@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urban Forecast Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Next-Hour City Forecast</p>
+          <h1>Simple predictions and clear analytics in one place</h1>
+          <p class="subtitle">
+            View traffic, AQI, temperature, and energy forecasts with ranges, model quality metrics, and relationship analysis.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <a class="ghost-link" href="/comparison">Open Model Comparison</a>
+          <button id="refreshButton" class="refresh-button" type="button">Refresh Forecast</button>
+        </div>
+      </section>
+
+      <section class="meta-panel">
+        <div>
+          <p class="meta-label">Forecast For</p>
+          <p id="forecastFor" class="meta-value">Loading...</p>
+        </div>
+        <div>
+          <p class="meta-label">Latest Data Point</p>
+          <p id="lastUpdated" class="meta-value">Loading...</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Outlook</h2>
+        <div id="cards" class="card-grid four-up"></div>
+      </section>
+
+      <section class="two-column">
+        <div class="panel">
+          <h2>Simple Summary</h2>
+          <ul id="summaryList" class="summary-list"></ul>
+        </div>
+        <div class="panel">
+          <h2>How To Read This</h2>
+          <p class="helper-text">
+            The large number is the most likely next-hour value. The range shows uncertainty, and the analytics panels help explain how the city signals move together.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Explainable Model Quality</h2>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>MAE</th>
+                <th>RMSE</th>
+                <th>NRMSE</th>
+              </tr>
+            </thead>
+            <tbody id="explainableMetricsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="analytics-grid">
+        <article class="panel">
+          <h2>Pearson Correlation</h2>
+          <div id="pearsonPairs" class="chip-list"></div>
+        </article>
+        <article class="panel">
+          <h2>Spearman Correlation</h2>
+          <div id="spearmanPairs" class="chip-list"></div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Granger Causality Highlights</h2>
+        <div id="grangerLinks" class="insight-list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Why The Model Thinks This</h2>
+        <div id="reasons" class="reason-grid"></div>
+      </section>
+
+      <section id="errorBox" class="error-box hidden"></section>
+    </main>
+
+    <template id="cardTemplate">
+      <article class="metric-card">
+        <div class="card-top">
+          <p class="metric-label"></p>
+          <span class="status-pill"></span>
+        </div>
+        <p class="metric-value"></p>
+        <p class="metric-range"></p>
+        <p class="metric-change"></p>
+      </article>
+    </template>
+
+    <template id="reasonTemplate">
+      <article class="reason-card">
+        <h3></h3>
+        <ul></ul>
+      </article>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

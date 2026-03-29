@@ -1,0 +1,168 @@
+{
+  "offline_metrics": {
+    "BiLSTM": {
+      "MAE": 28.022363662719727,
+      "RMSE": 40.95343780517578,
+      "NRMSE": 0.2880203242766575,
+      "UPS": 0.0
+    },
+    "Transformer": {
+      "MAE": 27.815664291381836,
+      "RMSE": 40.836971282958984,
+      "NRMSE": 0.287201230024892,
+      "UPS": 0.0
+    },
+    "Hybrid": {
+      "MAE": 28.1064510345459,
+      "RMSE": 41.08440017700195,
+      "NRMSE": 0.2889413659967899,
+      "UPS": 0.0
+    },
+    "AdaptiveEnsemble": {
+      "MAE": 28.102424172271153,
+      "RMSE": 41.10944041553301,
+      "NRMSE": 0.2891174708126051,
+      "UPS": 0.0
+    },
+    "AdaptiveSwitcher": {
+      "MAE": 28.106454060401447,
+      "RMSE": 41.08439971541105,
+      "NRMSE": 0.28894136275047977,
+      "UPS": 0.0
+    }
+  },
+  "per_target_metrics": {
+    "BiLSTM": {
+      "traffic_flow": {
+        "MAE": 40.88286209106445,
+        "RMSE": 52.104835510253906,
+        "NRMSE": 1.0096865088192262
+      },
+      "aqi": {
+        "MAE": 18.778396606445312,
+        "RMSE": 24.12083625793457,
+        "NRMSE": 1.008935428212821
+      },
+      "temperature": {
+        "MAE": 4.011624336242676,
+        "RMSE": 4.836907863616943,
+        "NRMSE": 1.0011138710860052
+      },
+      "electricity_demand": {
+        "MAE": 48.41657257080078,
+        "RMSE": 58.21178436279297,
+        "NRMSE": 1.0046482894938429
+      }
+    },
+    "Transformer": {
+      "traffic_flow": {
+        "MAE": 40.07569122314453,
+        "RMSE": 51.687564849853516,
+        "NRMSE": 1.0016006459198135
+      },
+      "aqi": {
+        "MAE": 18.697786331176758,
+        "RMSE": 24.035310745239258,
+        "NRMSE": 1.0053580348400692
+      },
+      "temperature": {
+        "MAE": 4.014732837677002,
+        "RMSE": 4.848342418670654,
+        "NRMSE": 1.0034805259813926
+      },
+      "electricity_demand": {
+        "MAE": 48.47444534301758,
+        "RMSE": 58.290870666503906,
+        "NRMSE": 1.0060132007504778
+      }
+    },
+    "Hybrid": {
+      "traffic_flow": {
+        "MAE": 40.83026123046875,
+        "RMSE": 52.06950378417969,
+        "NRMSE": 1.0090018513051762
+      },
+      "aqi": {
+        "MAE": 18.809154510498047,
+        "RMSE": 24.16010284423828,
+        "NRMSE": 1.0105778857811716
+      },
+      "temperature": {
+        "MAE": 4.017787456512451,
+        "RMSE": 4.856252670288086,
+        "NRMSE": 1.0051177419138189
+      },
+      "electricity_demand": {
+        "MAE": 48.76861572265625,
+        "RMSE": 58.593379974365234,
+        "NRMSE": 1.0112340587266697
+      }
+    },
+    "AdaptiveEnsemble": {
+      "traffic_flow": {
+        "MAE": 40.52249954562191,
+        "RMSE": 51.889652863244514,
+        "NRMSE": 1.005516703589256
+      },
+      "aqi": {
+        "MAE": 18.95589428467318,
+        "RMSE": 24.332632142817857,
+        "NRMSE": 1.0177945062946656
+      },
+      "temperature": {
+        "MAE": 4.026260991785046,
+        "RMSE": 4.879728213252148,
+        "NRMSE": 1.0099765675014172
+      },
+      "electricity_demand": {
+        "MAE": 48.90504186700447,
+        "RMSE": 58.749634521519475,
+        "NRMSE": 1.0139307783899218
+      }
+    },
+    "AdaptiveSwitcher": {
+      "traffic_flow": {
+        "MAE": 40.830261983989196,
+        "RMSE": 52.06950261992541,
+        "NRMSE": 1.009001828744279
+      },
+      "aqi": {
+        "MAE": 18.80915305055218,
+        "RMSE": 24.16010351770069,
+        "NRMSE": 1.010577913951011
+      },
+      "temperature": {
+        "MAE": 4.017787179829162,
+        "RMSE": 4.856252541918316,
+        "NRMSE": 1.005117715344622
+      },
+      "electricity_demand": {
+        "MAE": 48.768614027235245,
+        "RMSE": 58.5933844907371,
+        "NRMSE": 1.0112341366724897
+      }
+    }
+  },
+  "streaming_metrics": {
+    "MAE": 26.288565325940777,
+    "RMSE": 37.81086983921337,
+    "NRMSE": 0.26518463347660537
+  },
+  "final_ensemble_weights": {
+    "BiLSTM": 0.3334704282634979,
+    "Transformer": 0.3351770197139752,
+    "Hybrid": 0.33135255202252706
+  },
+  "adaptive_switcher": {
+    "traffic_flow": "Hybrid",
+    "aqi": "Hybrid",
+    "temperature": "Hybrid",
+    "electricity_demand": "Hybrid"
+  },
+  "xai_reports": {
+    "traffic_flow": "outputs/shap_fallback_traffic_flow.csv",
+    "aqi": "outputs/shap_fallback_aqi.csv",
+    "temperature": "outputs/shap_fallback_temperature.csv",
+    "electricity_demand": "outputs/shap_fallback_electricity_demand.csv"
+  }
+}
