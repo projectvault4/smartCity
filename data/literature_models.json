@@ -1,0 +1,182 @@
+[
+  {
+    "model": "ARIMA",
+    "family": "classical statistical",
+    "year": 1970,
+    "efficiency": "Low compute, strong simple baseline for univariate short-horizon forecasting.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "Box-Jenkins / ARIMA reference",
+    "source_url": "https://www.investopedia.com/terms/b/box-jenkins-model.asp"
+  },
+  {
+    "model": "SARIMA",
+    "family": "classical statistical",
+    "year": 1970,
+    "efficiency": "Low to medium compute, useful when seasonality is strong and stable.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "Box-Jenkins / ARIMA reference",
+    "source_url": "https://www.investopedia.com/terms/b/box-jenkins-model.asp"
+  },
+  {
+    "model": "Prophet",
+    "family": "classical additive",
+    "year": 2017,
+    "efficiency": "Low compute, convenient for trend and seasonality with business-style forecasting workflows.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "Prophet documentation",
+    "source_url": "https://facebook.github.io/prophet/"
+  },
+  {
+    "model": "LSTM",
+    "family": "recurrent neural network",
+    "year": 1997,
+    "efficiency": "Medium compute, standard deep sequential baseline for temporal dependencies.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "LSTM original paper",
+    "source_url": "https://www.bioinf.jku.at/publications/older/2604.pdf"
+  },
+  {
+    "model": "GRU",
+    "family": "recurrent neural network",
+    "year": 2014,
+    "efficiency": "Medium compute, often lighter than LSTM with competitive sequence modeling performance.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "GRU encoder-decoder paper",
+    "source_url": "https://arxiv.org/abs/1406.1078"
+  },
+  {
+    "model": "BiLSTM",
+    "family": "recurrent neural network",
+    "year": 1997,
+    "efficiency": "Medium to high compute, stronger context modeling than one-direction LSTM in many sequence tasks.",
+    "comparison_scope": "Implemented in this project",
+    "source_name": "Bidirectional recurrent neural networks",
+    "source_url": "https://ieeexplore.ieee.org/document/650093"
+  },
+  {
+    "model": "DeepAR",
+    "family": "probabilistic deep forecasting",
+    "year": 2017,
+    "efficiency": "Medium to high compute, strong autoregressive probabilistic baseline for many forecasting benchmarks.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "DeepAR paper",
+    "source_url": "https://arxiv.org/abs/1704.04110"
+  },
+  {
+    "model": "N-BEATS",
+    "family": "deep residual forecasting",
+    "year": 2020,
+    "efficiency": "Medium compute, strong pure deep-learning baseline without domain-specific architecture tricks.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "N-BEATS OpenReview",
+    "source_url": "https://openreview.net/forum?id=r1ecqn4YwB"
+  },
+  {
+    "model": "N-HiTS",
+    "family": "hierarchical interpolation deep forecasting",
+    "year": 2022,
+    "efficiency": "Medium compute, designed for long-horizon forecasting with better speed-accuracy tradeoffs than many deep baselines.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "N-HiTS paper",
+    "source_url": "https://arxiv.org/abs/2201.12886"
+  },
+  {
+    "model": "TFT",
+    "family": "transformer forecasting",
+    "year": 2019,
+    "efficiency": "High compute, interpretable multi-horizon forecasting with attention and gating.",
+    "comparison_scope": "Implemented in this project",
+    "source_name": "Temporal Fusion Transformer paper",
+    "source_url": "https://arxiv.org/abs/1912.09363"
+  },
+  {
+    "model": "Informer",
+    "family": "efficient transformer forecasting",
+    "year": 2021,
+    "efficiency": "High compute, built for long-sequence forecasting with more efficient attention.",
+    "comparison_scope": "Implemented in this project",
+    "source_name": "Informer paper",
+    "source_url": "https://arxiv.org/abs/2012.07436"
+  },
+  {
+    "model": "Autoformer",
+    "family": "decomposition transformer forecasting",
+    "year": 2021,
+    "efficiency": "High compute, strong long-horizon decomposition-based transformer benchmark.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "Autoformer paper",
+    "source_url": "https://arxiv.org/abs/2106.13008"
+  },
+  {
+    "model": "FEDformer",
+    "family": "frequency-domain transformer forecasting",
+    "year": 2022,
+    "efficiency": "High compute, improves long-horizon efficiency using frequency-domain decomposition.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "FEDformer paper",
+    "source_url": "https://arxiv.org/abs/2201.12740"
+  },
+  {
+    "model": "PatchTST",
+    "family": "patch transformer forecasting",
+    "year": 2023,
+    "efficiency": "High compute, strong modern transformer baseline with patching and channel independence.",
+    "comparison_scope": "Implemented in this project",
+    "source_name": "PatchTST repository / paper",
+    "source_url": "https://arxiv.org/abs/2211.14730"
+  },
+  {
+    "model": "DLinear",
+    "family": "linear forecasting",
+    "year": 2023,
+    "efficiency": "Very low compute, surprisingly strong lightweight baseline for long-term forecasting.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "Are Transformers Effective for Time Series Forecasting?",
+    "source_url": "https://arxiv.org/abs/2205.13504"
+  },
+  {
+    "model": "TiDE",
+    "family": "MLP forecasting",
+    "year": 2023,
+    "efficiency": "Medium compute, competitive long-range forecasting with MLP-based design.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "TiDE OpenReview",
+    "source_url": "https://openreview.net/forum?id=pCbC3aQB5W"
+  },
+  {
+    "model": "TimesNet",
+    "family": "temporal 2D variation forecasting",
+    "year": 2023,
+    "efficiency": "High compute, broad time-series foundation-style architecture for multiple tasks.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "TimesNet OpenReview",
+    "source_url": "https://openreview.net/forum?id=ju_Uqw384Oq"
+  },
+  {
+    "model": "TimeMixer",
+    "family": "all-MLP forecasting",
+    "year": 2024,
+    "efficiency": "Medium compute, multiscale mixing design intended to improve forecasting efficiency.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "TimeMixer paper",
+    "source_url": "https://arxiv.org/abs/2405.14616"
+  },
+  {
+    "model": "MOMENT",
+    "family": "time-series foundation model",
+    "year": 2024,
+    "efficiency": "High pretraining cost, strong transfer-oriented time-series foundation model reference.",
+    "comparison_scope": "Literature reference only",
+    "source_name": "MOMENT OpenReview",
+    "source_url": "https://openreview.net/forum?id=FVvf69a5rx"
+  },
+  {
+    "model": "Hybrid",
+    "family": "project ensemble model",
+    "year": 2026,
+    "efficiency": "Project model that combines BiLSTM and TFT internally for stronger accuracy than single-model baselines.",
+    "comparison_scope": "Implemented in this project",
+    "source_name": "Project implementation",
+    "source_url": ""
+  }
+]

@@ -1,0 +1,100 @@
+{
+  "selected_models": {
+    "traffic_flow": "BiLSTM",
+    "aqi": "BiLSTM",
+    "temperature": "BiLSTM",
+    "electricity_demand": "BiLSTM"
+  },
+  "validation_best_models": {
+    "traffic_flow": {
+      "model": "BiLSTM",
+      "MAE": 796.7280883789062,
+      "RMSE": 1054.5684814453125,
+      "NRMSE": 0.18996530139052703
+    },
+    "aqi": {
+      "model": "BiLSTM",
+      "MAE": 5.981747150421143,
+      "RMSE": 7.7835798263549805,
+      "NRMSE": 0.2645167676023674
+    },
+    "temperature": {
+      "model": "BiLSTM",
+      "MAE": 0.4791935384273529,
+      "RMSE": 0.5879936218261719,
+      "NRMSE": 0.1983695167343529
+    },
+    "electricity_demand": {
+      "model": "BiLSTM",
+      "MAE": 2.0990488529205322,
+      "RMSE": 2.6335020065307617,
+      "NRMSE": 0.1482044484350471
+    }
+  },
+  "test_metrics_overall": {
+    "MAE": 211.3565673828125,
+    "RMSE": 551.565185546875,
+    "NRMSE": 0.0995933895396148,
+    "UPS": 79.19876705973688
+  },
+  "test_metrics_by_target": {
+    "traffic_flow": {
+      "MAE": 836.0584716796875,
+      "RMSE": 1103.090576171875,
+      "NRMSE": 0.201194294365391
+    },
+    "aqi": {
+      "MAE": 7.184197902679443,
+      "RMSE": 9.096992492675781,
+      "NRMSE": 0.29276401125943835
+    },
+    "temperature": {
+      "MAE": 0.4095480740070343,
+      "RMSE": 0.5465112328529358,
+      "NRMSE": 0.2104418592120306
+    },
+    "electricity_demand": {
+      "MAE": 1.7740641832351685,
+      "RMSE": 2.2531261444091797,
+      "NRMSE": 0.12764915277366456
+    }
+  },
+  "existing_offline_metrics": {
+    "BiLSTM": {
+      "MAE": 211.3565673828125,
+      "RMSE": 551.565185546875,
+      "NRMSE": 0.0995933895396148,
+      "UPS": 79.19876705973688
+    },
+    "Transformer": {
+      "MAE": 224.0592498779297,
+      "RMSE": 587.3402709960938,
+      "NRMSE": 0.10605311925845914,
+      "UPS": 75.84131365314934
+    },
+    "Hybrid": {
+      "MAE": 262.0101318359375,
+      "RMSE": 662.8274536132812,
+      "NRMSE": 0.11968346537283092,
+      "UPS": 73.61163789933546
+    },
+    "AdaptiveEnsemble": {
+      "MAE": 213.7902755500737,
+      "RMSE": 535.6871227846406,
+      "NRMSE": 0.09672636650906263,
+      "UPS": 24.78464163706007
+    },
+    "AdaptiveSwitcher": {
+      "MAE": 211.35655981711366,
+      "RMSE": 551.5652258796043,
+      "NRMSE": 0.09959339682229566,
+      "UPS": 79.19876716310166
+    }
+  },
+  "adaptive_switcher": {
+    "traffic_flow": "BiLSTM",
+    "aqi": "BiLSTM",
+    "temperature": "BiLSTM",
+    "electricity_demand": "BiLSTM"
+  }
+}

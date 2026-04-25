@@ -1,0 +1,3 @@
+trial,seq_len,d_model,heads,layers,ff_dim,batch_size,dropout,learning_rate,val_MAE,val_MAPE,val_RMSE,val_NRMSE,val_UPS,checkpoint_path
+1,8,32,4,1,96,128,0.1,0.0005,302.285888671875,6.299270222590577,785.8314208984375,0.13773360803289897,70.48977316458395,outputs/checkpoints/project_best_informer_trial_1.pt
+2,12,48,4,1,128,128,0.1,0.0003,341.90625,6.314257515361904,916.7017822265625,0.16060045222729277,69.88751169786583,outputs/checkpoints/project_best_informer_trial_2.pt

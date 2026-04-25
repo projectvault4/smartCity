@@ -18,6 +18,16 @@ def rmse(y_true, y_pred):
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
 
+def mape(y_true, y_pred):
+    y_true = np.asarray(y_true, dtype=float)
+    y_pred = np.asarray(y_pred, dtype=float)
+    denominator = np.where(np.abs(y_true) < 1e-8, np.nan, np.abs(y_true))
+    percentage_errors = np.abs((y_true - y_pred) / denominator) * 100.0
+    if np.isnan(percentage_errors).all():
+        return 0.0
+    return float(np.nanmean(percentage_errors))
+
+
 def nrmse(y_true, y_pred):
     y_true = np.asarray(y_true)
     variance = float(np.var(y_true))
@@ -46,6 +56,7 @@ def compute_urban_prediction_score(y_true, y_pred, target_names):
 def compute_all_metrics(y_true, y_pred):
     return {
         "MAE": mae(y_true, y_pred),
+        "MAPE": mape(y_true, y_pred),
         "RMSE": rmse(y_true, y_pred),
         "NRMSE": nrmse(y_true, y_pred),
     }

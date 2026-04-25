@@ -1,0 +1,17 @@
+{
+  "trial": 5,
+  "seq_len": 8,
+  "hidden_dim": 48,
+  "heads": 2,
+  "layers": 1,
+  "ff_dim": 96,
+  "batch_size": 96,
+  "dropout": 0.05,
+  "learning_rate": 0.0005,
+  "val_MAE": 84.62391662597656,
+  "val_MAPE": 2.020456957572858,
+  "val_RMSE": 253.1284942626953,
+  "val_NRMSE": 0.04436613233265195,
+  "val_UPS": 89.75488132164499,
+  "checkpoint_path": "outputs/checkpoints/project_best_tft_trial_5.pt"
+}

@@ -1,0 +1,416 @@
+{
+  "finalized_at": "2026-04-22T21:28:22.930053+05:30",
+  "source_summary": "outputs/project_best_summary.json",
+  "top_4_models_by_rmse": [
+    {
+      "model": "TFT",
+      "MAE": 91.25911712646484,
+      "MAPE": 2.1588812019060613,
+      "RMSE": 261.3070068359375,
+      "NRMSE": 0.04718291002257359,
+      "UPS": 89.53998749962317
+    },
+    {
+      "model": "Hybrid",
+      "MAE": 105.57572174072266,
+      "MAPE": 2.5269267863621154,
+      "RMSE": 290.59552001953125,
+      "NRMSE": 0.05248883807122499,
+      "UPS": 88.70032152596133
+    },
+    {
+      "model": "GRU",
+      "MAE": 143.5352783203125,
+      "MAPE": 3.0390278605638867,
+      "RMSE": 384.541259765625,
+      "NRMSE": 0.06943470777605368,
+      "UPS": 85.9107133080138
+    },
+    {
+      "model": "SARIMA",
+      "MAE": 134.761825228679,
+      "MAPE": 2.5467923857919783,
+      "RMSE": 465.05559935104947,
+      "NRMSE": 0.08397278268719133,
+      "UPS": 86.30836456479165
+    }
+  ],
+  "project_best_models": {
+    "BiLSTM": {
+      "search_csv": "outputs/project_best_bilstm_search.csv",
+      "best_json": "outputs/project_best_bilstm_best.json",
+      "best_checkpoint": "outputs/checkpoints/project_best_bilstm.pt",
+      "best_validation": {
+        "trial": 8,
+        "hidden_dim": 32,
+        "seq_len": 12,
+        "batch_size": 64,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 165.17547607421875,
+        "val_MAPE": 3.9776519088704356,
+        "val_RMSE": 428.39422607421875,
+        "val_NRMSE": 0.07505200466827133,
+        "val_UPS": 79.85799888918024,
+        "checkpoint_path": "outputs/checkpoints/project_best_bilstm_trial_8.pt"
+      },
+      "test_metrics": {
+        "MAE": 184.06948852539062,
+        "MAPE": 4.645923363893177,
+        "RMSE": 465.44781494140625,
+        "NRMSE": 0.08405510307817352,
+        "UPS": 77.24788771068536
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 727.1901245117188,
+          "MAPE": 9.174340217466884,
+          "RMSE": 930.8565063476562,
+          "NRMSE": 0.16972220052720158
+        },
+        "aqi": {
+          "MAE": 6.43987512588501,
+          "MAPE": 6.202313872814065,
+          "RMSE": 8.083471298217773,
+          "NRMSE": 0.2600161135247752
+        },
+        "temperature": {
+          "MAE": 0.6404197812080383,
+          "MAPE": 2.48214543691382,
+          "RMSE": 0.8667175769805908,
+          "NRMSE": 0.3337129386885692
+        },
+        "electricity_demand": {
+          "MAE": 2.007579803466797,
+          "MAPE": 0.724893928377938,
+          "RMSE": 2.5861103534698486,
+          "NRMSE": 0.14663323883203983
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 256.4075622558594,
+          "project_best": 184.06948852539062,
+          "delta": -72.33807373046875
+        },
+        "RMSE": {
+          "previous": 672.2183227539062,
+          "project_best": 465.44781494140625,
+          "delta": -206.7705078125
+        },
+        "NRMSE": {
+          "previous": 0.12137912803056465,
+          "project_best": 0.08405510307817352,
+          "delta": -0.037324024952391135
+        },
+        "UPS": {
+          "previous": 76.54004157538853,
+          "project_best": 77.24788771068536,
+          "delta": 0.7078461352968333
+        }
+      }
+    },
+    "TFT": {
+      "search_csv": "outputs/project_best_tft_search.csv",
+      "best_json": "outputs/project_best_tft_best.json",
+      "best_checkpoint": "outputs/checkpoints/project_best_tft.pt",
+      "best_validation": {
+        "trial": 5,
+        "seq_len": 8,
+        "hidden_dim": 48,
+        "heads": 2,
+        "layers": 1,
+        "ff_dim": 96,
+        "batch_size": 96,
+        "dropout": 0.05,
+        "learning_rate": 0.0005,
+        "val_MAE": 84.62391662597656,
+        "val_MAPE": 2.020456957572858,
+        "val_RMSE": 253.1284942626953,
+        "val_NRMSE": 0.04436613233265195,
+        "val_UPS": 89.75488132164499,
+        "checkpoint_path": "outputs/checkpoints/project_best_tft_trial_5.pt"
+      },
+      "test_metrics": {
+        "MAE": 91.25911712646484,
+        "MAPE": 2.1588812019060613,
+        "RMSE": 261.3070068359375,
+        "NRMSE": 0.04718291002257359,
+        "UPS": 89.53998749962317
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 361.1152648925781,
+          "MAPE": 4.753222696254852,
+          "RMSE": 522.5968627929688,
+          "NRMSE": 0.09531720179505528
+        },
+        "aqi": {
+          "MAE": 2.733954906463623,
+          "MAPE": 2.6228710468184637,
+          "RMSE": 4.057135105133057,
+          "NRMSE": 0.13056877298256
+        },
+        "temperature": {
+          "MAE": 0.23427413403987885,
+          "MAPE": 0.9104840971943937,
+          "RMSE": 0.32375335693359375,
+          "NRMSE": 0.12466579690151675
+        },
+        "electricity_demand": {
+          "MAE": 0.9529922008514404,
+          "MAPE": 0.3489469673565347,
+          "RMSE": 1.197593092918396,
+          "NRMSE": 0.06784872833594154
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 313.9538269042969,
+          "project_best": 91.25911712646484,
+          "delta": -222.69470977783203
+        },
+        "RMSE": {
+          "previous": 826.5907592773438,
+          "project_best": 261.3070068359375,
+          "delta": -565.2837524414062
+        },
+        "NRMSE": {
+          "previous": 0.14925339313599265,
+          "project_best": 0.04718291002257359,
+          "delta": -0.10207048311341906
+        },
+        "UPS": {
+          "previous": 72.59806889019497,
+          "project_best": 89.53998749962317,
+          "delta": 16.9419186094282
+        }
+      }
+    },
+    "Hybrid": {
+      "search_csv": "outputs/project_best_hybrid_search.csv",
+      "best_json": "outputs/project_best_hybrid_best.json",
+      "best_checkpoint": "outputs/checkpoints/project_best_hybrid.pt",
+      "best_validation": {
+        "trial": 1,
+        "closeness_len": 4,
+        "period_len": 8,
+        "trend_len": 4,
+        "bilstm_hidden_dim": 16,
+        "tft_hidden_dim": 32,
+        "tft_heads": 2,
+        "tft_layers": 1,
+        "tft_ff_dim": 96,
+        "dense_hidden_dim": 96,
+        "dropout": 0.1,
+        "batch_size": 64,
+        "learning_rate": 0.0005,
+        "val_MAE": 98.54337310791016,
+        "val_MAPE": 2.286973726496041,
+        "val_RMSE": 281.12469482421875,
+        "val_NRMSE": 0.04924583475653195,
+        "val_UPS": 89.40641137780591,
+        "checkpoint_path": "outputs/checkpoints/project_best_hybrid_trial_1.pt"
+      },
+      "test_metrics": {
+        "MAE": 105.57572174072266,
+        "MAPE": 2.5269267863621154,
+        "RMSE": 290.59552001953125,
+        "NRMSE": 0.05248883807122499,
+        "UPS": 88.70032152596133
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 417.8439025878906,
+          "MAPE": 6.02264649456227,
+          "RMSE": 581.173583984375,
+          "NRMSE": 0.1060517126469244
+        },
+        "aqi": {
+          "MAE": 2.865115165710449,
+          "MAPE": 2.761370674480904,
+          "RMSE": 4.131295204162598,
+          "NRMSE": 0.13296349589101902
+        },
+        "temperature": {
+          "MAE": 0.2103329449892044,
+          "MAPE": 0.8308810344514582,
+          "RMSE": 0.29387375712394714,
+          "NRMSE": 0.11304197026236411
+        },
+        "electricity_demand": {
+          "MAE": 1.3835220336914062,
+          "MAPE": 0.49280894195382735,
+          "RMSE": 1.7659351825714111,
+          "NRMSE": 0.09992996016123938
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 131.98341369628906,
+          "project_best": 105.57572174072266,
+          "delta": -26.407691955566406
+        },
+        "RMSE": {
+          "previous": 353.46832275390625,
+          "project_best": 290.59552001953125,
+          "delta": -62.872802734375
+        },
+        "NRMSE": {
+          "previous": 0.0638240216757704,
+          "project_best": 0.05248883807122499,
+          "delta": -0.01133518360454542
+        },
+        "UPS": {
+          "previous": 86.9734036583598,
+          "project_best": 88.70032152596133,
+          "delta": 1.7269178676015287
+        }
+      }
+    },
+    "Informer": {
+      "search_csv": "outputs/project_best_informer_search.csv",
+      "best_json": "outputs/project_best_informer_best.json",
+      "best_checkpoint": "outputs/checkpoints/project_best_informer.pt",
+      "best_validation": {
+        "trial": 1,
+        "seq_len": 8,
+        "d_model": 32,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 96,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 302.285888671875,
+        "val_MAPE": 6.299270222590577,
+        "val_RMSE": 785.8314208984375,
+        "val_NRMSE": 0.13773360803289897,
+        "val_UPS": 70.48977316458395,
+        "checkpoint_path": "outputs/checkpoints/project_best_informer_trial_1.pt"
+      },
+      "test_metrics": {
+        "MAE": 326.0994567871094,
+        "MAPE": 6.5614966431336255,
+        "RMSE": 856.6414794921875,
+        "NRMSE": 0.1546795026199252,
+        "UPS": 70.4090067890571
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 1292.12255859375,
+          "MAPE": 14.849645094419754,
+          "RMSE": 1713.242919921875,
+          "NRMSE": 0.31248086766038696
+        },
+        "aqi": {
+          "MAE": 8.25152587890625,
+          "MAPE": 8.063595960016597,
+          "RMSE": 10.735129356384277,
+          "NRMSE": 0.3454833599449938
+        },
+        "temperature": {
+          "MAE": 0.5224174857139587,
+          "MAPE": 2.029944188166654,
+          "RMSE": 0.6951613426208496,
+          "NRMSE": 0.26768168081337385
+        },
+        "electricity_demand": {
+          "MAE": 3.501521587371826,
+          "MAPE": 1.3028013299314944,
+          "RMSE": 4.553830623626709,
+          "NRMSE": 0.2579938200189612
+        }
+      },
+      "comparison_to_current": {}
+    },
+    "PatchTST": {
+      "search_csv": "outputs/project_best_patchtst_search.csv",
+      "best_json": "outputs/project_best_patchtst_best.json",
+      "best_checkpoint": "outputs/checkpoints/project_best_patchtst.pt",
+      "best_validation": {
+        "trial": 1,
+        "seq_len": 12,
+        "d_model": 32,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 96,
+        "patch_len": 4,
+        "stride": 2,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 215.2630157470703,
+        "val_MAPE": 4.531802417238972,
+        "val_RMSE": 582.6488037109375,
+        "val_NRMSE": 0.10207644752079363,
+        "val_UPS": 79.03434474612547,
+        "checkpoint_path": "outputs/checkpoints/project_best_patchtst_trial_1.pt"
+      },
+      "test_metrics": {
+        "MAE": 239.54861450195312,
+        "MAPE": 4.866183645861709,
+        "RMSE": 634.1113891601562,
+        "NRMSE": 0.11451401525133496,
+        "UPS": 77.87013516909255
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 949.2969360351562,
+          "MAPE": 11.428636551420427,
+          "RMSE": 1268.1932373046875,
+          "NRMSE": 0.23122849274975052
+        },
+        "aqi": {
+          "MAE": 5.72806978225708,
+          "MAPE": 5.52060599863297,
+          "RMSE": 7.899632930755615,
+          "NRMSE": 0.2541026963725687
+        },
+        "temperature": {
+          "MAE": 0.3753679692745209,
+          "MAPE": 1.4665046708641447,
+          "RMSE": 0.5216725468635559,
+          "NRMSE": 0.20085998400247757
+        },
+        "electricity_demand": {
+          "MAE": 2.7940752506256104,
+          "MAPE": 1.048987362529294,
+          "RMSE": 3.50974178314209,
+          "NRMSE": 0.19900342011150132
+        }
+      },
+      "comparison_to_current": {}
+    }
+  },
+  "baselines": {
+    "LSTM": {
+      "MAE": 189.6083221435547,
+      "MAPE": 3.9018330084468302,
+      "RMSE": 495.2269592285156,
+      "NRMSE": 0.08942067547657592,
+      "UPS": 82.88476134388885
+    },
+    "GRU": {
+      "MAE": 143.5352783203125,
+      "MAPE": 3.0390278605638867,
+      "RMSE": 384.541259765625,
+      "NRMSE": 0.06943470777605368,
+      "UPS": 85.9107133080138
+    },
+    "ARIMA": {
+      "MAE": 265.2023118224806,
+      "MAPE": 4.540939519343993,
+      "RMSE": 697.981720824288,
+      "NRMSE": 0.1260310970219426,
+      "UPS": 82.96722225641253
+    },
+    "SARIMA": {
+      "MAE": 134.761825228679,
+      "MAPE": 2.5467923857919783,
+      "RMSE": 465.05559935104947,
+      "NRMSE": 0.08397278268719133,
+      "UPS": 86.30836456479165
+    }
+  }
+}

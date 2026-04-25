@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, Dataset
 
 
 @dataclass
@@ -33,13 +33,41 @@ class EarlyStopper:
         return self.counter >= self.patience
 
 
-class SequenceDataset(TensorDataset):
+class SequenceDataset(Dataset):
     def __init__(self, x, y):
-        super().__init__(torch.tensor(x, dtype=torch.float32), torch.tensor(y, dtype=torch.float32))
+        self.x = x
+        self.y = torch.tensor(y, dtype=torch.float32)
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, idx):
+        if isinstance(self.x, dict):
+            features = {
+                key: torch.tensor(value[idx], dtype=torch.float32)
+                for key, value in self.x.items()
+                if key in {"closeness", "period", "trend"}
+            }
+        else:
+            features = torch.tensor(self.x[idx], dtype=torch.float32)
+        return features, self.y[idx]
 
 
 def create_loader(x, y, batch_size: int, shuffle: bool = False):
     return DataLoader(SequenceDataset(x, y), batch_size=batch_size, shuffle=shuffle)
+
+
+def _num_samples(x) -> int:
+    if isinstance(x, dict):
+        first_key = next(iter(x))
+        return len(x[first_key])
+    return len(x)
+
+
+def _move_features_to_device(features, device):
+    if isinstance(features, dict):
+        return {key: value.to(device) for key, value in features.items()}
+    return features.to(device)
 
 
 def train_model(model, model_name: str, train_data, val_data, config, checkpoint_dir: Path):
@@ -65,7 +93,7 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
         model.train()
         train_losses = []
         for xb, yb in train_loader:
-            xb, yb = xb.to(device), yb.to(device)
+            xb, yb = _move_features_to_device(xb, device), yb.to(device)
             optimizer.zero_grad()
             preds = model(xb)
             loss = criterion(preds, yb)
@@ -78,7 +106,7 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
         val_losses = []
         with torch.no_grad():
             for xb, yb in val_loader:
-                xb, yb = xb.to(device), yb.to(device)
+                xb, yb = _move_features_to_device(xb, device), yb.to(device)
                 preds = model(xb)
                 loss = criterion(preds, yb)
                 val_losses.append(loss.item())
@@ -108,7 +136,7 @@ def fine_tune_model(model, recent_data, config, epochs: int = 2):
     model.train()
     for _ in range(max(1, epochs)):
         for xb, yb in loader:
-            xb, yb = xb.to(device), yb.to(device)
+            xb, yb = _move_features_to_device(xb, device), yb.to(device)
             optimizer.zero_grad()
             preds = model(xb)
             loss = criterion(preds, yb)
@@ -125,13 +153,13 @@ def predict_model(model, x, config):
     model.eval()
     loader = create_loader(
         x,
-        np.zeros((len(x), len(config.target_columns)), dtype=np.float32),
+        np.zeros((_num_samples(x), len(config.target_columns)), dtype=np.float32),
         batch_size=config.batch_size,
         shuffle=False,
     )
     preds = []
     for xb, _ in loader:
-        xb = xb.to(device)
+        xb = _move_features_to_device(xb, device)
         batch_preds = model(xb)
         preds.append(batch_preds.cpu().numpy())
     return np.concatenate(preds, axis=0)

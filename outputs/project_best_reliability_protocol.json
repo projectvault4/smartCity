@@ -1,0 +1,12 @@
+{
+  "description": "Multi-seed reliability study for finalized project-best neural models.",
+  "seeds": [
+    42,
+    52,
+    62
+  ],
+  "models": [
+    "TFT",
+    "Hybrid"
+  ]
+}

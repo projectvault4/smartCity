@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -75,6 +76,59 @@ def plot_feature_attention(weights, feature_names, save_path: Path, top_k: int =
     plt.figure(figsize=(12, 6))
     sns.barplot(x=series.values, y=series.index, orient="h")
     plt.title("Top Feature Attention Weights")
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()
+
+
+def plot_forecast_windows(y_true, predictions, save_path: Path, window: int = 96):
+    total_points = len(y_true)
+    if total_points == 0:
+        return
+    anchors = [0, max(0, total_points // 2 - window // 2), max(0, total_points - window)]
+    unique_anchors = []
+    for anchor in anchors:
+        if anchor not in unique_anchors:
+            unique_anchors.append(anchor)
+
+    fig, axes = plt.subplots(len(unique_anchors), 1, figsize=(14, 4 * len(unique_anchors)), sharey=False)
+    if not isinstance(axes, np.ndarray):
+        axes = np.array([axes])
+    for axis, start in zip(axes, unique_anchors):
+        end = min(total_points, start + window)
+        axis.plot(y_true[start:end], label="Actual", linewidth=2)
+        for name, pred in predictions.items():
+            axis.plot(pred[start:end], label=name, alpha=0.85)
+        axis.set_title(f"Representative Forecast Window: {start} to {end}")
+        axis.set_xlabel("Time Step")
+        axis.set_ylabel("Value")
+        axis.legend()
+    fig.tight_layout()
+    fig.savefig(save_path)
+    plt.close(fig)
+
+
+def plot_residual_histograms(y_true, predictions, save_path: Path):
+    residual_frame = pd.DataFrame({name: np.asarray(pred) - np.asarray(y_true) for name, pred in predictions.items()})
+    plt.figure(figsize=(14, 6))
+    for column in residual_frame.columns:
+        sns.histplot(residual_frame[column], label=column, kde=True, stat="density", element="step", fill=False)
+    plt.title("Residual Distribution")
+    plt.xlabel("Residual")
+    plt.ylabel("Density")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()
+
+
+def plot_residual_boxplot(y_true, predictions, save_path: Path):
+    residual_frame = pd.DataFrame({name: np.asarray(pred) - np.asarray(y_true) for name, pred in predictions.items()})
+    melted = residual_frame.melt(var_name="Model", value_name="Residual")
+    plt.figure(figsize=(12, 6))
+    sns.boxplot(data=melted, x="Model", y="Residual")
+    plt.title("Residual Boxplot")
+    plt.xticks(rotation=15)
     plt.tight_layout()
     plt.savefig(save_path)
     plt.close()

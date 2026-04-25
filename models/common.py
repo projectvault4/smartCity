@@ -45,3 +45,28 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x):
         return x + self.pe[:, : x.size(1)]
+
+
+def combine_temporal_groups(x):
+    if isinstance(x, dict):
+        parts = [x["trend"], x["period"], x["closeness"]]
+        return torch.cat(parts, dim=1)
+    return x
+
+
+def get_temporal_group_inputs(x):
+    if isinstance(x, dict):
+        return {
+            "trend": x["trend"],
+            "period": x["period"],
+            "closeness": x["closeness"],
+        }
+
+    total_steps = x.size(1)
+    if total_steps < 3:
+        raise ValueError("Grouped temporal models need trend, period, and closeness steps.")
+    return {
+        "trend": x[:, :1],
+        "period": x[:, 1:2],
+        "closeness": x[:, 2:3],
+    }

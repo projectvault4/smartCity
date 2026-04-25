@@ -1,0 +1,14 @@
+{
+  "trial": 8,
+  "hidden_dim": 32,
+  "seq_len": 12,
+  "batch_size": 64,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 165.17547607421875,
+  "val_MAPE": 3.9776519088704356,
+  "val_RMSE": 428.39422607421875,
+  "val_NRMSE": 0.07505200466827133,
+  "val_UPS": 79.85799888918024,
+  "checkpoint_path": "outputs/checkpoints/project_best_bilstm_trial_8.pt"
+}

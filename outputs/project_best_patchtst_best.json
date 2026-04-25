@@ -1,0 +1,19 @@
+{
+  "trial": 1,
+  "seq_len": 12,
+  "d_model": 32,
+  "heads": 4,
+  "layers": 1,
+  "ff_dim": 96,
+  "patch_len": 4,
+  "stride": 2,
+  "batch_size": 128,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 215.2630157470703,
+  "val_MAPE": 4.531802417238972,
+  "val_RMSE": 582.6488037109375,
+  "val_NRMSE": 0.10207644752079363,
+  "val_UPS": 79.03434474612547,
+  "checkpoint_path": "outputs/checkpoints/project_best_patchtst_trial_1.pt"
+}

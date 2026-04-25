@@ -1,0 +1,13 @@
+{
+  "description": "Each implemented model is tuned with a modest and comparable validation-driven budget.",
+  "validation_selection_rule": "Lowest validation RMSE, with MAE as the secondary tie-breaker.",
+  "trials_per_model": {
+    "ARIMA": 2,
+    "SARIMA": 2,
+    "LSTM": 3,
+    "GRU": 3,
+    "BiLSTM": 3,
+    "TFT": 3,
+    "Hybrid": 3
+  }
+}

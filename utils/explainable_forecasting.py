@@ -85,6 +85,13 @@ class ExplainableTimeSeriesForecaster:
         self.models: Dict[str, RidgeCV] = {}
         self.interval_bounds: Dict[str, Tuple[float, float]] = {}
         self.validation_metrics: Dict[str, Dict[str, float]] = {}
+        self.models_by_horizon: Dict[int, Dict[str, RidgeCV]] = {}
+        self.scalers_by_horizon: Dict[int, StandardScaler] = {}
+        self.feature_columns_by_horizon: Dict[int, List[str]] = {}
+        self.future_target_columns_by_horizon: Dict[int, List[str]] = {}
+        self.interval_bounds_by_horizon: Dict[int, Dict[str, Tuple[float, float]]] = {}
+        self.validation_metrics_by_horizon: Dict[int, Dict[str, Dict[str, float]]] = {}
+        self.primary_horizon: int = int(config.forecast_horizon)
 
     def _split_supervised_frame(self, supervised_df: pd.DataFrame):
         n = len(supervised_df)
@@ -96,49 +103,66 @@ class ExplainableTimeSeriesForecaster:
             supervised_df.iloc[val_end:].copy(),
         )
 
-    def fit(self, prepared_df: pd.DataFrame) -> ExplainableForecastArtifacts:
+    def _sync_primary_horizon(self, horizon: int) -> None:
+        self.primary_horizon = int(horizon)
+        self.models = self.models_by_horizon[horizon]
+        self.scaler = self.scalers_by_horizon[horizon]
+        self.feature_columns = self.feature_columns_by_horizon[horizon]
+        self.future_target_columns = self.future_target_columns_by_horizon[horizon]
+        self.interval_bounds = self.interval_bounds_by_horizon[horizon]
+        self.validation_metrics = self.validation_metrics_by_horizon[horizon]
+
+    def _fit_horizon(self, prepared_df: pd.DataFrame, horizon: int) -> ExplainableForecastArtifacts:
         supervised_df = _build_supervised_frame(
             prepared_df=prepared_df,
             target_columns=self.config.target_columns,
-            horizon=self.config.forecast_horizon,
+            horizon=horizon,
         )
-        self.future_target_columns = [
-            _future_target_name(target, self.config.forecast_horizon) for target in self.config.target_columns
-        ]
-        self.feature_columns = [
-            col for col in supervised_df.columns if col not in {"timestamp", *self.future_target_columns}
-        ]
+        future_target_columns = [_future_target_name(target, horizon) for target in self.config.target_columns]
+        feature_columns = [col for col in supervised_df.columns if col not in {"timestamp", *future_target_columns}]
 
         train_df, val_df, test_df = self._split_supervised_frame(supervised_df)
-        x_train = self.scaler.fit_transform(train_df[self.feature_columns])
-        x_val = self.scaler.transform(val_df[self.feature_columns])
-        x_test = self.scaler.transform(test_df[self.feature_columns])
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(train_df[feature_columns])
+        x_val = scaler.transform(val_df[feature_columns])
+        x_test = scaler.transform(test_df[feature_columns])
 
+        models: Dict[str, RidgeCV] = {}
+        bounds: Dict[str, Tuple[float, float]] = {}
+        validation_metrics: Dict[str, Dict[str, float]] = {}
         metrics = {}
         per_target = {}
         test_predictions = {}
         for target in self.config.target_columns:
-            y_train = train_df[_future_target_name(target, self.config.forecast_horizon)].to_numpy()
-            y_val = val_df[_future_target_name(target, self.config.forecast_horizon)].to_numpy()
-            y_test = test_df[_future_target_name(target, self.config.forecast_horizon)].to_numpy()
+            y_train = train_df[_future_target_name(target, horizon)].to_numpy()
+            y_val = val_df[_future_target_name(target, horizon)].to_numpy()
+            y_test = test_df[_future_target_name(target, horizon)].to_numpy()
 
             model = RidgeCV(alphas=np.logspace(-2, 3, 40))
             model.fit(x_train, y_train)
-            self.models[target] = model
+            models[target] = model
 
             val_pred = model.predict(x_val)
             test_pred = model.predict(x_test)
             residuals = y_val - val_pred
 
-            self.validation_metrics[target] = compute_all_metrics(y_val, val_pred)
-            self.interval_bounds[target] = (
-                float(np.quantile(residuals, 0.1)),
-                float(np.quantile(residuals, 0.9)),
+            validation_metrics[target] = compute_all_metrics(y_val, val_pred)
+            low_q, high_q = self.config.uncertainty_quantiles
+            bounds[target] = (
+                float(np.quantile(residuals, low_q)),
+                float(np.quantile(residuals, high_q)),
             )
 
             metrics[target] = compute_all_metrics(y_test, test_pred)
             per_target[target] = {target: metrics[target]}
             test_predictions[target] = test_pred
+
+        self.models_by_horizon[horizon] = models
+        self.scalers_by_horizon[horizon] = scaler
+        self.feature_columns_by_horizon[horizon] = feature_columns
+        self.future_target_columns_by_horizon[horizon] = future_target_columns
+        self.interval_bounds_by_horizon[horizon] = bounds
+        self.validation_metrics_by_horizon[horizon] = validation_metrics
 
         metrics_df = pd.DataFrame(metrics).T
         prediction_frame = pd.DataFrame(test_predictions, index=test_df["timestamp"])
@@ -148,14 +172,32 @@ class ExplainableTimeSeriesForecaster:
             test_predictions=prediction_frame,
         )
 
-    def predict_from_prepared(self, prepared_df: pd.DataFrame) -> Dict[str, Dict[str, float]]:
-        latest_features = prepared_df[self.feature_columns].tail(1)
-        x_latest = self.scaler.transform(latest_features)
+    def fit(self, prepared_df: pd.DataFrame) -> ExplainableForecastArtifacts:
+        artifacts = self._fit_horizon(prepared_df, self.config.forecast_horizon)
+        self._sync_primary_horizon(self.config.forecast_horizon)
+        return artifacts
+
+    def fit_multi_horizon(self, prepared_df: pd.DataFrame, horizons: List[int]) -> Dict[int, ExplainableForecastArtifacts]:
+        artifacts = {}
+        for horizon in sorted({int(h) for h in horizons if int(h) > 0}):
+            artifacts[horizon] = self._fit_horizon(prepared_df, horizon)
+        if self.config.forecast_horizon in artifacts:
+            self._sync_primary_horizon(self.config.forecast_horizon)
+        return artifacts
+
+    def predict_from_prepared(self, prepared_df: pd.DataFrame, horizon: int | None = None) -> Dict[str, Dict[str, float]]:
+        horizon = self.primary_horizon if horizon is None else int(horizon)
+        if horizon not in self.models_by_horizon:
+            raise ValueError(f"Horizon {horizon} has not been fitted yet")
+        feature_columns = self.feature_columns_by_horizon[horizon]
+        scaler = self.scalers_by_horizon[horizon]
+        latest_features = prepared_df[feature_columns].tail(1)
+        x_latest = scaler.transform(latest_features)
         forecast: Dict[str, Dict[str, float]] = {}
 
-        for target, model in self.models.items():
+        for target, model in self.models_by_horizon[horizon].items():
             point_estimate = float(model.predict(x_latest)[0])
-            low_residual, high_residual = self.interval_bounds[target]
+            low_residual, high_residual = self.interval_bounds_by_horizon[horizon][target]
             forecast[target] = {
                 "prediction": point_estimate,
                 "lower": point_estimate + low_residual,
@@ -163,18 +205,24 @@ class ExplainableTimeSeriesForecaster:
             }
         return forecast
 
-    def explain_latest_prediction(self, prepared_df: pd.DataFrame, top_k: int = 3) -> Dict[str, List[str]]:
-        latest_features = prepared_df[self.feature_columns].tail(1)
-        scaled_latest = self.scaler.transform(latest_features)[0]
+    def predict_multi_horizon(self, prepared_df: pd.DataFrame, horizons: List[int]) -> Dict[int, Dict[str, Dict[str, float]]]:
+        return {int(horizon): self.predict_from_prepared(prepared_df, horizon=int(horizon)) for horizon in horizons}
+
+    def explain_latest_prediction(self, prepared_df: pd.DataFrame, top_k: int = 3, horizon: int | None = None) -> Dict[str, List[str]]:
+        horizon = self.primary_horizon if horizon is None else int(horizon)
+        feature_columns = self.feature_columns_by_horizon[horizon]
+        scaler = self.scalers_by_horizon[horizon]
+        latest_features = prepared_df[feature_columns].tail(1)
+        scaled_latest = scaler.transform(latest_features)[0]
         explanations: Dict[str, List[str]] = {}
 
-        for target, model in self.models.items():
+        for target, model in self.models_by_horizon[horizon].items():
             contributions = model.coef_ * scaled_latest
             ranked_idx = np.argsort(np.abs(contributions))[::-1]
             lines = []
             seen = set()
             for idx in ranked_idx:
-                feature_name = _readable_feature_name(self.feature_columns[idx])
+                feature_name = _readable_feature_name(feature_columns[idx])
                 if feature_name in seen:
                     continue
                 seen.add(feature_name)
@@ -194,7 +242,20 @@ class ExplainableTimeSeriesForecaster:
     @classmethod
     def load(cls, path: Path) -> "ExplainableTimeSeriesForecaster":
         with open(path, "rb") as f:
-            return pickle.load(f)
+            forecaster = pickle.load(f)
+        if not hasattr(forecaster, "models_by_horizon"):
+            forecaster.models_by_horizon = {int(forecaster.config.forecast_horizon): forecaster.models}
+            forecaster.scalers_by_horizon = {int(forecaster.config.forecast_horizon): forecaster.scaler}
+            forecaster.feature_columns_by_horizon = {int(forecaster.config.forecast_horizon): forecaster.feature_columns}
+            forecaster.future_target_columns_by_horizon = {
+                int(forecaster.config.forecast_horizon): forecaster.future_target_columns
+            }
+            forecaster.interval_bounds_by_horizon = {int(forecaster.config.forecast_horizon): forecaster.interval_bounds}
+            forecaster.validation_metrics_by_horizon = {
+                int(forecaster.config.forecast_horizon): forecaster.validation_metrics
+            }
+            forecaster.primary_horizon = int(forecaster.config.forecast_horizon)
+        return forecaster
 
 
 def classify_forecast_levels(prediction: Dict[str, float], recent_df: pd.DataFrame) -> Dict[str, str]:

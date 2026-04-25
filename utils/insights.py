@@ -8,16 +8,16 @@ import pandas as pd
 import torch
 
 from engine.adaptive_ensemble import AdaptiveEnsemble
-from train import build_models
-from utils.data_utils import load_input_dataframe
+from train import build_models, checkpoint_name_for_model
+from utils.data_utils import build_temporal_groups_for_inference, load_input_dataframe
 from utils.training import predict_model
 
 
 def load_trained_models(datasets, config):
-    input_dim = datasets["train_seq"][0].shape[-1]
+    input_dim = datasets["train_tpt"]["closeness"].shape[-1]
     models = build_models(input_dim, config)
     for name, model in models.items():
-        checkpoint = Path(config.checkpoint_dir) / f"{name.lower()}.pt"
+        checkpoint = Path(config.checkpoint_dir) / f"{checkpoint_name_for_model(name)}.pt"
         if not checkpoint.exists():
             raise FileNotFoundError(
                 f"Missing checkpoint {checkpoint}. Run `python3 main.py` to train the models on the current dataset."
@@ -28,7 +28,9 @@ def load_trained_models(datasets, config):
 
 def build_adaptive_ensemble(models, datasets, config):
     processor = datasets["processor"]
-    x_val, y_val_scaled = datasets["val_seq"]
+    val_groups = datasets["val_tpt"]
+    x_val = {key: val_groups[key] for key in ("closeness", "period", "trend")}
+    y_val_scaled = val_groups["target"]
     y_val = processor.inverse_transform_targets(y_val_scaled)
     predictions = {}
     for name, model in models.items():
@@ -42,11 +44,16 @@ def build_adaptive_ensemble(models, datasets, config):
 def prepare_latest_sequence(raw_df: pd.DataFrame, processor, config):
     prepared = processor.prepare_dataframe(raw_df)
     x_all, _ = processor.transform_dataframe(prepared)
-    if len(x_all) < config.seq_len:
-        raise ValueError(f"Need at least {config.seq_len} usable rows after feature engineering.")
-    latest_x = x_all[-config.seq_len :]
-    latest_timestamp = prepared["timestamp"].iloc[-1]
-    return latest_x[np.newaxis, ...].astype(np.float32), latest_timestamp, prepared
+    grouped = build_temporal_groups_for_inference(x_all, prepared["timestamp"], config)
+    if len(grouped["closeness"]) == 0:
+        raise ValueError("Need enough usable rows to create closeness, period, and trend groups.")
+    latest_x = {
+        "closeness": grouped["closeness"][-1:].astype(np.float32),
+        "period": grouped["period"][-1:].astype(np.float32),
+        "trend": grouped["trend"][-1:].astype(np.float32),
+    }
+    latest_timestamp = grouped["timestamp"].iloc[-1]
+    return latest_x, latest_timestamp, prepared
 
 
 def predict_next_hour(models, ensemble, datasets, config):

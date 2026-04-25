@@ -1,0 +1,4 @@
+major_project.zip
+major_project_clean.zip
+.venv/lib/python3.13/site-packages/torch/lib/libtorch_cpu.dylib
+venv/lib/python3.11/site-packages/torch/lib/libtorch_cpu.dylib
