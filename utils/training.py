@@ -96,7 +96,10 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
             xb, yb = _move_features_to_device(xb, device), yb.to(device)
             optimizer.zero_grad()
             preds = model(xb)
-            loss = criterion(preds, yb)
+            if hasattr(model, "compute_loss"):
+                loss = model.compute_loss(preds, yb)
+            else:
+                loss = criterion(preds, yb)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
@@ -139,7 +142,10 @@ def fine_tune_model(model, recent_data, config, epochs: int = 2):
             xb, yb = _move_features_to_device(xb, device), yb.to(device)
             optimizer.zero_grad()
             preds = model(xb)
-            loss = criterion(preds, yb)
+            if hasattr(model, "compute_loss"):
+                loss = model.compute_loss(preds, yb)
+            else:
+                loss = criterion(preds, yb)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()

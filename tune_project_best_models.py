@@ -78,6 +78,23 @@ def _base_training_config(base_config):
     return config
 
 
+def _limit_candidate_specs(candidate_specs: list[dict], base_config) -> list[dict]:
+    max_trials = getattr(base_config, "search_max_trials", None)
+    if max_trials is None:
+        return candidate_specs
+    return candidate_specs[: max(1, int(max_trials))]
+
+
+def _apply_runtime_overrides(config, base_config):
+    if getattr(base_config, "search_epochs_override", None) is not None:
+        config.epochs = int(base_config.search_epochs_override)
+    if getattr(base_config, "search_patience_override", None) is not None:
+        config.patience = int(base_config.search_patience_override)
+    if getattr(base_config, "search_lr_patience_override", None) is not None:
+        config.lr_scheduler_patience = int(base_config.search_lr_patience_override)
+    return config
+
+
 def _validation_and_test_metrics(model, datasets, config):
     processor = datasets["processor"]
     val_x, y_val_scaled = _dataset_groups(datasets["val_tpt"])
@@ -222,6 +239,7 @@ def _search_bilstm(base_config, raw_df):
                 "learning_rate": 1e-3,
             },
         )
+    candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
 
     rows = []
     best = None
@@ -233,6 +251,7 @@ def _search_bilstm(base_config, raw_df):
             flush=True,
         )
         config = _base_training_config(base_config)
+        config = _apply_runtime_overrides(config, base_config)
         config.bilstm_hidden_dim = spec["hidden_dim"]
         config.seq_len = spec["seq_len"]
         config.batch_size = spec["batch_size"]
@@ -337,6 +356,7 @@ def _search_tft(base_config, raw_df):
             "learning_rate": 3e-4,
         },
     ]
+    candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
 
     rows = []
     best = None
@@ -349,6 +369,7 @@ def _search_tft(base_config, raw_df):
             flush=True,
         )
         config = _base_training_config(base_config)
+        config = _apply_runtime_overrides(config, base_config)
         config.seq_len = spec["seq_len"]
         config.batch_size = spec["batch_size"]
         config.dropout = spec["dropout"]
@@ -406,8 +427,36 @@ def _search_hybrid(base_config, raw_df):
             "tft_heads": 2,
             "tft_layers": 1,
             "tft_ff_dim": 96,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 64,
+            "learning_rate": 7e-4,
+        },
+        {
+            "closeness_len": 4,
+            "period_len": 8,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 16,
+            "tft_hidden_dim": 32,
+            "tft_heads": 2,
+            "tft_layers": 1,
+            "tft_ff_dim": 96,
             "dense_hidden_dim": 96,
             "dropout": 0.10,
+            "batch_size": 64,
+            "learning_rate": 5e-4,
+        },
+        {
+            "closeness_len": 6,
+            "period_len": 8,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 16,
+            "tft_hidden_dim": 32,
+            "tft_heads": 2,
+            "tft_layers": 1,
+            "tft_ff_dim": 128,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
             "batch_size": 64,
             "learning_rate": 5e-4,
         },
@@ -444,6 +493,20 @@ def _search_hybrid(base_config, raw_df):
             "period_len": 8,
             "trend_len": 4,
             "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 32,
+            "tft_heads": 2,
+            "tft_layers": 1,
+            "tft_ff_dim": 128,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 64,
+            "learning_rate": 5e-4,
+        },
+        {
+            "closeness_len": 4,
+            "period_len": 8,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
             "tft_hidden_dim": 48,
             "tft_heads": 4,
             "tft_layers": 2,
@@ -467,6 +530,20 @@ def _search_hybrid(base_config, raw_df):
             "batch_size": 64,
             "learning_rate": 3e-4,
         },
+        {
+            "closeness_len": 8,
+            "period_len": 12,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 4,
+            "tft_layers": 1,
+            "tft_ff_dim": 144,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 64,
+            "learning_rate": 3e-4,
+        },
     ]
     if branch_artifact or ensemble_artifact:
         candidate_specs.insert(
@@ -486,6 +563,7 @@ def _search_hybrid(base_config, raw_df):
                 "learning_rate": 5e-4,
             },
         )
+    candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
 
     rows = []
     best = None
@@ -499,6 +577,10 @@ def _search_hybrid(base_config, raw_df):
             flush=True,
         )
         config = _base_training_config(base_config)
+        config.epochs = 24
+        config.patience = 7
+        config.lr_scheduler_patience = 3
+        config = _apply_runtime_overrides(config, base_config)
         config.closeness_lags = _window(spec["closeness_len"], 1)
         config.period_lags = _window(spec["period_len"], 24)
         config.trend_lags = _window(spec["trend_len"], 24 * 7)
@@ -569,6 +651,7 @@ def _search_informer(base_config, raw_df):
             "learning_rate": 3e-4,
         },
     ]
+    candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
 
     rows = []
     best = None
@@ -583,6 +666,7 @@ def _search_informer(base_config, raw_df):
         config = _base_training_config(base_config)
         config.epochs = 4
         config.patience = 1
+        config = _apply_runtime_overrides(config, base_config)
         config.seq_len = spec["seq_len"]
         config.batch_size = spec["batch_size"]
         config.dropout = spec["dropout"]
@@ -653,6 +737,7 @@ def _search_patchtst(base_config, raw_df):
             "learning_rate": 3e-4,
         },
     ]
+    candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
 
     rows = []
     best = None
@@ -667,6 +752,7 @@ def _search_patchtst(base_config, raw_df):
         config = _base_training_config(base_config)
         config.epochs = 4
         config.patience = 1
+        config = _apply_runtime_overrides(config, base_config)
         config.seq_len = spec["seq_len"]
         config.batch_size = spec["batch_size"]
         config.dropout = spec["dropout"]
@@ -790,8 +876,36 @@ def main():
         default="BiLSTM,TFT,Hybrid,Informer,PatchTST",
         help="Comma-separated subset of models to tune.",
     )
+    parser.add_argument(
+        "--max-trials",
+        type=int,
+        default=None,
+        help="Cap the number of candidate configurations evaluated per selected model.",
+    )
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=None,
+        help="Override epochs for faster exploratory runs.",
+    )
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=None,
+        help="Override early-stopping patience for faster exploratory runs.",
+    )
+    parser.add_argument(
+        "--lr-patience",
+        type=int,
+        default=None,
+        help="Override ReduceLROnPlateau patience for faster exploratory runs.",
+    )
     args = parser.parse_args()
     selected = [name.strip() for name in args.models.split(",") if name.strip()]
+    CONFIG.search_max_trials = args.max_trials
+    CONFIG.search_epochs_override = args.epochs
+    CONFIG.search_patience_override = args.patience
+    CONFIG.search_lr_patience_override = args.lr_patience
 
     summary, summary_path = run_project_best_track(CONFIG, selected)
     print("\nProject-Best Summary")

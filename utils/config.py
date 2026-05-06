@@ -1,6 +1,16 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import torch
+
+
+def _default_device() -> str:
+    if torch.cuda.is_available():
+        return "cuda"
+    if getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
 
 @dataclass
 class Config:
@@ -68,7 +78,7 @@ class Config:
     drift_error_window: int = 48
     drift_threshold: float = 1.2
     ensemble_error_window: int = 72
-    device: str = "cpu"
+    device: str = field(default_factory=_default_device)
 
     domain_columns: tuple = field(
         default_factory=lambda: ("traffic_flow", "aqi", "electricity_demand", "temperature", "humidity")
