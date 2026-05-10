@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import copy
 from pathlib import Path
 
 import pandas as pd
@@ -67,6 +68,49 @@ def _build_paper_style_comparison(config, metrics_df: pd.DataFrame) -> pd.DataFr
     return pd.DataFrame(rows)
 
 
+def _with_latest_hybrid_outputs(project_best_summary: dict, output_dir: Path) -> tuple[dict, dict | None]:
+    """Use the canonical residual-hybrid artifact as the final Hybrid row when available."""
+    hybrid_metrics_path = output_dir / "tft_gru_residual_hybrid_metrics.json"
+    if not hybrid_metrics_path.exists():
+        return project_best_summary, None
+
+    hybrid_artifact = _load_json(hybrid_metrics_path)
+    metrics = hybrid_artifact.get("metrics")
+    per_target = hybrid_artifact.get("per_target_metrics")
+    if not metrics or not per_target:
+        return project_best_summary, None
+
+    summary = copy.deepcopy(project_best_summary)
+    results = summary.setdefault("results", {})
+    prior_hybrid = results.get("Hybrid", {})
+    results["Hybrid"] = {
+        **prior_hybrid,
+        "source_artifact": str(hybrid_metrics_path),
+        "model": hybrid_artifact.get("model", "TFTGRUResidualHybrid"),
+        "architecture": hybrid_artifact.get("architecture", ""),
+        "prediction_path": hybrid_artifact.get("prediction_path", ""),
+        "best_checkpoint": hybrid_artifact.get("checkpoint_path", prior_hybrid.get("best_checkpoint", "")),
+        "test_metrics": metrics,
+        "test_per_target": per_target,
+        "project_best_search_result": prior_hybrid,
+    }
+
+    protocol = summary.setdefault("search_protocol", {})
+    sources = protocol.setdefault("final_metric_sources", {})
+    sources["Hybrid"] = str(hybrid_metrics_path)
+
+    previous_rmse = prior_hybrid.get("test_metrics", {}).get("RMSE")
+    override = {
+        "model": "Hybrid",
+        "source_artifact": str(hybrid_metrics_path),
+        "previous_project_best_RMSE": previous_rmse,
+        "final_RMSE": metrics.get("RMSE"),
+        "checkpoint_path": hybrid_artifact.get("checkpoint_path", ""),
+        "prediction_path": hybrid_artifact.get("prediction_path", ""),
+    }
+    return summary, override
+
+
 def main():
     config = CONFIG
     set_seed(config.random_seed)
@@ -84,6 +128,7 @@ def main():
     baseline_metrics_df, baseline_per_target_metrics, _, baseline_metadata = evaluate_baselines(datasets, config)
 
     project_best_summary = _load_json(project_best_path)
+    project_best_summary, hybrid_override = _with_latest_hybrid_outputs(project_best_summary, output_dir)
     prior_summary_path = output_dir / "summary.json"
     prior_summary = _load_json(prior_summary_path) if prior_summary_path.exists() else {}
 
@@ -124,6 +169,7 @@ def main():
         "top_4_models_by_rmse": best_four_df.to_dict(orient="records"),
         "project_best_models": project_best_summary["results"],
         "baselines": baseline_metrics_df.to_dict(orient="index"),
+        "hybrid_override": hybrid_override,
     }
     with open(output_dir / "final_model_registry.json", "w", encoding="utf-8") as handle:
         json.dump(final_registry, handle, indent=2)
@@ -142,6 +188,11 @@ def main():
 
     print("\nFinalized Top 4 Models")
     print(best_four_df[["model", "MAE", "RMSE", "NRMSE", "UPS"]].round(4).to_string(index=False))
+    if hybrid_override:
+        print(
+            "\nMapped Hybrid to latest residual-hybrid artifact "
+            f"({hybrid_override['source_artifact']})"
+        )
     print(f"\nWrote finalized outputs to {output_dir}")
 
 

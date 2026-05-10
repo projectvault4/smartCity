@@ -70,7 +70,7 @@ def _move_features_to_device(features, device):
     return features.to(device)
 
 
-def train_model(model, model_name: str, train_data, val_data, config, checkpoint_dir: Path):
+def train_model(model, model_name: str, train_data, val_data, config, checkpoint_dir: Path, verbose: bool = False):
     device = torch.device(config.device)
     model = model.to(device)
     criterion = nn.MSELoss()
@@ -89,10 +89,19 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
 
     checkpoint_path = checkpoint_dir / f"{model_name}.pt"
 
-    for _ in range(config.epochs):
+    if verbose:
+        print(
+            f"Training {model_name} on {device} | "
+            f"epochs={config.epochs}, batch_size={config.batch_size}, "
+            f"train_samples={_num_samples(train_data[0])}, val_samples={_num_samples(val_data[0])}",
+            flush=True,
+        )
+
+    for epoch in range(1, config.epochs + 1):
         model.train()
         train_losses = []
-        for xb, yb in train_loader:
+        progress_interval = max(1, len(train_loader) // 10)
+        for batch_idx, (xb, yb) in enumerate(train_loader, start=1):
             xb, yb = _move_features_to_device(xb, device), yb.to(device)
             optimizer.zero_grad()
             preds = model(xb)
@@ -104,6 +113,13 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
             train_losses.append(loss.item())
+            if verbose and (batch_idx == 1 or batch_idx == len(train_loader) or batch_idx % progress_interval == 0):
+                print(
+                    f"Epoch {epoch:03d}/{config.epochs} | "
+                    f"batch {batch_idx:04d}/{len(train_loader)} | "
+                    f"batch_loss={loss.item():.6f}",
+                    flush=True,
+                )
 
         model.eval()
         val_losses = []
@@ -122,7 +138,22 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
 
         if val_loss <= early_stopper.best_loss:
             torch.save(model.state_dict(), checkpoint_path)
+            if verbose:
+                print(
+                    f"Epoch {epoch:03d}/{config.epochs} | "
+                    f"train_loss={train_loss:.6f} | val_loss={val_loss:.6f} | saved best",
+                    flush=True,
+                )
+        elif verbose:
+            print(
+                f"Epoch {epoch:03d}/{config.epochs} | "
+                f"train_loss={train_loss:.6f} | val_loss={val_loss:.6f} | "
+                f"best_val={early_stopper.best_loss:.6f}",
+                flush=True,
+            )
         if early_stopper.step(val_loss):
+            if verbose:
+                print(f"Early stopping after epoch {epoch:03d}", flush=True)
             break
 
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))

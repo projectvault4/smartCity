@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.informer import InformerForecastModel
 from models.patchtst import PatchTSTForecastModel
 from models.transformer import TemporalFusionTransformer
@@ -135,7 +135,7 @@ def _build_model(model_name: str, input_dim: int, config):
             output_dim=output_dim,
         )
     if model_name == "Hybrid":
-        return AdaptiveHybridModel(input_dim=input_dim, config=config)
+        return TFTGRUResidualHybrid(input_dim=input_dim, config=config)
     if model_name == "Informer":
         return InformerForecastModel(
             input_dim=input_dim,

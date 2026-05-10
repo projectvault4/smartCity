@@ -12,10 +12,10 @@
   "dropout": 0.1,
   "batch_size": 64,
   "learning_rate": 0.0005,
-  "val_MAE": 98.54337310791016,
-  "val_MAPE": 2.286973726496041,
-  "val_RMSE": 281.12469482421875,
-  "val_NRMSE": 0.04924583475653195,
-  "val_UPS": 89.40641137780591,
+  "val_MAE": 133.4460906982422,
+  "val_MAPE": 2.980565062664607,
+  "val_RMSE": 358.44305419921875,
+  "val_NRMSE": 0.06279002784781558,
+  "val_UPS": 85.36126225777878,
   "checkpoint_path": "outputs/checkpoints/project_best_hybrid_trial_1.pt"
 }

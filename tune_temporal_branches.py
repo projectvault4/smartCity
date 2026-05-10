@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from utils.config import CONFIG
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
 from utils.metrics import compute_all_metrics
@@ -53,7 +53,7 @@ def run_search(base_config=CONFIG):
 
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
-        model = AdaptiveHybridModel(input_dim=input_dim, config=config)
+        model = TFTGRUResidualHybrid(input_dim=input_dim, config=config)
 
         train_groups = datasets["train_tpt"]
         val_groups = datasets["val_tpt"]

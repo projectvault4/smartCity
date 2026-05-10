@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.transformer import TemporalFusionTransformer
 from utils.config import CONFIG
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
@@ -105,7 +105,7 @@ def _build_model(model_name: str, input_dim: int, config):
             output_dim=output_dim,
         )
     if model_name == "Hybrid":
-        return AdaptiveHybridModel(input_dim=input_dim, config=config)
+        return TFTGRUResidualHybrid(input_dim=input_dim, config=config)
     raise ValueError(f"Unsupported model for reliability: {model_name}")
 
 

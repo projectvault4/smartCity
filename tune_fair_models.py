@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.recurrent_baselines import PlainGRU, PlainLSTM
 from train import build_models
 from utils.baselines import (
@@ -167,7 +167,7 @@ def _search_grouped_model(name: str, datasets, base_config):
         elif name == "TFT":
             model = build_models(input_dim, config)["TFT"]
         elif name == "Hybrid":
-            model = AdaptiveHybridModel(input_dim=input_dim, config=config)
+            model = TFTGRUResidualHybrid(input_dim=input_dim, config=config)
         else:
             raise ValueError(f"Unsupported grouped model {name}")
 
@@ -227,7 +227,7 @@ def build_tuned_model(name: str, datasets, base_config, tuned_entry: dict):
         elif name == "TFT":
             model = build_models(input_dim, config)["TFT"]
         else:
-            model = AdaptiveHybridModel(input_dim=input_dim, config=config)
+            model = TFTGRUResidualHybrid(input_dim=input_dim, config=config)
         return model, config, "grouped"
 
     raise ValueError(f"Unsupported tuned neural model: {name}")

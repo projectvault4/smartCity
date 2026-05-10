@@ -10,7 +10,7 @@ import torch
 
 from engine.adaptive_ensemble import AdaptiveEnsemble
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.transformer import AdvancedTimeSeriesTransformer
 from utils.config import CONFIG
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
@@ -85,7 +85,7 @@ def run_search(base_config=CONFIG):
                 config.dropout = dropout
                 config.ensemble_error_window = ensemble_error_window
 
-                hybrid = AdaptiveHybridModel(input_dim=input_dim, config=config)
+                hybrid = TFTGRUResidualHybrid(input_dim=input_dim, config=config)
                 model_name = f"hybrid_d{dense_hidden_dim}_do{str(dropout).replace('.', '')}_ew{ensemble_error_window}"
                 result = train_model(
                     model=hybrid,

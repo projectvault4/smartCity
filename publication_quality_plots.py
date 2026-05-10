@@ -10,13 +10,16 @@ from pathlib import Path
 os.environ.setdefault("MPLCONFIGDIR", str(Path("outputs") / "mplconfig"))
 os.environ.setdefault("XDG_CACHE_HOME", str(Path("outputs") / "cache"))
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
 
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.transformer import TemporalFusionTransformer
 from utils.config import CONFIG
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
@@ -162,7 +165,7 @@ def _build_model(model_name: str, input_dim: int, config) -> torch.nn.Module:
             output_dim=output_dim,
         )
     if model_name == "Hybrid":
-        return AdaptiveHybridModel(input_dim=input_dim, config=config)
+        return TFTGRUResidualHybrid(input_dim=input_dim, config=config)
     raise ValueError(f"Unsupported model: {model_name}")
 
 
@@ -172,6 +175,33 @@ def _collect_real_outputs(raw_df: pd.DataFrame, prediction_model: str) -> dict[s
 
     for model_name, artifact in artifacts.items():
         print(f"Loading real outputs for {model_name}...", flush=True)
+        if model_name == "Hybrid" and (Path(CONFIG.output_dir) / "tft_gru_residual_hybrid_metrics.json").exists():
+            metrics_doc = _load_json(Path(CONFIG.output_dir) / "tft_gru_residual_hybrid_metrics.json")
+            entry = {
+                "metrics": {
+                    "RMSE": float(metrics_doc["metrics"]["RMSE"]),
+                    "MAE": float(metrics_doc["metrics"]["MAE"]),
+                    "MAPE": float(metrics_doc["metrics"]["MAPE"]),
+                }
+            }
+            prediction_path = Path(metrics_doc["prediction_path"])
+            if prediction_model == "Hybrid" and prediction_path.exists():
+                prediction_df = pd.read_csv(prediction_path)
+                actual_columns = [f"actual_{target}" for target in CONFIG.target_columns]
+                predicted_columns = [f"predicted_{target}" for target in CONFIG.target_columns]
+                entry["y_true"] = prediction_df[actual_columns].to_numpy(dtype=float)
+                entry["y_pred"] = prediction_df[predicted_columns].to_numpy(dtype=float)
+                entry["timestamps"] = pd.to_datetime(prediction_df["timestamp"]).reset_index(drop=True)
+            results[model_name] = entry
+            print(
+                f"{model_name} metrics: "
+                f"RMSE={entry['metrics']['RMSE']:.2f}, "
+                f"MAE={entry['metrics']['MAE']:.2f}, "
+                f"MAPE={entry['metrics']['MAPE']:.2f}%",
+                flush=True,
+            )
+            continue
+
         config = _config_for_model(model_name, artifact["best"])
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
@@ -335,13 +365,14 @@ def main() -> None:
 
     raw_df = load_input_dataframe(CONFIG)
     model_outputs = _collect_real_outputs(raw_df, args.prediction_model)
+    summary_metrics = _load_json(Path(CONFIG.output_dir) / "summary.json")["offline_metrics"]
     keep_open = args.show
 
     _save_prediction_plot(model_outputs[args.prediction_model], output_dir, args.max_points, keep_open)
     print("Saved prediction.png", flush=True)
     _save_bar_chart(
         models=["BiLSTM", "TFT", "Hybrid"],
-        values=[184.06, 91.25, 105.57],
+        values=[model_outputs[name]["metrics"]["MAE"] for name in ("BiLSTM", "TFT", "Hybrid")],
         ylabel="MAE",
         title="MAE Comparison",
         filename="mae.png",
@@ -351,7 +382,7 @@ def main() -> None:
     print("Saved mae.png", flush=True)
     _save_bar_chart(
         models=["BiLSTM", "TFT", "Hybrid"],
-        values=[465.44, 261.30, 290.59],
+        values=[model_outputs[name]["metrics"]["RMSE"] for name in ("BiLSTM", "TFT", "Hybrid")],
         ylabel="RMSE",
         title="RMSE Comparison",
         filename="rmse.png",
@@ -361,7 +392,7 @@ def main() -> None:
     print("Saved rmse.png", flush=True)
     _save_bar_chart(
         models=["BiLSTM", "TFT", "Hybrid"],
-        values=[77.24, 89.54, 88.70],
+        values=[summary_metrics[name]["UPS"] for name in ("BiLSTM", "TFT", "Hybrid")],
         ylabel="UPS",
         title="UPS Comparison",
         filename="ups.png",

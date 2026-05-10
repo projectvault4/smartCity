@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.informer import InformerForecastModel
 from models.patchtst import PatchTSTForecastModel
 from models.transformer import TemporalFusionTransformer
@@ -14,6 +14,8 @@ def checkpoint_name_for_model(name: str) -> str:
     aliases = {
         "AdaptiveHybrid": "hybrid",
         "Hybrid": "hybrid",
+        "TFTGRUResidualHybrid": "tft_gru_residual_hybrid",
+        "TFT-GRU-Residual": "tft_gru_residual_hybrid",
         "PatchTST": "patchtst",
     }
     return aliases.get(name, name.lower())
@@ -38,7 +40,8 @@ def build_models(input_dim: int, config):
             dropout=config.dropout,
             output_dim=output_dim,
         ),
-        "Hybrid": AdaptiveHybridModel(input_dim=input_dim, config=config),
+        "Hybrid": TFTGRUResidualHybrid(input_dim=input_dim, config=config),
+        "TFTGRUResidualHybrid": TFTGRUResidualHybrid(input_dim=input_dim, config=config),
         "Informer": InformerForecastModel(
             input_dim=input_dim,
             d_model=config.informer_d_model,

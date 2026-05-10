@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from models.bilstm import EnhancedBiLSTM
-from models.hybrid import AdaptiveHybridModel
+from models.hybrid import TFTGRUResidualHybrid
 from models.informer import InformerForecastModel
 from models.patchtst import PatchTSTForecastModel
 from models.transformer import TemporalFusionTransformer
@@ -146,7 +146,7 @@ def _build_tft_model(input_dim: int, config):
 
 
 def _build_hybrid_model(input_dim: int, config):
-    return AdaptiveHybridModel(input_dim=input_dim, config=config)
+    return TFTGRUResidualHybrid(input_dim=input_dim, config=config)
 
 
 def _build_informer_model(input_dim: int, config):

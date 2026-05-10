@@ -1,335 +1,236 @@
 {
   "offline_metrics": {
-    "ARIMA": {
-      "MAE": 265.2023118224806,
-      "MAPE": 4.540939519343993,
-      "RMSE": 697.981720824288,
-      "NRMSE": 0.1260310970219426,
-      "UPS": 82.96722225641253
-    },
-    "SARIMA": {
-      "MAE": 134.761825228679,
-      "MAPE": 2.5467923857919783,
-      "RMSE": 465.05559935104947,
-      "NRMSE": 0.08397278268719133,
-      "UPS": 86.30836456479165
-    },
     "LSTM": {
-      "MAE": 189.6083221435547,
-      "MAPE": 3.9018330084468302,
+      "MAE": 189.60833740234375,
+      "MAPE": 3.901833029881306,
       "RMSE": 495.2269592285156,
       "NRMSE": 0.08942067547657592,
-      "UPS": 82.88476134388885
+      "UPS": 82.88476112425558
     },
     "GRU": {
       "MAE": 143.5352783203125,
-      "MAPE": 3.0390278605638867,
+      "MAPE": 3.0390278705620997,
       "RMSE": 384.541259765625,
       "NRMSE": 0.06943470777605368,
-      "UPS": 85.9107133080138
+      "UPS": 85.91071292436844
     },
     "BiLSTM": {
-      "MAE": 256.4075622558594,
-      "MAPE": 5.147858717591657,
-      "RMSE": 672.2183227539062,
-      "NRMSE": 0.12137912803056465,
-      "UPS": 76.54004157538853
+      "MAE": 184.06948852539062,
+      "MAPE": 4.645923363893177,
+      "RMSE": 465.44781494140625,
+      "NRMSE": 0.08405510307817352,
+      "UPS": 77.24788771068536
     },
     "TFT": {
-      "MAE": 313.9538269042969,
-      "MAPE": 6.114165316296335,
-      "RMSE": 826.5907592773438,
-      "NRMSE": 0.14925339313599265,
-      "UPS": 72.59806889019497
+      "MAE": 91.25911712646484,
+      "MAPE": 2.1588812019060613,
+      "RMSE": 261.3070068359375,
+      "NRMSE": 0.04718291002257359,
+      "UPS": 89.53998749962317
     },
     "Informer": {
-      "MAE": 130.24703979492188,
-      "MAPE": 3.049674252008604,
-      "RMSE": 347.1453857421875,
-      "NRMSE": 0.06268232030421232,
-      "UPS": 85.1915303093418
+      "MAE": 326.0994567871094,
+      "MAPE": 6.5614966431336255,
+      "RMSE": 856.6414794921875,
+      "NRMSE": 0.1546795026199252,
+      "UPS": 70.4090067890571
     },
     "PatchTST": {
-      "MAE": 348.1142578125,
-      "MAPE": 7.471580778532182,
-      "RMSE": 912.6561279296875,
-      "NRMSE": 0.16479378983011098,
-      "UPS": 65.61027504796412
+      "MAE": 239.54861450195312,
+      "MAPE": 4.866183645861709,
+      "RMSE": 634.1113891601562,
+      "NRMSE": 0.11451401525133496,
+      "UPS": 77.87013516909255
     },
     "Hybrid": {
-      "MAE": 131.98341369628906,
-      "MAPE": 2.808203501166866,
-      "RMSE": 353.46832275390625,
-      "NRMSE": 0.0638240216757704,
-      "UPS": 86.9734036583598
-    },
-    "AdaptiveSwitcher": {
-      "MAE": 129.9102437366299,
-      "MAPE": 2.796794259516626,
-      "RMSE": 347.1415861036942,
-      "NRMSE": 0.06268163422233752,
-      "UPS": 87.03110239445502
+      "MAE": 72.0799331665039,
+      "MAPE": 1.899978886729696,
+      "RMSE": 214.1963348388672,
+      "NRMSE": 0.03867636967045685,
+      "UPS": 89.9696342318103
     }
   },
   "per_target_metrics": {
     "BiLSTM": {
       "traffic_flow": {
-        "MAE": 1016.3583984375,
-        "MAPE": 11.483744339704012,
-        "RMSE": 1344.4013671875,
-        "NRMSE": 0.24520732046668392
+        "MAE": 727.1901245117188,
+        "MAPE": 9.174340217466884,
+        "RMSE": 930.8565063476562,
+        "NRMSE": 0.16972220052720158
       },
       "aqi": {
-        "MAE": 6.949034690856934,
-        "MAPE": 6.659129890639411,
-        "RMSE": 9.284364700317383,
-        "NRMSE": 0.2987941183692175
+        "MAE": 6.43987512588501,
+        "MAPE": 6.202313872814065,
+        "RMSE": 8.083471298217773,
+        "NRMSE": 0.2600161135247752
       },
       "temperature": {
-        "MAE": 0.4499955475330353,
-        "MAPE": 1.757557543790179,
-        "RMSE": 0.593095600605011,
-        "NRMSE": 0.22837982712677554
+        "MAE": 0.6404197812080383,
+        "MAPE": 2.48214543691382,
+        "RMSE": 0.8667175769805908,
+        "NRMSE": 0.3337129386885692
       },
       "electricity_demand": {
-        "MAE": 1.8726924657821655,
-        "MAPE": 0.6910030962330264,
-        "RMSE": 2.9303555488586426,
-        "NRMSE": 0.16601707102178195
+        "MAE": 2.007579803466797,
+        "MAPE": 0.724893928377938,
+        "RMSE": 2.5861103534698486,
+        "NRMSE": 0.14663323883203983
       }
     },
     "TFT": {
       "traffic_flow": {
-        "MAE": 1242.7525634765625,
-        "MAPE": 12.674205089532064,
-        "RMSE": 1653.1319580078125,
-        "NRMSE": 0.3015171419000825
+        "MAE": 361.1152648925781,
+        "MAPE": 4.753222696254852,
+        "RMSE": 522.5968627929688,
+        "NRMSE": 0.09531720179505528
       },
       "aqi": {
-        "MAE": 10.106732368469238,
-        "MAPE": 9.240074891704934,
-        "RMSE": 12.370427131652832,
-        "NRMSE": 0.3981113396511128
+        "MAE": 2.733954906463623,
+        "MAPE": 2.6228710468184637,
+        "RMSE": 4.057135105133057,
+        "NRMSE": 0.13056877298256
       },
       "temperature": {
-        "MAE": 0.41081544756889343,
-        "MAPE": 1.605566049293357,
-        "RMSE": 0.5499679446220398,
-        "NRMSE": 0.21177291483855987
+        "MAE": 0.23427413403987885,
+        "MAPE": 0.9104840971943937,
+        "RMSE": 0.32375335693359375,
+        "NRMSE": 0.12466579690151675
       },
       "electricity_demand": {
-        "MAE": 2.5451762676239014,
-        "MAPE": 0.9368152346549846,
-        "RMSE": 3.259700298309326,
-        "NRMSE": 0.18467584800244613
+        "MAE": 0.9529922008514404,
+        "MAPE": 0.3489469673565347,
+        "RMSE": 1.197593092918396,
+        "NRMSE": 0.06784872833594154
       }
     },
     "Hybrid": {
       "traffic_flow": {
-        "MAE": 523.022705078125,
-        "MAPE": 6.407813138206349,
-        "RMSE": 706.9197998046875,
-        "NRMSE": 0.12893613032957926
+        "MAE": 284.39849853515625,
+        "MAPE": 3.7176134355493926,
+        "RMSE": 428.3716735839844,
+        "NRMSE": 0.07813133250756964
       },
       "aqi": {
-        "MAE": 3.27482533454895,
-        "MAPE": 3.1138781547541874,
-        "RMSE": 4.591342449188232,
-        "NRMSE": 0.14776090379016077
+        "MAE": 2.733954906463623,
+        "MAPE": 2.6228710468184637,
+        "RMSE": 4.057135105133057,
+        "NRMSE": 0.13056877298256
       },
       "temperature": {
-        "MAE": 0.31007590889930725,
-        "MAPE": 1.223298674635878,
-        "RMSE": 0.3986765146255493,
-        "NRMSE": 0.15351601562515296
+        "MAE": 0.23427413403987885,
+        "MAPE": 0.9104840971943937,
+        "RMSE": 0.32375335693359375,
+        "NRMSE": 0.12466579690151675
       },
       "electricity_demand": {
-        "MAE": 1.3260308504104614,
-        "MAPE": 0.48782403707104816,
-        "RMSE": 1.603601098060608,
-        "NRMSE": 0.09085080392071491
+        "MAE": 0.9529922008514404,
+        "MAPE": 0.3489469673565347,
+        "RMSE": 1.197593092918396,
+        "NRMSE": 0.06784872833594154
       }
     },
     "Informer": {
       "traffic_flow": {
-        "MAE": 514.7300415039062,
-        "MAPE": 6.36217617160539,
-        "RMSE": 694.2659912109375,
-        "NRMSE": 0.12662818377827306
+        "MAE": 1292.12255859375,
+        "MAPE": 14.849645094419754,
+        "RMSE": 1713.242919921875,
+        "NRMSE": 0.31248086766038696
       },
       "aqi": {
-        "MAE": 3.962019681930542,
-        "MAPE": 3.915761805364403,
-        "RMSE": 5.314011096954346,
-        "NRMSE": 0.17101819154782166
+        "MAE": 8.25152587890625,
+        "MAPE": 8.063595960016597,
+        "RMSE": 10.735129356384277,
+        "NRMSE": 0.3454833599449938
       },
       "temperature": {
-        "MAE": 0.2973790466785431,
-        "MAPE": 1.182259513876593,
-        "RMSE": 0.40761134028434753,
-        "NRMSE": 0.15695649627832708
+        "MAE": 0.5224174857139587,
+        "MAPE": 2.029944188166654,
+        "RMSE": 0.6951613426208496,
+        "NRMSE": 0.26768168081337385
       },
       "electricity_demand": {
-        "MAE": 1.9987525939941406,
-        "MAPE": 0.7384995171880312,
-        "RMSE": 2.431166887283325,
-        "NRMSE": 0.13773591602190605
+        "MAE": 3.501521587371826,
+        "MAPE": 1.3028013299314944,
+        "RMSE": 4.553830623626709,
+        "NRMSE": 0.2579938200189612
       }
     },
     "PatchTST": {
       "traffic_flow": {
-        "MAE": 1377.7374267578125,
-        "MAPE": 16.686551859537094,
-        "RMSE": 1825.2647705078125,
-        "NRMSE": 0.3329126958973379
+        "MAE": 949.2969360351562,
+        "MAPE": 11.428636551420427,
+        "RMSE": 1268.1932373046875,
+        "NRMSE": 0.23122849274975052
       },
       "aqi": {
-        "MAE": 9.51060676574707,
-        "MAPE": 8.9460615523026,
-        "RMSE": 11.95460319519043,
-        "NRMSE": 0.3847290835137754
+        "MAE": 5.72806978225708,
+        "MAPE": 5.52060599863297,
+        "RMSE": 7.899632930755615,
+        "NRMSE": 0.2541026963725687
       },
       "temperature": {
-        "MAE": 0.6988069415092468,
-        "MAPE": 2.623039990845474,
-        "RMSE": 0.909801721572876,
-        "NRMSE": 0.3503319864124797
+        "MAE": 0.3753679692745209,
+        "MAPE": 1.4665046708641447,
+        "RMSE": 0.5216725468635559,
+        "NRMSE": 0.20085998400247757
       },
       "electricity_demand": {
-        "MAE": 4.510090351104736,
-        "MAPE": 1.630669711443566,
-        "RMSE": 5.429694652557373,
-        "NRMSE": 0.30761523225784193
-      }
-    },
-    "AdaptiveSwitcher": {
-      "traffic_flow": {
-        "MAE": 514.7300429128434,
-        "MAPE": 6.36217617160539,
-        "RMSE": 694.2660241615356,
-        "NRMSE": 0.12662818978818058
-      },
-      "aqi": {
-        "MAE": 3.2748251081650426,
-        "MAPE": 3.1138781547541874,
-        "RMSE": 4.591342507285171,
-        "NRMSE": 0.14776090565986583
-      },
-      "temperature": {
-        "MAE": 0.31007593013426454,
-        "MAPE": 1.223298674635878,
-        "RMSE": 0.3986764939718342,
-        "NRMSE": 0.15351600767214862
-      },
-      "electricity_demand": {
-        "MAE": 1.3260309953768827,
-        "MAPE": 0.48782403707104816,
-        "RMSE": 1.6036010483006815,
-        "NRMSE": 0.09085080110160403
+        "MAE": 2.7940752506256104,
+        "MAPE": 1.048987362529294,
+        "RMSE": 3.50974178314209,
+        "NRMSE": 0.19900342011150132
       }
     },
     "LSTM": {
       "traffic_flow": {
-        "MAE": 751.5086669921875,
-        "MAPE": 8.850601658164003,
+        "MAE": 751.5086059570312,
+        "MAPE": 8.850601586666839,
         "RMSE": 990.4293212890625,
         "NRMSE": 0.18064584424887475
       },
       "aqi": {
         "MAE": 5.113555431365967,
-        "MAPE": 4.9121258632448725,
+        "MAPE": 4.912125914374297,
         "RMSE": 6.695956707000732,
         "NRMSE": 0.21549266379403847
       },
       "temperature": {
-        "MAE": 0.33253493905067444,
-        "MAPE": 1.3014794646002068,
-        "RMSE": 0.4620649516582489,
-        "NRMSE": 0.1779246274519764
+        "MAE": 0.3325349688529968,
+        "MAPE": 1.3014794979857087,
+        "RMSE": 0.4620649218559265,
+        "NRMSE": 0.1779246159761718
       },
       "electricity_demand": {
-        "MAE": 1.4785754680633545,
-        "MAPE": 0.543125047778237,
-        "RMSE": 1.9512468576431274,
-        "NRMSE": 0.11054641074955594
+        "MAE": 1.4785757064819336,
+        "MAPE": 0.5431251204983779,
+        "RMSE": 1.951247215270996,
+        "NRMSE": 0.1105464310106916
       }
     },
     "GRU": {
       "traffic_flow": {
         "MAE": 568.651611328125,
-        "MAPE": 6.659782055612602,
+        "MAPE": 6.659781925026261,
         "RMSE": 769.0604858398438,
         "NRMSE": 0.14027006042407095
       },
       "aqi": {
         "MAE": 4.0647430419921875,
-        "MAPE": 3.9687272158657865,
-        "RMSE": 5.592766284942627,
-        "NRMSE": 0.1799892319285336
+        "MAPE": 3.968727320392749,
+        "RMSE": 5.592766761779785,
+        "NRMSE": 0.1799892472743481
       },
       "temperature": {
-        "MAE": 0.2827732563018799,
-        "MAPE": 1.1066531762951108,
+        "MAE": 0.28277331590652466,
+        "MAPE": 1.1066532205717388,
         "RMSE": 0.40322497487068176,
         "NRMSE": 0.15526746440241032
       },
       "electricity_demand": {
         "MAE": 1.1420098543167114,
-        "MAPE": 0.42094899448204465,
+        "MAPE": 0.4209490162576496,
         "RMSE": 1.5540709495544434,
         "NRMSE": 0.08804471092443326
-      }
-    },
-    "ARIMA": {
-      "traffic_flow": {
-        "MAE": 1053.5240254916685,
-        "MAPE": 11.914454218449453,
-        "RMSE": 1395.9392654525377,
-        "NRMSE": 0.25460739268060334
-      },
-      "aqi": {
-        "MAE": 5.895092301383227,
-        "MAPE": 5.371433477957061,
-        "RMSE": 7.929145316946595,
-        "NRMSE": 0.2551797630609532
-      },
-      "temperature": {
-        "MAE": 0.10309800397729672,
-        "MAPE": 0.40521736160350846,
-        "RMSE": 0.1295610786874126,
-        "NRMSE": 0.04988932091690827
-      },
-      "electricity_demand": {
-        "MAE": 1.2870314928936093,
-        "MAPE": 0.4726530193659506,
-        "RMSE": 2.1469642838557763,
-        "NRMSE": 0.12163463308503375
-      }
-    },
-    "SARIMA": {
-      "traffic_flow": {
-        "MAE": 534.6763192028887,
-        "MAPE": 6.387218693596136,
-        "RMSE": 930.0872012854358,
-        "NRMSE": 0.16963995722845135
-      },
-      "aqi": {
-        "MAE": 3.2066326749444487,
-        "MAPE": 3.0283370264396114,
-        "RMSE": 6.3054411631554474,
-        "NRMSE": 0.2029248951422169
-      },
-      "temperature": {
-        "MAE": 0.09513597192398533,
-        "MAPE": 0.3739265002894731,
-        "RMSE": 0.130231190177727,
-        "NRMSE": 0.05014735679874175
-      },
-      "electricity_demand": {
-        "MAE": 1.069213064958849,
-        "MAPE": 0.39768732284269326,
-        "RMSE": 2.2055402185873914,
-        "NRMSE": 0.12495320823892368
       }
     }
   },
@@ -354,126 +255,16 @@
     "GRU": {
       "family": "recurrent neural network",
       "status": "evaluated"
-    },
-    "ARIMA": {
-      "family": "classical statistical",
-      "orders": {
-        "traffic_flow": {
-          "order": [
-            2,
-            1,
-            1
-          ],
-          "seasonal_order": [
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        "aqi": {
-          "order": [
-            2,
-            1,
-            1
-          ],
-          "seasonal_order": [
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        "temperature": {
-          "order": [
-            2,
-            1,
-            1
-          ],
-          "seasonal_order": [
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        "electricity_demand": {
-          "order": [
-            2,
-            1,
-            1
-          ],
-          "seasonal_order": [
-            0,
-            0,
-            0,
-            0
-          ]
-        }
-      },
-      "status": "evaluated"
-    },
-    "SARIMA": {
-      "family": "classical statistical",
-      "orders": {
-        "traffic_flow": {
-          "order": [
-            1,
-            0,
-            1
-          ],
-          "seasonal_order": [
-            1,
-            0,
-            0,
-            24
-          ]
-        },
-        "aqi": {
-          "order": [
-            1,
-            0,
-            1
-          ],
-          "seasonal_order": [
-            1,
-            0,
-            0,
-            24
-          ]
-        },
-        "temperature": {
-          "order": [
-            1,
-            0,
-            1
-          ],
-          "seasonal_order": [
-            1,
-            0,
-            0,
-            24
-          ]
-        },
-        "electricity_demand": {
-          "order": [
-            1,
-            0,
-            1
-          ],
-          "seasonal_order": [
-            1,
-            0,
-            0,
-            24
-          ]
-        }
-      },
-      "status": "evaluated"
     }
   },
   "ablation_metadata": {
-    "hybrid_without_gating_training_seconds": 0.0,
-    "path": "outputs/ablation_study.csv"
+    "skipped": true,
+    "reason": "Legacy checkpoints are incompatible with the current Hybrid architecture.",
+    "legacy_checkpoint_error": "Error(s) in loading state_dict for TFTGRUResidualHybrid:\n\tMissing key(s) in state_dict: \"residual_scale\", \"gru.weight_ih_l0\", \"gru.weight_hh_l0\", \"gru.bias_ih_l0\", \"gru.bias_hh_l0\", \"gru.weight_ih_l1\", \"gru.weight_hh_l1\", \"gru.bias_ih_l1\", \"gru.bias_hh_l1\", \"gru_adapter.0.weight\", \"gru_adapter.0.bias\", \"gru_adapter.3.weight\", \"gru_adapter.3.bias\", \"tft_adapter.0.weight\", \"tft_adapter.0.bias\", \"tft_adapter.3.weight\", \"tft_adapter.3.bias\", \"gru_regressor.0.weight\", \"gru_regressor.0.bias\", \"gru_regressor.3.weight\", \"gru_regressor.3.bias\", \"fused_expert.0.weight\", \"fused_expert.0.bias\", \"fused_expert.3.weight\", \"fused_expert.3.bias\", \"residual_corrector.0.weight\", \"residual_corrector.0.bias\", \"residual_corrector.3.weight\", \"residual_corrector.3.bias\". \n\tUnexpected key(s) in state_dict: \"bilstm_branch.feature_attention.trend.fc1.weight\", \"bilstm_branch.feature_attention.trend.fc1.bias\", \"bilstm_branch.feature_attention.trend.fc2.weight\", \"bilstm_branch.feature_attention.trend.fc2.bias\", \"bilstm_branch.feature_attention.period.fc1.weight\", \"bilstm_branch.feature_attention.period.fc1.bias\", \"bilstm_branch.feature_attention.period.fc2.weight\", \"bilstm_branch.feature_attention.period.fc2.bias\", \"bilstm_branch.feature_attention.closeness.fc1.weight\", \"bilstm_branch.feature_attention.closeness.fc1.bias\", \"bilstm_branch.feature_attention.closeness.fc2.weight\", \"bilstm_branch.feature_attention.closeness.fc2.bias\", \"bilstm_branch.lstm.trend.weight_ih_l0\", \"bilstm_branch.lstm.trend.weight_hh_l0\", \"bilstm_branch.lstm.trend.bias_ih_l0\", \"bilstm_branch.lstm.trend.bias_hh_l0\", \"bilstm_branch.lstm.trend.weight_ih_l0_reverse\", \"bilstm_branch.lstm.trend.weight_hh_l0_reverse\", \"bilstm_branch.lstm.trend.bias_ih_l0_reverse\", \"bilstm_branch.lstm.trend.bias_hh_l0_reverse\", \"bilstm_branch.lstm.trend.weight_ih_l1\", \"bilstm_branch.lstm.trend.weight_hh_l1\", \"bilstm_branch.lstm.trend.bias_ih_l1\", \"bilstm_branch.lstm.trend.bias_hh_l1\", \"bilstm_branch.lstm.trend.weight_ih_l1_reverse\", \"bilstm_branch.lstm.trend.weight_hh_l1_reverse\", \"bilstm_branch.lstm.trend.bias_ih_l1_reverse\", \"bilstm_branch.lstm.trend.bias_hh_l1_reverse\", \"bilstm_branch.lstm.period.weight_ih_l0\", \"bilstm_branch.lstm.period.weight_hh_l0\", \"bilstm_branch.lstm.period.bias_ih_l0\", \"bilstm_branch.lstm.period.bias_hh_l0\", \"bilstm_branch.lstm.period.weight_ih_l0_reverse\", \"bilstm_branch.lstm.period.weight_hh_l0_reverse\", \"bilstm_branch.lstm.period.bias_ih_l0_reverse\", \"bilstm_branch.lstm.period.bias_hh_l0_reverse\", \"bilstm_branch.lstm.period.weight_ih_l1\", \"bilstm_branch.lstm.period.weight_hh_l1\", \"bilstm_branch.lstm.period.bias_ih_l1\", \"bilstm_branch.lstm.period.bias_hh_l1\", \"bilstm_branch.lstm.period.weight_ih_l1_reverse\", \"bilstm_branch.lstm.period.weight_hh_l1_reverse\", \"bilstm_branch.lstm.period.bias_ih_l1_reverse\", \"bilstm_branch.lstm.period.bias_hh_l1_reverse\", \"bilstm_branch.lstm.closeness.weight_ih_l0\", \"bilstm_branch.lstm.closeness.weight_hh_l0\", \"bilstm_branch.lstm.closeness.bias_ih_l0\", \"bilstm_branch.lstm.closeness.bias_hh_l0\", \"bilstm_branch.lstm.closeness.weight_ih_l0_reverse\", \"bilstm_branch.lstm.closeness.weight_hh_l0_reverse\", \"bilstm_branch.lstm.closeness.bias_ih_l0_reverse\", \"bilstm_branch.lstm.closeness.bias_hh_l0_reverse\", \"bilstm_branch.lstm.closeness.weight_ih_l1\", \"bilstm_branch.lstm.closeness.weight_hh_l1\", \"bilstm_branch.lstm.closeness.bias_ih_l1\", \"bilstm_branch.lstm.closeness.bias_hh_l1\", \"bilstm_branch.lstm.closeness.weight_ih_l1_reverse\", \"bilstm_branch.lstm.closeness.weight_hh_l1_reverse\", \"bilstm_branch.lstm.closeness.bias_ih_l1_reverse\", \"bilstm_branch.lstm.closeness.bias_hh_l1_reverse\", \"bilstm_branch.temporal_attention.trend.proj.weight\", \"bilstm_branch.temporal_attention.trend.proj.bias\", \"bilstm_branch.temporal_attention.trend.score.weight\", \"bilstm_branch.temporal_attention.trend.score.bias\", \"bilstm_branch.temporal_attention.period.proj.weight\", \"bilstm_branch.temporal_attention.period.proj.bias\", \"bilstm_branch.temporal_attention.period.score.weight\", \"bilstm_branch.temporal_attention.period.score.bias\", \"bilstm_branch.temporal_attention.closeness.proj.weight\", \"bilstm_branch.temporal_attention.closeness.proj.bias\", \"bilstm_branch.temporal_attention.closeness.score.weight\", \"bilstm_branch.temporal_attention.closeness.score.bias\", \"bilstm_branch.group_fusion.0.weight\", \"bilstm_branch.group_fusion.0.bias\", \"bilstm_branch.regressor.0.weight\", \"bilstm_branch.regressor.0.bias\", \"bilstm_branch.regressor.3.weight\", \"bilstm_branch.regressor.3.bias\", \"context_norm.weight\", \"context_norm.bias\", \"fusion_refiner.0.weight\", \"fusion_refiner.0.bias\", \"fusion_refiner.3.weight\", \"fusion_refiner.3.bias\". \n\tsize mismatch for gate_network.0.weight: copying a param with shape torch.Size([64, 160]) from checkpoint, the shape in current model is torch.Size([64, 268]).\n\tsize mismatch for gate_network.3.weight: copying a param with shape torch.Size([4, 64]) from checkpoint, the shape in current model is torch.Size([12, 64]).\n\tsize mismatch for gate_network.3.bias: copying a param with shape torch.Size([4]) from checkpoint, the shape in current model is torch.Size([12])."
+  },
+  "hybrid_artifact_override": {
+    "used": true,
+    "source": "outputs/tft_gru_residual_hybrid_metrics.json",
+    "model": "TFTGRUResidualHybrid"
   }
 }
