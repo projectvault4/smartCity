@@ -275,12 +275,15 @@ def _save_bar_chart(
     filename: str,
     output_dir: Path,
     keep_open: bool,
+    y_limits: tuple[float, float] | None = None,
 ) -> None:
     fig, ax = plt.subplots(figsize=(6.5, 4.2))
     bars = ax.bar(models, values)
     ax.set_title(title)
     ax.set_xlabel("Model")
     ax.set_ylabel(ylabel)
+    if y_limits is not None:
+        ax.set_ylim(*y_limits)
     ax.grid(True, axis="y", alpha=0.3)
     for bar, value in zip(bars, values):
         ax.text(
@@ -393,11 +396,12 @@ def main() -> None:
     _save_bar_chart(
         models=["BiLSTM", "TFT", "Hybrid"],
         values=[summary_metrics[name]["UPS"] for name in ("BiLSTM", "TFT", "Hybrid")],
-        ylabel="UPS",
+        ylabel="UPS (zoomed scale)",
         title="UPS Comparison",
         filename="ups.png",
         output_dir=output_dir,
         keep_open=keep_open,
+        y_limits=(75, 91.5),
     )
     print("Saved ups.png", flush=True)
     _save_heatmap(raw_df, output_dir, keep_open)
