@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -27,14 +30,46 @@ def plot_predictions(y_true, predictions, save_path: Path, max_points: int = 250
 
 
 def plot_error_bars(metric_df: pd.DataFrame, save_path: Path):
-    melted = metric_df.reset_index().melt(id_vars="index", var_name="Metric", value_name="Value")
-    melted = melted.rename(columns={"index": "Model"})
-    plt.figure(figsize=(12, 6))
-    sns.barplot(data=melted, x="Metric", y="Value", hue="Model")
-    plt.title("Error Comparison")
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
+    metrics = [metric for metric in ("MAE", "RMSE", "NRMSE", "UPS") if metric in metric_df.columns]
+    if not metrics:
+        return
+
+    plot_df = metric_df[metrics].reset_index().rename(columns={"index": "Model"})
+    melted = plot_df.melt(id_vars="Model", var_name="Metric", value_name="Value")
+    melted["Value"] = pd.to_numeric(melted["Value"], errors="coerce")
+    melted = melted.dropna(subset=["Value"])
+
+    fig, axes = plt.subplots(1, len(metrics), figsize=(4 * len(metrics), 5), sharey=False)
+    if not isinstance(axes, np.ndarray):
+        axes = np.array([axes])
+
+    palette = dict(zip(plot_df["Model"], sns.color_palette(n_colors=len(plot_df))))
+    for axis, metric in zip(axes, metrics):
+        metric_values = melted[melted["Metric"] == metric]
+        sns.barplot(data=metric_values, x="Model", y="Value", hue="Model", palette=palette, dodge=False, ax=axis)
+        axis.set_title(metric)
+        axis.set_xlabel("")
+        axis.set_ylabel("Value")
+        axis.tick_params(axis="x", rotation=35)
+        legend = axis.get_legend()
+        if legend is not None:
+            legend.remove()
+
+        max_value = float(metric_values["Value"].max()) if not metric_values.empty else 0.0
+        axis.set_ylim(0, max_value * 1.15 if max_value > 0 else 1.0)
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    if not handles:
+        handles = [
+            plt.Rectangle((0, 0), 1, 1, color=palette[model_name])
+            for model_name in plot_df["Model"]
+        ]
+        labels = list(plot_df["Model"])
+    fig.suptitle("Error Comparison", y=0.98)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.93), ncol=min(len(labels), 4), frameon=True)
+    fig.tight_layout(rect=(0, 0, 1, 0.84))
+    fig.savefig(save_path, bbox_inches="tight")
+    plt.close(fig)
 
 
 def plot_rolling_error(error_traces, save_path: Path):
