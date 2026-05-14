@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from models.bilstm import EnhancedBiLSTM
-from models.common import combine_temporal_groups
+from models.common import combine_temporal_groups, recurrent_input_feature_importance
 from models.transformer import TemporalFusionTransformer
 
 
@@ -201,6 +201,7 @@ class TFTGRUResidualHybrid(nn.Module):
         )
         self.residual_scale = nn.Parameter(torch.full((output_dim,), 0.1))
         self.latest_feature_weights = None
+        self.latest_component_feature_weights = None
         self.latest_gate_values = None
         self._last_tft_pred = None
         self._last_gru_pred = None
@@ -236,7 +237,13 @@ class TFTGRUResidualHybrid(nn.Module):
         residual = self.residual_corrector(residual_features)
         final_prediction = mixture_prediction + self.residual_scale * residual
 
-        self.latest_feature_weights = self.tft_branch.latest_feature_weights
+        tft_weights = self.tft_branch.latest_feature_weights
+        gru_weights = recurrent_input_feature_importance(self.gru)
+        self.latest_component_feature_weights = {"TFT branch": tft_weights, "GRU branch": gru_weights}
+        if tft_weights is not None and gru_weights is not None:
+            self.latest_feature_weights = (0.6 * tft_weights) + (0.4 * gru_weights)
+        else:
+            self.latest_feature_weights = tft_weights if tft_weights is not None else gru_weights
         self.latest_gate_values = gate.detach().mean(dim=0).cpu().numpy()
         self._last_tft_pred = tft_pred
         self._last_gru_pred = gru_pred

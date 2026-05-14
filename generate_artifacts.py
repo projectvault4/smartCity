@@ -140,8 +140,15 @@ def _load_json(path: Path) -> dict:
         return json.load(handle)
 
 
+def _hybrid_artifact_path(config) -> Path:
+    lag_stabilized_path = Path(config.output_dir) / "tft_gru_residual_hybrid_lag_stabilized_metrics.json"
+    if lag_stabilized_path.exists():
+        return lag_stabilized_path
+    return Path(config.output_dir) / "tft_gru_residual_hybrid_metrics.json"
+
+
 def _load_tft_gru_hybrid_artifact(config) -> tuple[dict | None, dict | None, np.ndarray | None]:
-    metrics_path = Path(config.output_dir) / "tft_gru_residual_hybrid_metrics.json"
+    metrics_path = _hybrid_artifact_path(config)
     if not metrics_path.exists():
         return None, None, None
 
@@ -175,6 +182,14 @@ def _overlay_tft_gru_hybrid_artifact(
     if predictions is not None:
         all_predictions["Hybrid"] = predictions
     return core_metrics_df, all_metrics_df, all_per_target_metrics, all_predictions, True
+
+
+def _comparison_feature_weights(feature_weights: dict, baseline_metadata: dict) -> dict:
+    return {
+        "GRU": baseline_metadata.get("GRU", {}).get("feature_weights"),
+        "TFT": feature_weights.get("TFT"),
+        "Hybrid": feature_weights.get("Hybrid"),
+    }
 
 
 def main():
@@ -326,7 +341,7 @@ def main():
                 "ablation_metadata": ablation_metadata,
                 "hybrid_artifact_override": {
                     "used": used_tft_gru_hybrid,
-                    "source": "outputs/tft_gru_residual_hybrid_metrics.json",
+                    "source": str(_hybrid_artifact_path(config)),
                     "model": "TFTGRUResidualHybrid",
                 },
             },
@@ -345,8 +360,11 @@ def main():
     if error_traces:
         plot_rolling_error(error_traces, Path(config.plot_dir) / "rolling_error.png")
     plot_correlation_heatmap(datasets["prepared_df"].drop(columns=["timestamp"]), Path(config.plot_dir) / "correlation_heatmap.png")
-    if feature_weights.get("Hybrid") is not None:
-        plot_feature_attention(feature_weights.get("Hybrid"), datasets["processor"].feature_columns, Path(config.plot_dir) / "feature_attention.png")
+    plot_feature_attention(
+        _comparison_feature_weights(feature_weights, baseline_metadata),
+        datasets["processor"].feature_columns,
+        Path(config.plot_dir) / "feature_attention.png",
+    )
     correlations = compute_correlation_matrices(datasets["prepared_df"].drop(columns=["timestamp"]))
     granger_df = granger_causality_table(datasets["prepared_df"], list(config.domain_columns), max_lag=config.granger_max_lag)
     save_analysis_tables(correlations, granger_df, Path(config.output_dir))
@@ -368,7 +386,7 @@ def main():
         print("Skipped ablation, robustness, and efficiency regeneration that depends on legacy-compatible checkpoints.")
     if used_tft_gru_hybrid:
         print("\nHybrid Artifact Override")
-        print("Used outputs/tft_gru_residual_hybrid_metrics.json as the canonical Hybrid row.")
+        print(f"Used {_hybrid_artifact_path(config)} as the canonical Hybrid row.")
     if not used_finalized_fallback:
         print("\nABLATION STUDY")
         print(ablation_df.round(4).to_string(index=False))

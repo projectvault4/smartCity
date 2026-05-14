@@ -3,6 +3,8 @@ from __future__ import annotations
 import torch
 from torch import nn
 
+from models.common import recurrent_input_feature_importance
+
 
 class _RecurrentForecastBase(nn.Module):
     recurrent_cls = nn.RNN
@@ -26,10 +28,12 @@ class _RecurrentForecastBase(nn.Module):
         )
         self.dropout = nn.Dropout(dropout)
         self.head = nn.Linear(hidden_dim, output_dim)
+        self.latest_feature_weights = None
 
     def forward(self, x):
         output, _ = self.recurrent(x)
         final_state = output[:, -1, :]
+        self.latest_feature_weights = recurrent_input_feature_importance(self.recurrent)
         return self.head(self.dropout(final_state))
 
 

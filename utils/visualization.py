@@ -14,6 +14,52 @@ import seaborn as sns
 sns.set_theme(style="whitegrid")
 
 
+def _readable_correlation_view(corr: pd.DataFrame, max_features: int = 18) -> tuple[pd.DataFrame, str]:
+    corr = corr.copy()
+    if len(corr.columns) <= max_features:
+        return corr, ""
+
+    strength = corr.abs().where(~np.eye(len(corr), dtype=bool), 0.0).max(axis=1)
+    selected = strength.sort_values(ascending=False).head(max_features).index.tolist()
+    return corr.loc[selected, selected], f"Top {max_features} most-correlated variables shown; full matrix saved as CSV."
+
+
+def _plot_readable_heatmap(corr: pd.DataFrame, save_path: Path, title: str):
+    corr, note = _readable_correlation_view(corr)
+    mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
+    side = max(8.0, min(16.0, 0.48 * len(corr.columns) + 3.2))
+    fig, ax = plt.subplots(figsize=(side, side * 0.82))
+    annotate = len(corr.columns) <= 18
+
+    sns.heatmap(
+        corr,
+        mask=mask,
+        cmap="vlag",
+        center=0,
+        vmin=-1,
+        vmax=1,
+        square=True,
+        linewidths=0.35,
+        linecolor="white",
+        annot=annotate,
+        fmt=".2f",
+        annot_kws={"size": 7},
+        cbar_kws={"shrink": 0.78, "label": "Correlation"},
+        ax=ax,
+    )
+    ax.set_title(title, pad=16)
+    ax.tick_params(axis="x", labelrotation=45, labelsize=8)
+    ax.tick_params(axis="y", labelrotation=0, labelsize=8)
+    ax.set_xticklabels(ax.get_xticklabels(), ha="right")
+    if note:
+        fig.text(0.5, 0.02, note, ha="center", fontsize=8)
+        fig.tight_layout(rect=(0, 0.04, 1, 1))
+    else:
+        fig.tight_layout()
+    fig.savefig(save_path, bbox_inches="tight", dpi=300)
+    plt.close(fig)
+
+
 def plot_predictions(y_true, predictions, save_path: Path, max_points: int = 250):
     plt.figure(figsize=(14, 6))
     view = slice(0, min(max_points, len(y_true)))
@@ -87,33 +133,54 @@ def plot_rolling_error(error_traces, save_path: Path):
 
 def plot_correlation_heatmap(df: pd.DataFrame, save_path: Path):
     corr = df.corr(numeric_only=True)
-    plt.figure(figsize=(14, 10))
-    sns.heatmap(corr, cmap="coolwarm", center=0)
-    plt.title("Feature Correlation Heatmap")
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
+    _plot_readable_heatmap(corr, save_path, "Feature Correlation Heatmap")
 
 
 def plot_named_correlation_heatmap(corr: pd.DataFrame, save_path: Path, title: str):
-    plt.figure(figsize=(14, 10))
-    sns.heatmap(corr, cmap="coolwarm", center=0)
-    plt.title(title)
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
+    _plot_readable_heatmap(corr, save_path, title)
 
 
 def plot_feature_attention(weights, feature_names, save_path: Path, top_k: int = 20):
     if weights is None:
         return
+
+    if isinstance(weights, dict):
+        series_by_model = {
+            model_name: pd.Series(model_weights, index=feature_names, dtype=float)
+            for model_name, model_weights in weights.items()
+            if model_weights is not None
+        }
+        if not series_by_model:
+            return
+
+        ranking = pd.concat(series_by_model, axis=1).fillna(0.0).max(axis=1).sort_values(ascending=False).head(top_k)
+        plot_df = (
+            pd.concat(series_by_model, axis=1)
+            .loc[ranking.index]
+            .reset_index(names="Feature")
+            .melt(id_vars="Feature", var_name="Model", value_name="Weight")
+        )
+        height = max(5.5, 0.42 * len(ranking) + 1.6)
+        fig, ax = plt.subplots(figsize=(12, height))
+        sns.barplot(data=plot_df, x="Weight", y="Feature", hue="Model", orient="h", ax=ax)
+        ax.set_title("Top Feature Importance / Attention Weights")
+        ax.set_xlabel("Normalized weight")
+        ax.set_ylabel("")
+        ax.legend(title="Model", loc="lower right", frameon=True)
+        fig.tight_layout()
+        fig.savefig(save_path, bbox_inches="tight", dpi=300)
+        plt.close(fig)
+        return
+
     series = pd.Series(weights, index=feature_names).sort_values(ascending=False).head(top_k)
-    plt.figure(figsize=(12, 6))
-    sns.barplot(x=series.values, y=series.index, orient="h")
-    plt.title("Top Feature Attention Weights")
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
+    fig, ax = plt.subplots(figsize=(12, max(5.0, 0.36 * len(series) + 1.5)))
+    sns.barplot(x=series.values, y=series.index, orient="h", ax=ax)
+    ax.set_title("Top Feature Attention Weights")
+    ax.set_xlabel("Normalized weight")
+    ax.set_ylabel("")
+    fig.tight_layout()
+    fig.savefig(save_path, bbox_inches="tight", dpi=300)
+    plt.close(fig)
 
 
 def plot_forecast_windows(y_true, predictions, save_path: Path, window: int = 96):

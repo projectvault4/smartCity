@@ -1,0 +1,193 @@
+{
+  "model": "TFTGRUResidualHybridLagStabilized",
+  "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + one-step lag stabilization postprocessor",
+  "checkpoint_path": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+  "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+  "targets": [
+    "traffic_flow",
+    "aqi",
+    "temperature",
+    "electricity_demand"
+  ],
+  "target_output_map": {
+    "traffic_flow": 0,
+    "aqi": 1,
+    "temperature": 2,
+    "electricity_demand": 3
+  },
+  "best_val_loss": 0.015833909664412633,
+  "tft_init_checkpoint": "outputs/checkpoints/project_best_tft.pt",
+  "calibration": {
+    "enabled": true,
+    "selected": true,
+    "target_specs": {
+      "traffic_flow": {
+        "target_index": 0,
+        "method": "ridge",
+        "params": {
+          "lambda": 1.0,
+          "coefficients": [
+            154.47824594759427,
+            0.693062450371286,
+            0.3212146383595331,
+            0.3707745177039359
+          ]
+        },
+        "val_RMSE": 401.78562055128697,
+        "raw_val_RMSE": 511.2893371582031,
+        "tft_val_RMSE": 506.24176025390625
+      },
+      "aqi": {
+        "target_index": 1,
+        "method": "ols",
+        "params": {
+          "coefficients": [
+            0.6304751132762557,
+            0.32435021817498305,
+            0.6820802913357612,
+            -0.3577300731607783
+          ]
+        },
+        "val_RMSE": 3.337471079479094,
+        "raw_val_RMSE": 7.7045440673828125,
+        "tft_val_RMSE": 3.6393849849700928
+      },
+      "temperature": {
+        "target_index": 2,
+        "method": "ols",
+        "params": {
+          "coefficients": [
+            -0.6921605764246287,
+            0.3342160400001788,
+            0.7003335500328877,
+            -0.36611751003272996
+          ]
+        },
+        "val_RMSE": 0.28046840632314823,
+        "raw_val_RMSE": 2.5743281841278076,
+        "tft_val_RMSE": 0.3397836983203888
+      },
+      "electricity_demand": {
+        "target_index": 3,
+        "method": "ols",
+        "params": {
+          "coefficients": [
+            -10.124041433631843,
+            0.3466386629614755,
+            0.6934481502204527,
+            -0.34680948725981137
+          ]
+        },
+        "val_RMSE": 1.1185064852961195,
+        "raw_val_RMSE": 15.34424114227295,
+        "tft_val_RMSE": 1.4268851280212402
+      }
+    },
+    "raw_val_metrics": {
+      "MAE": 97.94269561767578,
+      "MAPE": 5.85497419303323,
+      "RMSE": 255.79200744628906,
+      "NRMSE": 0.044832969457082705
+    },
+    "calibrated_val_metrics": {
+      "MAE": 64.64363861083984,
+      "MAPE": 1.6481735745612294,
+      "RMSE": 200.9005584716797,
+      "NRMSE": 0.03521207989175716
+    }
+  },
+  "routing": {
+    "enabled": true,
+    "strategy": "tft_fallback_for_near_zero_loss_weight_targets",
+    "loss_weight_threshold": 0.01,
+    "loss_weights": {
+      "traffic_flow": 3.999796152114868,
+      "aqi": 0.0001598251110408455,
+      "temperature": 1.2659454569075024e-06,
+      "electricity_demand": 4.2420793761266395e-05
+    },
+    "routed_targets": [
+      "aqi",
+      "temperature",
+      "electricity_demand"
+    ]
+  },
+  "metrics": {
+    "MAE": 72.0855925934826,
+    "MAPE": 1.8931902683813,
+    "RMSE": 214.19662015804022,
+    "NRMSE": 0.03867642111390897,
+    "UPS": 90.25687233516678
+  },
+  "per_target_metrics": {
+    "traffic_flow": {
+      "MAE": 284.39852582333026,
+      "MAPE": 3.7176135507778354,
+      "RMSE": 428.3716955854051,
+      "NRMSE": 0.07813133660836166
+    },
+    "aqi": {
+      "MAE": 2.855365271375807,
+      "MAPE": 2.6977718383554508,
+      "RMSE": 4.136836701500643,
+      "NRMSE": 0.13313376958530868
+    },
+    "temperature": {
+      "MAE": 0.21599573782702342,
+      "MAPE": 0.8374732979100116,
+      "RMSE": 0.29855095344234944,
+      "NRMSE": 0.11496125523584268
+    },
+    "electricity_demand": {
+      "MAE": 0.8724835413973508,
+      "MAPE": 0.3199023864819027,
+      "RMSE": 1.1208118617374385,
+      "NRMSE": 0.06349874516381611
+    }
+  },
+  "history": {
+    "train_loss": [
+      0.011045014465961492,
+      0.0028990615744877496,
+      0.0021264041491755935,
+      0.0016633756613979736,
+      0.0014164758461640413,
+      0.00129570270302903,
+      0.0011664113163891616,
+      0.0010985427924121419,
+      0.0010233576084966913,
+      0.0009884022335013884,
+      0.000893761715357841
+    ],
+    "val_loss": [
+      0.04236713813289123,
+      0.02267232627662666,
+      0.01767006523304564,
+      0.016570917837431327,
+      0.01597825687049943,
+      0.015833909664412633,
+      0.0164781387155766,
+      0.016144658055375603,
+      0.016599689363775885,
+      0.016228698221418786,
+      0.016470483668586788
+    ]
+  },
+  "postprocessing": {
+    "method": "one_step_lag_stabilization",
+    "alpha_by_target": {
+      "traffic_flow": 0.0,
+      "aqi": 0.1,
+      "temperature": 0.1,
+      "electricity_demand": 0.1
+    },
+    "note": "Blends selected one-step forecasts with the previous observed target value."
+  },
+  "base_metrics": {
+    "MAE": 72.0799331665039,
+    "MAPE": 1.899978886729696,
+    "RMSE": 214.1963348388672,
+    "NRMSE": 0.03867636967045685,
+    "UPS": 89.9696342318103
+  }
+}

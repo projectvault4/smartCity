@@ -17,6 +17,13 @@ def _load_json(path: Path) -> dict:
         return json.load(handle)
 
 
+def _latest_hybrid_metrics_path(output_dir: Path) -> Path:
+    lag_stabilized_path = output_dir / "tft_gru_residual_hybrid_lag_stabilized_metrics.json"
+    if lag_stabilized_path.exists():
+        return lag_stabilized_path
+    return output_dir / "tft_gru_residual_hybrid_metrics.json"
+
+
 def _load_literature_models(config) -> list[dict]:
     literature_path = Path(config.data_dir) / "literature_models.json"
     if not literature_path.exists():
@@ -70,7 +77,7 @@ def _build_paper_style_comparison(config, metrics_df: pd.DataFrame) -> pd.DataFr
 
 def _with_latest_hybrid_outputs(project_best_summary: dict, output_dir: Path) -> tuple[dict, dict | None]:
     """Use the canonical residual-hybrid artifact as the final Hybrid row when available."""
-    hybrid_metrics_path = output_dir / "tft_gru_residual_hybrid_metrics.json"
+    hybrid_metrics_path = _latest_hybrid_metrics_path(output_dir)
     if not hybrid_metrics_path.exists():
         return project_best_summary, None
 

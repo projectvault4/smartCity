@@ -1,18 +1,18 @@
 {
   "offline_metrics": {
     "LSTM": {
-      "MAE": 189.60833740234375,
-      "MAPE": 3.901833029881306,
+      "MAE": 189.6083221435547,
+      "MAPE": 3.9018330084468302,
       "RMSE": 495.2269592285156,
       "NRMSE": 0.08942067547657592,
-      "UPS": 82.88476112425558
+      "UPS": 82.88476134388885
     },
     "GRU": {
       "MAE": 143.5352783203125,
-      "MAPE": 3.0390278705620997,
+      "MAPE": 3.0390278605638867,
       "RMSE": 384.541259765625,
       "NRMSE": 0.06943470777605368,
-      "UPS": 85.91071292436844
+      "UPS": 85.9107133080138
     },
     "BiLSTM": {
       "MAE": 184.06948852539062,
@@ -43,11 +43,11 @@
       "UPS": 77.87013516909255
     },
     "Hybrid": {
-      "MAE": 72.0799331665039,
-      "MAPE": 1.899978886729696,
-      "RMSE": 214.1963348388672,
-      "NRMSE": 0.03867636967045685,
-      "UPS": 89.9696342318103
+      "MAE": 72.0855925934826,
+      "MAPE": 1.8931902683813,
+      "RMSE": 214.19662015804022,
+      "NRMSE": 0.03867642111390897,
+      "UPS": 90.25687233516678
     }
   },
   "per_target_metrics": {
@@ -105,28 +105,28 @@
     },
     "Hybrid": {
       "traffic_flow": {
-        "MAE": 284.39849853515625,
-        "MAPE": 3.7176134355493926,
-        "RMSE": 428.3716735839844,
-        "NRMSE": 0.07813133250756964
+        "MAE": 284.39852582333026,
+        "MAPE": 3.7176135507778354,
+        "RMSE": 428.3716955854051,
+        "NRMSE": 0.07813133660836166
       },
       "aqi": {
-        "MAE": 2.733954906463623,
-        "MAPE": 2.6228710468184637,
-        "RMSE": 4.057135105133057,
-        "NRMSE": 0.13056877298256
+        "MAE": 2.855365271375807,
+        "MAPE": 2.6977718383554508,
+        "RMSE": 4.136836701500643,
+        "NRMSE": 0.13313376958530868
       },
       "temperature": {
-        "MAE": 0.23427413403987885,
-        "MAPE": 0.9104840971943937,
-        "RMSE": 0.32375335693359375,
-        "NRMSE": 0.12466579690151675
+        "MAE": 0.21599573782702342,
+        "MAPE": 0.8374732979100116,
+        "RMSE": 0.29855095344234944,
+        "NRMSE": 0.11496125523584268
       },
       "electricity_demand": {
-        "MAE": 0.9529922008514404,
-        "MAPE": 0.3489469673565347,
-        "RMSE": 1.197593092918396,
-        "NRMSE": 0.06784872833594154
+        "MAE": 0.8724835413973508,
+        "MAPE": 0.3199023864819027,
+        "RMSE": 1.1208118617374385,
+        "NRMSE": 0.06349874516381611
       }
     },
     "Informer": {
@@ -183,52 +183,52 @@
     },
     "LSTM": {
       "traffic_flow": {
-        "MAE": 751.5086059570312,
-        "MAPE": 8.850601586666839,
+        "MAE": 751.5086669921875,
+        "MAPE": 8.850601658164003,
         "RMSE": 990.4293212890625,
         "NRMSE": 0.18064584424887475
       },
       "aqi": {
         "MAE": 5.113555431365967,
-        "MAPE": 4.912125914374297,
+        "MAPE": 4.9121258632448725,
         "RMSE": 6.695956707000732,
         "NRMSE": 0.21549266379403847
       },
       "temperature": {
-        "MAE": 0.3325349688529968,
-        "MAPE": 1.3014794979857087,
-        "RMSE": 0.4620649218559265,
-        "NRMSE": 0.1779246159761718
+        "MAE": 0.33253493905067444,
+        "MAPE": 1.3014794646002068,
+        "RMSE": 0.4620649516582489,
+        "NRMSE": 0.1779246274519764
       },
       "electricity_demand": {
-        "MAE": 1.4785757064819336,
-        "MAPE": 0.5431251204983779,
-        "RMSE": 1.951247215270996,
-        "NRMSE": 0.1105464310106916
+        "MAE": 1.4785754680633545,
+        "MAPE": 0.543125047778237,
+        "RMSE": 1.9512468576431274,
+        "NRMSE": 0.11054641074955594
       }
     },
     "GRU": {
       "traffic_flow": {
         "MAE": 568.651611328125,
-        "MAPE": 6.659781925026261,
+        "MAPE": 6.659782055612602,
         "RMSE": 769.0604858398438,
         "NRMSE": 0.14027006042407095
       },
       "aqi": {
         "MAE": 4.0647430419921875,
-        "MAPE": 3.968727320392749,
-        "RMSE": 5.592766761779785,
-        "NRMSE": 0.1799892472743481
+        "MAPE": 3.9687272158657865,
+        "RMSE": 5.592766284942627,
+        "NRMSE": 0.1799892319285336
       },
       "temperature": {
-        "MAE": 0.28277331590652466,
-        "MAPE": 1.1066532205717388,
+        "MAE": 0.2827732563018799,
+        "MAPE": 1.1066531762951108,
         "RMSE": 0.40322497487068176,
         "NRMSE": 0.15526746440241032
       },
       "electricity_demand": {
         "MAE": 1.1420098543167114,
-        "MAPE": 0.4209490162576496,
+        "MAPE": 0.42094899448204465,
         "RMSE": 1.5540709495544434,
         "NRMSE": 0.08804471092443326
       }
@@ -236,10 +236,10 @@
   },
   "streaming_model": "AdaptiveSwitcher",
   "adaptive_switcher": {
-    "traffic_flow": "Informer",
+    "traffic_flow": "Hybrid",
     "aqi": "Hybrid",
     "temperature": "Hybrid",
-    "electricity_demand": "Hybrid"
+    "electricity_demand": "TFTGRUResidualHybrid"
   },
   "xai_reports": {
     "traffic_flow": "outputs/shap_fallback_traffic_flow.csv",
@@ -250,21 +250,235 @@
   "baseline_metadata": {
     "LSTM": {
       "family": "recurrent neural network",
-      "status": "evaluated"
+      "status": "evaluated",
+      "feature_weights": [
+        0.010950940661132336,
+        0.009200752712786198,
+        0.009826723486185074,
+        0.008901586756110191,
+        0.009936565533280373,
+        0.012609224766492844,
+        0.00925861019641161,
+        0.008970086462795734,
+        0.011338009499013424,
+        0.010817276313900948,
+        0.010764812119305134,
+        0.0102878762409091,
+        0.009955176152288914,
+        0.00967990979552269,
+        0.009348906576633453,
+        0.010104548186063766,
+        0.010159289464354515,
+        0.010493039153516293,
+        0.009031231515109539,
+        0.00986957736313343,
+        0.011057903990149498,
+        0.009338989853858948,
+        0.008857643231749535,
+        0.008672996424138546,
+        0.009940172545611858,
+        0.009491605684161186,
+        0.009362521581351757,
+        0.00923650898039341,
+        0.009310978464782238,
+        0.009379959665238857,
+        0.009271003305912018,
+        0.00973215326666832,
+        0.009865104220807552,
+        0.008990311995148659,
+        0.009073219262063503,
+        0.008722728118300438,
+        0.009362053126096725,
+        0.009398598223924637,
+        0.009361091069877148,
+        0.008365077897906303,
+        0.010196507908403873,
+        0.009310993365943432,
+        0.009119054302573204,
+        0.009185735136270523,
+        0.008822471834719181,
+        0.009433180093765259,
+        0.010688812471926212,
+        0.01028384454548359,
+        0.009182701818645,
+        0.009311990812420845,
+        0.009540589526295662,
+        0.011295070871710777,
+        0.009134639985859394,
+        0.009008435532450676,
+        0.009347445331513882,
+        0.010892911814153194,
+        0.009230121038854122,
+        0.009167205542325974,
+        0.010089728981256485,
+        0.009401948191225529,
+        0.009434296749532223,
+        0.008775707334280014,
+        0.009948845952749252,
+        0.008859445340931416,
+        0.009427808225154877,
+        0.008446634747087955,
+        0.009856097400188446,
+        0.00889497809112072,
+        0.009137261658906937,
+        0.009113015606999397,
+        0.011168010532855988,
+        0.008886943571269512,
+        0.009164733812212944,
+        0.00980781577527523,
+        0.009336533956229687,
+        0.008781726472079754,
+        0.008713508024811745,
+        0.00938111450523138,
+        0.010305647738277912,
+        0.009799492545425892,
+        0.009447307325899601,
+        0.009162434376776218,
+        0.009603921324014664,
+        0.009353000670671463,
+        0.009351505897939205,
+        0.008903739973902702,
+        0.009366083890199661,
+        0.009485914371907711,
+        0.010289433412253857,
+        0.009183396585285664,
+        0.008753664791584015,
+        0.009025543928146362,
+        0.00907442718744278,
+        0.009682680480182171,
+        0.00954949390143156,
+        0.008840939030051231,
+        0.00917288288474083,
+        0.009472399018704891,
+        0.009685319848358631,
+        0.009289721958339214,
+        0.008881536312401295,
+        0.008589576929807663,
+        0.009133500047028065,
+        0.00898599810898304,
+        0.009537811391055584
+      ]
     },
     "GRU": {
       "family": "recurrent neural network",
-      "status": "evaluated"
+      "status": "evaluated",
+      "feature_weights": [
+        0.011823662556707859,
+        0.009900335222482681,
+        0.009973965585231781,
+        0.0086709288880229,
+        0.008996155112981796,
+        0.014548714272677898,
+        0.011437840759754181,
+        0.008989142253994942,
+        0.012044703587889671,
+        0.010313138365745544,
+        0.011090502142906189,
+        0.00830172561109066,
+        0.010790020227432251,
+        0.009033788926899433,
+        0.009617646224796772,
+        0.009550953283905983,
+        0.01058750506490469,
+        0.010368848219513893,
+        0.009855090640485287,
+        0.010254981927573681,
+        0.0094728609547019,
+        0.009264817461371422,
+        0.010592814534902573,
+        0.009591178968548775,
+        0.008883273229002953,
+        0.008352100849151611,
+        0.0096194539219141,
+        0.009123740717768669,
+        0.008683516643941402,
+        0.009803734719753265,
+        0.00865823682397604,
+        0.009658300317823887,
+        0.010012113489210606,
+        0.009156402200460434,
+        0.009094315581023693,
+        0.008680539205670357,
+        0.009432106278836727,
+        0.009287260472774506,
+        0.008880631066858768,
+        0.008500230498611927,
+        0.009146304801106453,
+        0.008990606293082237,
+        0.008725220337510109,
+        0.00932958722114563,
+        0.00947077851742506,
+        0.009400212205946445,
+        0.010029250755906105,
+        0.011633246205747128,
+        0.008021815679967403,
+        0.00943091232329607,
+        0.009503438137471676,
+        0.012254784815013409,
+        0.009244149550795555,
+        0.008806847035884857,
+        0.00983155146241188,
+        0.010091091506183147,
+        0.008474444970488548,
+        0.009306699968874454,
+        0.009218032471835613,
+        0.009952391497790813,
+        0.009073319844901562,
+        0.008886273950338364,
+        0.0093753132969141,
+        0.009470786899328232,
+        0.008956244215369225,
+        0.009155767038464546,
+        0.008282349444925785,
+        0.009018667973577976,
+        0.008797683753073215,
+        0.009161381050944328,
+        0.011252819560468197,
+        0.009143050760030746,
+        0.009883205406367779,
+        0.00883830338716507,
+        0.010296984575688839,
+        0.00967315211892128,
+        0.008456646464765072,
+        0.009001835249364376,
+        0.010249520651996136,
+        0.009973518550395966,
+        0.009878713637590408,
+        0.009680015034973621,
+        0.010891767218708992,
+        0.009326851926743984,
+        0.009375795722007751,
+        0.009300420060753822,
+        0.010262347757816315,
+        0.009506957605481148,
+        0.00942098256200552,
+        0.009569779969751835,
+        0.008282377384603024,
+        0.00915592722594738,
+        0.008655977435410023,
+        0.009794989600777626,
+        0.010869464837014675,
+        0.009131241589784622,
+        0.009022055193781853,
+        0.0076960125006735325,
+        0.009826777502894402,
+        0.00885698664933443,
+        0.008625652641057968,
+        0.00837453082203865,
+        0.008785147219896317,
+        0.008553752675652504,
+        0.008450048044323921
+      ]
     }
   },
   "ablation_metadata": {
     "skipped": true,
     "reason": "Legacy checkpoints are incompatible with the current Hybrid architecture.",
-    "legacy_checkpoint_error": "Error(s) in loading state_dict for TFTGRUResidualHybrid:\n\tMissing key(s) in state_dict: \"residual_scale\", \"gru.weight_ih_l0\", \"gru.weight_hh_l0\", \"gru.bias_ih_l0\", \"gru.bias_hh_l0\", \"gru.weight_ih_l1\", \"gru.weight_hh_l1\", \"gru.bias_ih_l1\", \"gru.bias_hh_l1\", \"gru_adapter.0.weight\", \"gru_adapter.0.bias\", \"gru_adapter.3.weight\", \"gru_adapter.3.bias\", \"tft_adapter.0.weight\", \"tft_adapter.0.bias\", \"tft_adapter.3.weight\", \"tft_adapter.3.bias\", \"gru_regressor.0.weight\", \"gru_regressor.0.bias\", \"gru_regressor.3.weight\", \"gru_regressor.3.bias\", \"fused_expert.0.weight\", \"fused_expert.0.bias\", \"fused_expert.3.weight\", \"fused_expert.3.bias\", \"residual_corrector.0.weight\", \"residual_corrector.0.bias\", \"residual_corrector.3.weight\", \"residual_corrector.3.bias\". \n\tUnexpected key(s) in state_dict: \"bilstm_branch.feature_attention.trend.fc1.weight\", \"bilstm_branch.feature_attention.trend.fc1.bias\", \"bilstm_branch.feature_attention.trend.fc2.weight\", \"bilstm_branch.feature_attention.trend.fc2.bias\", \"bilstm_branch.feature_attention.period.fc1.weight\", \"bilstm_branch.feature_attention.period.fc1.bias\", \"bilstm_branch.feature_attention.period.fc2.weight\", \"bilstm_branch.feature_attention.period.fc2.bias\", \"bilstm_branch.feature_attention.closeness.fc1.weight\", \"bilstm_branch.feature_attention.closeness.fc1.bias\", \"bilstm_branch.feature_attention.closeness.fc2.weight\", \"bilstm_branch.feature_attention.closeness.fc2.bias\", \"bilstm_branch.lstm.trend.weight_ih_l0\", \"bilstm_branch.lstm.trend.weight_hh_l0\", \"bilstm_branch.lstm.trend.bias_ih_l0\", \"bilstm_branch.lstm.trend.bias_hh_l0\", \"bilstm_branch.lstm.trend.weight_ih_l0_reverse\", \"bilstm_branch.lstm.trend.weight_hh_l0_reverse\", \"bilstm_branch.lstm.trend.bias_ih_l0_reverse\", \"bilstm_branch.lstm.trend.bias_hh_l0_reverse\", \"bilstm_branch.lstm.trend.weight_ih_l1\", \"bilstm_branch.lstm.trend.weight_hh_l1\", \"bilstm_branch.lstm.trend.bias_ih_l1\", \"bilstm_branch.lstm.trend.bias_hh_l1\", \"bilstm_branch.lstm.trend.weight_ih_l1_reverse\", \"bilstm_branch.lstm.trend.weight_hh_l1_reverse\", \"bilstm_branch.lstm.trend.bias_ih_l1_reverse\", \"bilstm_branch.lstm.trend.bias_hh_l1_reverse\", \"bilstm_branch.lstm.period.weight_ih_l0\", \"bilstm_branch.lstm.period.weight_hh_l0\", \"bilstm_branch.lstm.period.bias_ih_l0\", \"bilstm_branch.lstm.period.bias_hh_l0\", \"bilstm_branch.lstm.period.weight_ih_l0_reverse\", \"bilstm_branch.lstm.period.weight_hh_l0_reverse\", \"bilstm_branch.lstm.period.bias_ih_l0_reverse\", \"bilstm_branch.lstm.period.bias_hh_l0_reverse\", \"bilstm_branch.lstm.period.weight_ih_l1\", \"bilstm_branch.lstm.period.weight_hh_l1\", \"bilstm_branch.lstm.period.bias_ih_l1\", \"bilstm_branch.lstm.period.bias_hh_l1\", \"bilstm_branch.lstm.period.weight_ih_l1_reverse\", \"bilstm_branch.lstm.period.weight_hh_l1_reverse\", \"bilstm_branch.lstm.period.bias_ih_l1_reverse\", \"bilstm_branch.lstm.period.bias_hh_l1_reverse\", \"bilstm_branch.lstm.closeness.weight_ih_l0\", \"bilstm_branch.lstm.closeness.weight_hh_l0\", \"bilstm_branch.lstm.closeness.bias_ih_l0\", \"bilstm_branch.lstm.closeness.bias_hh_l0\", \"bilstm_branch.lstm.closeness.weight_ih_l0_reverse\", \"bilstm_branch.lstm.closeness.weight_hh_l0_reverse\", \"bilstm_branch.lstm.closeness.bias_ih_l0_reverse\", \"bilstm_branch.lstm.closeness.bias_hh_l0_reverse\", \"bilstm_branch.lstm.closeness.weight_ih_l1\", \"bilstm_branch.lstm.closeness.weight_hh_l1\", \"bilstm_branch.lstm.closeness.bias_ih_l1\", \"bilstm_branch.lstm.closeness.bias_hh_l1\", \"bilstm_branch.lstm.closeness.weight_ih_l1_reverse\", \"bilstm_branch.lstm.closeness.weight_hh_l1_reverse\", \"bilstm_branch.lstm.closeness.bias_ih_l1_reverse\", \"bilstm_branch.lstm.closeness.bias_hh_l1_reverse\", \"bilstm_branch.temporal_attention.trend.proj.weight\", \"bilstm_branch.temporal_attention.trend.proj.bias\", \"bilstm_branch.temporal_attention.trend.score.weight\", \"bilstm_branch.temporal_attention.trend.score.bias\", \"bilstm_branch.temporal_attention.period.proj.weight\", \"bilstm_branch.temporal_attention.period.proj.bias\", \"bilstm_branch.temporal_attention.period.score.weight\", \"bilstm_branch.temporal_attention.period.score.bias\", \"bilstm_branch.temporal_attention.closeness.proj.weight\", \"bilstm_branch.temporal_attention.closeness.proj.bias\", \"bilstm_branch.temporal_attention.closeness.score.weight\", \"bilstm_branch.temporal_attention.closeness.score.bias\", \"bilstm_branch.group_fusion.0.weight\", \"bilstm_branch.group_fusion.0.bias\", \"bilstm_branch.regressor.0.weight\", \"bilstm_branch.regressor.0.bias\", \"bilstm_branch.regressor.3.weight\", \"bilstm_branch.regressor.3.bias\", \"context_norm.weight\", \"context_norm.bias\", \"fusion_refiner.0.weight\", \"fusion_refiner.0.bias\", \"fusion_refiner.3.weight\", \"fusion_refiner.3.bias\". \n\tsize mismatch for gate_network.0.weight: copying a param with shape torch.Size([64, 160]) from checkpoint, the shape in current model is torch.Size([64, 268]).\n\tsize mismatch for gate_network.3.weight: copying a param with shape torch.Size([4, 64]) from checkpoint, the shape in current model is torch.Size([12, 64]).\n\tsize mismatch for gate_network.3.bias: copying a param with shape torch.Size([4]) from checkpoint, the shape in current model is torch.Size([12])."
+    "legacy_checkpoint_error": "Missing checkpoint: outputs/checkpoints/tftgruresidualhybrid.pt. Run `python3 main.py` first to train models on the current dataset."
   },
   "hybrid_artifact_override": {
     "used": true,
-    "source": "outputs/tft_gru_residual_hybrid_metrics.json",
+    "source": "outputs/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
     "model": "TFTGRUResidualHybrid"
   }
 }

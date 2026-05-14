@@ -86,6 +86,8 @@ def _predict_neural_baselines(datasets, config) -> tuple[dict[str, np.ndarray], 
         test_scaled = predict_model(model, x_test, config)
         predictions[name] = processor.inverse_transform_targets(test_scaled)
         metadata[name] = {"family": "recurrent neural network", "status": "evaluated"}
+        if getattr(model, "latest_feature_weights", None) is not None:
+            metadata[name]["feature_weights"] = model.latest_feature_weights.tolist()
     return predictions, metadata
 
 

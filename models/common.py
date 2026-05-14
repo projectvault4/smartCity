@@ -70,3 +70,15 @@ def get_temporal_group_inputs(x):
         "period": x[:, 1:2],
         "closeness": x[:, 2:3],
     }
+
+
+def recurrent_input_feature_importance(recurrent_module: torch.nn.Module):
+    weight = getattr(recurrent_module, "weight_ih_l0", None)
+    if weight is None:
+        return None
+
+    scores = weight.detach().abs().mean(dim=0)
+    total = scores.sum()
+    if total <= 0:
+        return None
+    return (scores / total).cpu().numpy()

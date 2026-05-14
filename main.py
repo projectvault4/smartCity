@@ -314,6 +314,14 @@ def _load_or_train_models(datasets, config, force_retrain: bool = False):
     return models, f"checkpoints+trained({', '.join(models_to_train)})"
 
 
+def _comparison_feature_weights(feature_weights: dict, baseline_metadata: dict) -> dict:
+    return {
+        "GRU": baseline_metadata.get("GRU", {}).get("feature_weights"),
+        "TFT": feature_weights.get("TFT"),
+        "Hybrid": feature_weights.get("Hybrid"),
+    }
+
+
 def main():
     args = parse_args()
     config = copy.deepcopy(CONFIG)
@@ -368,7 +376,11 @@ def main():
             plot_correlation_heatmap(datasets["prepared_df"].drop(columns=["timestamp"]), Path(config.plot_dir) / "correlation_heatmap.png")
             plot_named_correlation_heatmap(correlations["pearson"], Path(config.plot_dir) / "pearson_correlation_heatmap.png", "Pearson Correlation Heatmap")
             plot_named_correlation_heatmap(correlations["spearman"], Path(config.plot_dir) / "spearman_correlation_heatmap.png", "Spearman Correlation Heatmap")
-        plot_feature_attention(feature_weights.get("Hybrid"), datasets["processor"].feature_columns, Path(config.plot_dir) / "feature_attention.png")
+        plot_feature_attention(
+            _comparison_feature_weights(feature_weights, baseline_metadata),
+            datasets["processor"].feature_columns,
+            Path(config.plot_dir) / "feature_attention.png",
+        )
 
     save_metrics(metrics_df, per_target_metrics, streaming_metrics, streaming_switcher_models, xai_reports, baseline_metadata, config)
 
