@@ -1,0 +1,17 @@
+{
+  "trial": 1,
+  "seq_len": 8,
+  "d_model": 32,
+  "heads": 4,
+  "layers": 1,
+  "ff_dim": 96,
+  "batch_size": 128,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 1220.6497802734375,
+  "val_MAPE": 14.550864927583309,
+  "val_RMSE": 2790.137451171875,
+  "val_NRMSE": 0.5146072607300839,
+  "val_UPS": 43.882334351671254,
+  "checkpoint_path": "outputs/bangalore/checkpoints/project_best_informer_trial_1.pt"
+}

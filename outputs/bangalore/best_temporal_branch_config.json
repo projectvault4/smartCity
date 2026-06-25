@@ -1,0 +1,9 @@
+{
+  "closeness_length": 4,
+  "period_length": 8,
+  "trend_length": 4,
+  "MAE": 252.10812377929688,
+  "RMSE": 645.6487426757812,
+  "NRMSE": 0.11310109669467208,
+  "checkpoint_path": "outputs/checkpoints/hybrid_c4_p8_t4.pt"
+}

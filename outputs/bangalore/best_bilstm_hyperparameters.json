@@ -1,0 +1,9 @@
+{
+  "hidden_dim": 16,
+  "seq_len": 8,
+  "batch_size": 32,
+  "MAE": 223.0149688720703,
+  "RMSE": 563.5657348632812,
+  "NRMSE": 0.09877683681531471,
+  "checkpoint_path": "outputs/checkpoints/bilstm_h16_s8_b32.pt"
+}

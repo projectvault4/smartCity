@@ -76,7 +76,7 @@ def plot_predictions(y_true, predictions, save_path: Path, max_points: int = 250
 
 
 def plot_error_bars(metric_df: pd.DataFrame, save_path: Path):
-    metrics = [metric for metric in ("MAE", "RMSE", "NRMSE", "UPS") if metric in metric_df.columns]
+    metrics = [metric for metric in ("MAE", "MAPE", "RMSE", "NRMSE", "UPS") if metric in metric_df.columns]
     if not metrics:
         return
 

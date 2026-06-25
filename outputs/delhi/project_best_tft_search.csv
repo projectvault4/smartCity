@@ -1,0 +1,7 @@
+trial,seq_len,hidden_dim,heads,layers,ff_dim,batch_size,dropout,learning_rate,val_MAE,val_MAPE,val_RMSE,val_NRMSE,val_UPS,checkpoint_path
+2,8,32,4,1,128,64,0.1,0.0005,130044.0078125,18.578128304762615,308900.375,0.18758798410986877,0.0,outputs/delhi/checkpoints/project_best_tft_trial_2.pt
+3,12,48,4,1,144,64,0.1,0.0005,140356.203125,18.3669923190668,343169.3125,0.23471713467476335,0.0,outputs/delhi/checkpoints/project_best_tft_trial_3.pt
+6,12,64,4,2,192,96,0.1,0.0003,162472.4375,19.118279476996015,378951.09375,0.25919075997469215,0.0,outputs/delhi/checkpoints/project_best_tft_trial_6.pt
+4,12,48,4,2,192,64,0.1,0.0005,280179.59375,32.765939809946566,657608.5625,0.44978380031457516,0.0,outputs/delhi/checkpoints/project_best_tft_trial_4.pt
+5,8,48,2,1,96,96,0.05,0.0005,311095.0625,28.142820751315273,684722.0,0.4158156805593958,0.0,outputs/delhi/checkpoints/project_best_tft_trial_5.pt
+1,8,32,2,1,96,64,0.05,0.0005,359238.1875,27.401920711606213,770197.375,0.4677228797244504,0.0,outputs/delhi/checkpoints/project_best_tft_trial_1.pt

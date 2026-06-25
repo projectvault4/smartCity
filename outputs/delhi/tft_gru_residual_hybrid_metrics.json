@@ -1,0 +1,83 @@
+{
+  "model": "TFTGRUResidualHybrid",
+  "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction",
+  "checkpoint_path": "outputs/delhi/checkpoints/tft_gru_residual_hybrid.pt",
+  "prediction_path": "outputs/delhi/tft_gru_residual_hybrid_predictions.csv",
+  "targets": [
+    "traffic_flow",
+    "aqi",
+    "temperature",
+    "electricity_demand"
+  ],
+  "target_output_map": {
+    "traffic_flow": 0,
+    "aqi": 1,
+    "temperature": 2,
+    "electricity_demand": 3
+  },
+  "best_val_loss": 0.26659291982650757,
+  "tft_init_checkpoint": "outputs/delhi/checkpoints/project_best_tft.pt",
+  "calibration": null,
+  "routing": null,
+  "metrics": {
+    "MAE": 185774.78125,
+    "MAPE": 9.493726333767968,
+    "RMSE": 410499.40625,
+    "NRMSE": 0.2084034301640383,
+    "UPS": 82.75382004371272
+  },
+  "per_target_metrics": {
+    "traffic_flow": {
+      "MAE": 742865.9375,
+      "MAPE": 16.30242276703571,
+      "RMSE": 820998.75,
+      "NRMSE": 1.7159711538765121,
+      "UPS": 36.819242302065604
+    },
+    "aqi": {
+      "MAE": 38.35940170288086,
+      "MAPE": 16.232763440227,
+      "RMSE": 41.43545150756836,
+      "NRMSE": 2.3211489751325183,
+      "UPS": 30.110061532548347
+    },
+    "temperature": {
+      "MAE": 0.682637631893158,
+      "MAPE": 2.2762263259200357,
+      "RMSE": 0.7179666757583618,
+      "NRMSE": 1.573752713597057,
+      "UPS": 38.85377156542781
+    },
+    "electricity_demand": {
+      "MAE": 194.06149291992188,
+      "MAPE": 3.1634928018891286,
+      "RMSE": 227.634521484375,
+      "NRMSE": 1.3194760916065251,
+      "UPS": 43.11318420649794
+    }
+  },
+  "history": {
+    "train_loss": [
+      0.12216709107160569,
+      0.06308923959732056,
+      0.06123209893703461,
+      0.04204513505101204,
+      0.036685139313340186,
+      0.032469600811600684,
+      0.03466176278889179,
+      0.02769308499991894,
+      0.026017490401864053
+    ],
+    "val_loss": [
+      0.26659291982650757,
+      0.29335734248161316,
+      0.29990890622138977,
+      0.3330162465572357,
+      0.32789596915245056,
+      0.34548085927963257,
+      0.34074637293815613,
+      0.353093683719635,
+      0.3563648462295532
+    ]
+  }
+}

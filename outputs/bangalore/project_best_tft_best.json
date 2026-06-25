@@ -1,0 +1,17 @@
+{
+  "trial": 4,
+  "seq_len": 12,
+  "hidden_dim": 48,
+  "heads": 4,
+  "layers": 2,
+  "ff_dim": 192,
+  "batch_size": 64,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 382.1497497558594,
+  "val_MAPE": 7.601508101408289,
+  "val_RMSE": 724.463623046875,
+  "val_NRMSE": 0.13349858487399185,
+  "val_UPS": 47.71867278920808,
+  "checkpoint_path": "outputs/bangalore/checkpoints/project_best_tft_trial_4.pt"
+}

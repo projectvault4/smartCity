@@ -1,0 +1,699 @@
+{
+  "search_protocol": {
+    "selection_rule": "lowest validation RMSE, MAE as tie-breaker",
+    "training_budget": {
+      "epochs": 16,
+      "patience": 5
+    },
+    "models": [
+      "BiLSTM",
+      "TFT",
+      "Hybrid",
+      "Informer",
+      "PatchTST"
+    ],
+    "updated_models": [
+      "Hybrid"
+    ],
+    "final_metric_sources": {
+      "Hybrid": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_metrics.json"
+    }
+  },
+  "results": {
+    "BiLSTM": {
+      "search_csv": "outputs/delhi/project_best_bilstm_search.csv",
+      "best_json": "outputs/delhi/project_best_bilstm_best.json",
+      "best_checkpoint": "outputs/delhi/checkpoints/project_best_bilstm.pt",
+      "best_validation": {
+        "trial": 2,
+        "hidden_dim": 16,
+        "seq_len": 12,
+        "batch_size": 64,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 352395.34375,
+        "val_MAPE": 34.682471719608884,
+        "val_RMSE": 799122.75,
+        "val_NRMSE": 0.5465751024384421,
+        "val_UPS": 0.0,
+        "checkpoint_path": "outputs/delhi/checkpoints/project_best_bilstm_trial_2.pt"
+      },
+      "test_metrics": {
+        "MAE": 546539.5,
+        "MAPE": 33.40294395081578,
+        "RMSE": 1125092.625,
+        "NRMSE": 0.5766522990024877,
+        "UPS": 63.42552512260803
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 2185406.0,
+          "MAPE": 48.00583690506497,
+          "RMSE": 2250185.25,
+          "NRMSE": 4.201829356877515,
+          "UPS": 19.224006236918672
+        },
+        "aqi": {
+          "MAE": 167.48660278320312,
+          "MAPE": 72.55528494184502,
+          "RMSE": 168.6667022705078,
+          "NRMSE": 8.485363502660249,
+          "UPS": 10.542558540002624
+        },
+        "temperature": {
+          "MAE": 1.1052072048187256,
+          "MAPE": 3.6822716648783524,
+          "RMSE": 1.1945685148239136,
+          "NRMSE": 2.6410979781398747,
+          "UPS": 27.464243093806264
+        },
+        "electricity_demand": {
+          "MAE": 583.272216796875,
+          "MAPE": 9.368382291474806,
+          "RMSE": 608.5299682617188,
+          "NRMSE": 3.5141315970960134,
+          "UPS": 22.152655023245448
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 379110.0,
+          "project_best": 546539.5,
+          "delta": 167429.5
+        },
+        "RMSE": {
+          "previous": 795163.25,
+          "project_best": 1125092.625,
+          "delta": 329929.375
+        },
+        "NRMSE": {
+          "previous": 0.4036905932562107,
+          "project_best": 0.5766522990024877,
+          "delta": 0.172961705746277
+        },
+        "UPS": {
+          "previous": 0.0,
+          "project_best": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "TFT": {
+      "search_csv": "outputs/delhi/project_best_tft_search.csv",
+      "best_json": "outputs/delhi/project_best_tft_best.json",
+      "best_checkpoint": "outputs/delhi/checkpoints/project_best_tft.pt",
+      "best_validation": {
+        "trial": 2,
+        "seq_len": 8,
+        "hidden_dim": 32,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 128,
+        "batch_size": 64,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 130044.0078125,
+        "val_MAPE": 18.578128304762615,
+        "val_RMSE": 308900.375,
+        "val_NRMSE": 0.18758798410986877,
+        "val_UPS": 0.0,
+        "checkpoint_path": "outputs/delhi/checkpoints/project_best_tft_trial_2.pt"
+      },
+      "test_metrics": {
+        "MAE": 119678.3984375,
+        "MAPE": 15.045397389542464,
+        "RMSE": 294487.4375,
+        "NRMSE": 0.14950616537028877,
+        "UPS": 86.99387877383602
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 478166.71875,
+          "MAPE": 10.475910099726175,
+          "RMSE": 588974.6875,
+          "NRMSE": 1.2310171898720104,
+          "UPS": 44.822603991561735
+        },
+        "aqi": {
+          "MAE": 93.99398040771484,
+          "MAPE": 40.068328779276484,
+          "RMSE": 96.32894897460938,
+          "NRMSE": 5.396196567259967,
+          "UPS": 15.634291246123864
+        },
+        "temperature": {
+          "MAE": 0.7386030554771423,
+          "MAPE": 2.448865929768767,
+          "RMSE": 0.7996535301208496,
+          "NRMSE": 1.752806857833466,
+          "UPS": 36.32655873238514
+        },
+        "electricity_demand": {
+          "MAE": 452.1325988769531,
+          "MAPE": 7.188484749398421,
+          "RMSE": 477.27117919921875,
+          "NRMSE": 2.766486849444973,
+          "UPS": 26.54994003622658
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 328121.71875,
+          "project_best": 119678.3984375,
+          "delta": -208443.3203125
+        },
+        "RMSE": {
+          "previous": 690352.375,
+          "project_best": 294487.4375,
+          "delta": -395864.9375
+        },
+        "NRMSE": {
+          "previous": 0.3504799295233828,
+          "project_best": 0.14950616537028877,
+          "delta": -0.20097376415309404
+        },
+        "UPS": {
+          "previous": 0.0,
+          "project_best": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "Hybrid": {
+      "search_csv": "outputs/delhi/project_best_hybrid_search.csv",
+      "best_json": "outputs/delhi/project_best_hybrid_best.json",
+      "best_checkpoint": "outputs/delhi/checkpoints/tft_gru_residual_hybrid.pt",
+      "best_validation": {
+        "trial": 9,
+        "closeness_len": 8,
+        "period_len": 12,
+        "trend_len": 4,
+        "bilstm_hidden_dim": 24,
+        "tft_hidden_dim": 48,
+        "tft_heads": 2,
+        "tft_layers": 2,
+        "tft_ff_dim": 144,
+        "dense_hidden_dim": 160,
+        "dropout": 0.05,
+        "batch_size": 96,
+        "learning_rate": 0.0003,
+        "val_MAE": 58306.4921875,
+        "val_MAPE": 5.523790627563791,
+        "val_RMSE": 132558.375,
+        "val_NRMSE": 0.07610865860329277,
+        "val_UPS": 92.92741880712343,
+        "checkpoint_path": "outputs/delhi/checkpoints/project_best_hybrid_trial_9.pt"
+      },
+      "test_metrics": {
+        "MAE": 73862.06243154468,
+        "MAPE": 3.6851497036663026,
+        "RMSE": 244730.9297438046,
+        "NRMSE": 0.12424564447629569,
+        "UPS": 88.94853228146837
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 295349.09500000015,
+          "MAPE": 6.46437233221454,
+          "RMSE": 489461.8485329204,
+          "NRMSE": 1.023025284693368,
+          "UPS": 49.430919502895435
+        },
+        "aqi": {
+          "MAE": 15.197579500000002,
+          "MAPE": 6.416089896673119,
+          "RMSE": 23.785061738173592,
+          "NRMSE": 1.3324018155086426,
+          "UPS": 42.874259201428515
+        },
+        "temperature": {
+          "MAE": 0.14906596428571461,
+          "MAPE": 0.49435450774971745,
+          "RMSE": 0.16627858733155232,
+          "NRMSE": 0.36447572247937066,
+          "UPS": 73.28822224721692
+        },
+        "electricity_demand": {
+          "MAE": 83.80808071428568,
+          "MAPE": 1.3657820780278365,
+          "RMSE": 100.78714049216792,
+          "NRMSE": 0.5842093784573197,
+          "UPS": 63.122969324533706
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 185774.78125,
+          "project_best": 384440.0,
+          "delta": 198665.21875
+        },
+        "RMSE": {
+          "previous": 410499.40625,
+          "project_best": 809666.3125,
+          "delta": 399166.90625
+        },
+        "NRMSE": {
+          "previous": 0.2084034301640383,
+          "project_best": 0.42939944460147367,
+          "delta": 0.22099601443743536
+        },
+        "UPS": {
+          "previous": 82.75382004371272,
+          "project_best": 69.95945071734702,
+          "delta": -12.794369326365697
+        }
+      },
+      "source_artifact": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+      "model": "TFTGRUResidualHybridLagStabilized",
+      "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+      "prediction_path": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+      "project_best_search_result": {
+        "search_csv": "outputs/delhi/project_best_hybrid_search.csv",
+        "best_json": "outputs/delhi/project_best_hybrid_best.json",
+        "best_checkpoint": "outputs/delhi/checkpoints/tft_gru_residual_hybrid.pt",
+        "best_validation": {
+          "trial": 9,
+          "closeness_len": 8,
+          "period_len": 12,
+          "trend_len": 4,
+          "bilstm_hidden_dim": 24,
+          "tft_hidden_dim": 48,
+          "tft_heads": 2,
+          "tft_layers": 2,
+          "tft_ff_dim": 144,
+          "dense_hidden_dim": 160,
+          "dropout": 0.05,
+          "batch_size": 96,
+          "learning_rate": 0.0003,
+          "val_MAE": 58306.4921875,
+          "val_MAPE": 5.523790627563791,
+          "val_RMSE": 132558.375,
+          "val_NRMSE": 0.07610865860329277,
+          "val_UPS": 92.92741880712343,
+          "checkpoint_path": "outputs/delhi/checkpoints/project_best_hybrid_trial_9.pt"
+        },
+        "test_metrics": {
+          "MAE": 73862.06243154468,
+          "MAPE": 3.6851497036663026,
+          "RMSE": 244730.9297438046,
+          "NRMSE": 0.12424564447629569,
+          "UPS": 88.94853228146837
+        },
+        "test_per_target": {
+          "traffic_flow": {
+            "MAE": 295349.09500000015,
+            "MAPE": 6.46437233221454,
+            "RMSE": 489461.8485329204,
+            "NRMSE": 1.023025284693368,
+            "UPS": 49.430919502895435
+          },
+          "aqi": {
+            "MAE": 15.197579500000002,
+            "MAPE": 6.416089896673119,
+            "RMSE": 23.785061738173592,
+            "NRMSE": 1.3324018155086426,
+            "UPS": 42.874259201428515
+          },
+          "temperature": {
+            "MAE": 0.14906596428571461,
+            "MAPE": 0.49435450774971745,
+            "RMSE": 0.16627858733155232,
+            "NRMSE": 0.36447572247937066,
+            "UPS": 73.28822224721692
+          },
+          "electricity_demand": {
+            "MAE": 83.80808071428568,
+            "MAPE": 1.3657820780278365,
+            "RMSE": 100.78714049216792,
+            "NRMSE": 0.5842093784573197,
+            "UPS": 63.122969324533706
+          }
+        },
+        "comparison_to_current": {
+          "MAE": {
+            "previous": 185774.78125,
+            "project_best": 384440.0,
+            "delta": 198665.21875
+          },
+          "RMSE": {
+            "previous": 410499.40625,
+            "project_best": 809666.3125,
+            "delta": 399166.90625
+          },
+          "NRMSE": {
+            "previous": 0.2084034301640383,
+            "project_best": 0.42939944460147367,
+            "delta": 0.22099601443743536
+          },
+          "UPS": {
+            "previous": 82.75382004371272,
+            "project_best": 69.95945071734702,
+            "delta": -12.794369326365697
+          }
+        },
+        "source_artifact": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+        "model": "TFTGRUResidualHybridLagStabilized",
+        "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+        "prediction_path": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+        "project_best_search_result": {
+          "search_csv": "outputs/delhi/project_best_hybrid_search.csv",
+          "best_json": "outputs/delhi/project_best_hybrid_best.json",
+          "best_checkpoint": "outputs/delhi/checkpoints/tft_gru_residual_hybrid.pt",
+          "best_validation": {
+            "trial": 9,
+            "closeness_len": 8,
+            "period_len": 12,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 2,
+            "tft_layers": 2,
+            "tft_ff_dim": 144,
+            "dense_hidden_dim": 160,
+            "dropout": 0.05,
+            "batch_size": 96,
+            "learning_rate": 0.0003,
+            "val_MAE": 58306.4921875,
+            "val_MAPE": 5.523790627563791,
+            "val_RMSE": 132558.375,
+            "val_NRMSE": 0.07610865860329277,
+            "val_UPS": 92.92741880712343,
+            "checkpoint_path": "outputs/delhi/checkpoints/project_best_hybrid_trial_9.pt"
+          },
+          "test_metrics": {
+            "MAE": 73862.06243154468,
+            "MAPE": 3.6851497036663026,
+            "RMSE": 244730.9297438046,
+            "NRMSE": 0.12424564447629569,
+            "UPS": 88.94853228146837
+          },
+          "test_per_target": {
+            "traffic_flow": {
+              "MAE": 295349.09500000015,
+              "MAPE": 6.46437233221454,
+              "RMSE": 489461.8485329204,
+              "NRMSE": 1.023025284693368,
+              "UPS": 49.430919502895435
+            },
+            "aqi": {
+              "MAE": 15.197579500000002,
+              "MAPE": 6.416089896673119,
+              "RMSE": 23.785061738173592,
+              "NRMSE": 1.3324018155086426,
+              "UPS": 42.874259201428515
+            },
+            "temperature": {
+              "MAE": 0.14906596428571461,
+              "MAPE": 0.49435450774971745,
+              "RMSE": 0.16627858733155232,
+              "NRMSE": 0.36447572247937066,
+              "UPS": 73.28822224721692
+            },
+            "electricity_demand": {
+              "MAE": 83.80808071428568,
+              "MAPE": 1.3657820780278365,
+              "RMSE": 100.78714049216792,
+              "NRMSE": 0.5842093784573197,
+              "UPS": 63.122969324533706
+            }
+          },
+          "comparison_to_current": {
+            "MAE": {
+              "previous": 185774.78125,
+              "project_best": 384440.0,
+              "delta": 198665.21875
+            },
+            "RMSE": {
+              "previous": 410499.40625,
+              "project_best": 809666.3125,
+              "delta": 399166.90625
+            },
+            "NRMSE": {
+              "previous": 0.2084034301640383,
+              "project_best": 0.42939944460147367,
+              "delta": 0.22099601443743536
+            },
+            "UPS": {
+              "previous": 82.75382004371272,
+              "project_best": 69.95945071734702,
+              "delta": -12.794369326365697
+            }
+          },
+          "source_artifact": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+          "model": "TFTGRUResidualHybridLagStabilized",
+          "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+          "prediction_path": "outputs/delhi/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+          "project_best_search_result": {
+            "search_csv": "outputs/delhi/project_best_hybrid_search.csv",
+            "best_json": "outputs/delhi/project_best_hybrid_best.json",
+            "best_checkpoint": "outputs/delhi/checkpoints/project_best_hybrid.pt",
+            "best_validation": {
+              "trial": 9,
+              "closeness_len": 8,
+              "period_len": 12,
+              "trend_len": 4,
+              "bilstm_hidden_dim": 24,
+              "tft_hidden_dim": 48,
+              "tft_heads": 2,
+              "tft_layers": 2,
+              "tft_ff_dim": 144,
+              "dense_hidden_dim": 160,
+              "dropout": 0.05,
+              "batch_size": 96,
+              "learning_rate": 0.0003,
+              "val_MAE": 58306.4921875,
+              "val_MAPE": 5.523790627563791,
+              "val_RMSE": 132558.375,
+              "val_NRMSE": 0.07610865860329277,
+              "val_UPS": 92.92741880712343,
+              "checkpoint_path": "outputs/delhi/checkpoints/project_best_hybrid_trial_9.pt"
+            },
+            "test_metrics": {
+              "MAE": 384440.0,
+              "MAPE": 16.360050541117957,
+              "RMSE": 809666.3125,
+              "NRMSE": 0.42939944460147367,
+              "UPS": 69.95945071734702
+            },
+            "test_per_target": {
+              "traffic_flow": {
+                "MAE": 1537510.125,
+                "MAPE": 35.28565080244409,
+                "RMSE": 1619332.625,
+                "NRMSE": 1.8248959892930905,
+                "UPS": 35.39953342672424
+              },
+              "aqi": {
+                "MAE": 55.434852600097656,
+                "MAPE": 24.330264606712074,
+                "RMSE": 58.756954193115234,
+                "NRMSE": 1.7860834570348614,
+                "UPS": 35.89267929052878
+              },
+              "temperature": {
+                "MAE": 0.8268460035324097,
+                "MAPE": 2.7525261683209923,
+                "RMSE": 0.9379547238349915,
+                "NRMSE": 2.0466666123257675,
+                "UPS": 32.822757697030035
+              },
+              "electricity_demand": {
+                "MAE": 193.66036987304688,
+                "MAPE": 3.0717605869946714,
+                "RMSE": 221.84571838378906,
+                "NRMSE": 1.4515185299200009,
+                "UPS": 40.79104390994069
+              }
+            },
+            "comparison_to_current": {
+              "MAE": {
+                "previous": 185774.78125,
+                "project_best": 384440.0,
+                "delta": 198665.21875
+              },
+              "RMSE": {
+                "previous": 410499.40625,
+                "project_best": 809666.3125,
+                "delta": 399166.90625
+              },
+              "NRMSE": {
+                "previous": 0.2084034301640383,
+                "project_best": 0.42939944460147367,
+                "delta": 0.22099601443743536
+              },
+              "UPS": {
+                "previous": 82.75382004371272,
+                "project_best": 69.95945071734702,
+                "delta": -12.794369326365697
+              }
+            }
+          }
+        }
+      }
+    },
+    "Informer": {
+      "search_csv": "outputs/delhi/project_best_informer_search.csv",
+      "best_json": "outputs/delhi/project_best_informer_best.json",
+      "best_checkpoint": "outputs/delhi/checkpoints/project_best_informer.pt",
+      "best_validation": {
+        "trial": 2,
+        "seq_len": 12,
+        "d_model": 48,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 128,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0003,
+        "val_MAE": 334386.375,
+        "val_MAPE": 37.699798787374334,
+        "val_RMSE": 758363.0625,
+        "val_NRMSE": 0.5186967441128014,
+        "val_UPS": 0.0,
+        "checkpoint_path": "outputs/delhi/checkpoints/project_best_informer_trial_2.pt"
+      },
+      "test_metrics": {
+        "MAE": 386107.875,
+        "MAPE": 16.293795070764034,
+        "RMSE": 814420.0625,
+        "NRMSE": 0.4174209224723829,
+        "UPS": 70.55067299667887
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 1543969.0,
+          "MAPE": 33.46087914633951,
+          "RMSE": 1628840.0,
+          "NRMSE": 3.0415752345974054,
+          "UPS": 24.74282778258397
+        },
+        "aqi": {
+          "MAE": 55.71309280395508,
+          "MAPE": 23.475969276933945,
+          "RMSE": 59.75529479980469,
+          "NRMSE": 3.006197374818929,
+          "UPS": 24.961326326194744
+        },
+        "temperature": {
+          "MAE": 0.5206134915351868,
+          "MAPE": 1.7323513269567261,
+          "RMSE": 0.6081703305244446,
+          "NRMSE": 1.3446172491408237,
+          "UPS": 42.65088471759927
+        },
+        "electricity_demand": {
+          "MAE": 406.22613525390625,
+          "MAPE": 6.505980532825961,
+          "RMSE": 437.4066162109375,
+          "NRMSE": 2.52593050626,
+          "UPS": 28.36130769521924
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 305183.4375,
+          "project_best": 386107.875,
+          "delta": 80924.4375
+        },
+        "RMSE": {
+          "previous": 642998.875,
+          "project_best": 814420.0625,
+          "delta": 171421.1875
+        },
+        "NRMSE": {
+          "previous": 0.326439378721069,
+          "project_best": 0.4174209224723829,
+          "delta": 0.0909815437513139
+        },
+        "UPS": {
+          "previous": 0.0,
+          "project_best": 0.0,
+          "delta": 0.0
+        }
+      }
+    },
+    "PatchTST": {
+      "search_csv": "outputs/delhi/project_best_patchtst_search.csv",
+      "best_json": "outputs/delhi/project_best_patchtst_best.json",
+      "best_checkpoint": "outputs/delhi/checkpoints/project_best_patchtst.pt",
+      "best_validation": {
+        "trial": 2,
+        "seq_len": 16,
+        "d_model": 48,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 128,
+        "patch_len": 4,
+        "stride": 2,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0003,
+        "val_MAE": 224219.59375,
+        "val_MAPE": 37.718589598116296,
+        "val_RMSE": 530586.0625,
+        "val_NRMSE": 0.6029767569185694,
+        "val_UPS": 0.0,
+        "checkpoint_path": "outputs/delhi/checkpoints/project_best_patchtst_trial_2.pt"
+      },
+      "test_metrics": {
+        "MAE": 482896.46875,
+        "MAPE": 20.37547515268328,
+        "RMSE": 1012825.8125,
+        "NRMSE": 0.5367555478894296,
+        "UPS": 65.07215811736575
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 1931359.875,
+          "MAPE": 43.58673695325762,
+          "RMSE": 2025651.625,
+          "NRMSE": 3.2318335070428406,
+          "UPS": 23.630419257651493
+        },
+        "aqi": {
+          "MAE": 71.68475341796875,
+          "MAPE": 31.29113184278131,
+          "RMSE": 74.88824462890625,
+          "NRMSE": 3.2261851307846325,
+          "UPS": 23.662001759358336
+        },
+        "temperature": {
+          "MAE": 1.2112785577774048,
+          "MAPE": 4.113981916018759,
+          "RMSE": 1.2492165565490723,
+          "NRMSE": 3.8922062138527367,
+          "UPS": 20.440675562048206
+        },
+        "electricity_demand": {
+          "MAE": 153.14208984375,
+          "MAPE": 2.5100498986754203,
+          "RMSE": 178.1918487548828,
+          "NRMSE": 2.052445990303081,
+          "UPS": 32.760612413021235
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 127873.4296875,
+          "project_best": 482896.46875,
+          "delta": 355023.0390625
+        },
+        "RMSE": {
+          "previous": 281953.78125,
+          "project_best": 1012825.8125,
+          "delta": 730872.03125
+        },
+        "NRMSE": {
+          "previous": 0.14314304543582007,
+          "project_best": 0.5367555478894296,
+          "delta": 0.3936125024536095
+        },
+        "UPS": {
+          "previous": 0.0,
+          "project_best": 0.0,
+          "delta": 0.0
+        }
+      }
+    }
+  }
+}

@@ -13,7 +13,7 @@ from models.hybrid import TFTGRUResidualHybrid
 from models.informer import InformerForecastModel
 from models.patchtst import PatchTSTForecastModel
 from models.transformer import TemporalFusionTransformer
-from utils.config import CONFIG
+from utils.config import CONFIG, apply_city_config
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
 from utils.metrics import compute_all_metrics, compute_metrics_by_target, compute_urban_prediction_score
 from utils.training import predict_model, train_model
@@ -28,6 +28,12 @@ def _dataset_groups(grouped):
 
 def _window(length: int, anchor: int) -> tuple[int, ...]:
     return tuple(range(anchor, anchor + length))
+
+
+def _lag_window_from_config(config, name: str, length: int, fallback_anchor: int) -> tuple[int, ...]:
+    configured = tuple(getattr(config, name, ()) or ())
+    anchor = configured[0] if configured else fallback_anchor
+    return _window(length, anchor)
 
 
 def _load_json(path: Path) -> dict:
@@ -257,9 +263,9 @@ def _search_bilstm(base_config, raw_df):
         config.batch_size = spec["batch_size"]
         config.dropout = spec["dropout"]
         config.learning_rate = spec["learning_rate"]
-        config.closeness_lags = _window(spec["seq_len"], 1)
-        config.period_lags = _window(spec["seq_len"], 24)
-        config.trend_lags = _window(spec["seq_len"], 24 * 7)
+        config.closeness_lags = _lag_window_from_config(config, "closeness_lags", spec["seq_len"], 1)
+        config.period_lags = _lag_window_from_config(config, "period_lags", spec["seq_len"], 24)
+        config.trend_lags = _lag_window_from_config(config, "trend_lags", spec["seq_len"], 24 * 7)
 
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
@@ -378,9 +384,9 @@ def _search_tft(base_config, raw_df):
         config.tft_heads = spec["heads"]
         config.tft_layers = spec["layers"]
         config.tft_ff_dim = spec["ff_dim"]
-        config.closeness_lags = _window(spec["seq_len"], 1)
-        config.period_lags = _window(spec["seq_len"], 24)
-        config.trend_lags = _window(spec["seq_len"], 24 * 7)
+        config.closeness_lags = _lag_window_from_config(config, "closeness_lags", spec["seq_len"], 1)
+        config.period_lags = _lag_window_from_config(config, "period_lags", spec["seq_len"], 24)
+        config.trend_lags = _lag_window_from_config(config, "trend_lags", spec["seq_len"], 24 * 7)
 
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
@@ -417,7 +423,37 @@ def _search_tft(base_config, raw_df):
 def _search_hybrid(base_config, raw_df):
     branch_artifact = _load_json(Path(base_config.output_dir) / "best_temporal_branch_config.json")
     ensemble_artifact = _load_json(Path(base_config.output_dir) / "best_hybrid_ensemble_config.json")
+    best_tft_artifact = _load_json(Path(base_config.output_dir) / "project_best_tft_best.json")
+    best_bilstm_artifact = _load_json(Path(base_config.output_dir) / "best_bilstm_hyperparameters.json")
     candidate_specs = [
+        {
+            "closeness_len": 4,
+            "period_len": 8,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 2,
+            "tft_layers": 1,
+            "tft_ff_dim": 96,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 96,
+            "learning_rate": 5e-4,
+        },
+        {
+            "closeness_len": 6,
+            "period_len": 8,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 2,
+            "tft_layers": 1,
+            "tft_ff_dim": 128,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 96,
+            "learning_rate": 3e-4,
+        },
         {
             "closeness_len": 4,
             "period_len": 8,
@@ -489,6 +525,20 @@ def _search_hybrid(base_config, raw_df):
             "learning_rate": 5e-4,
         },
         {
+            "closeness_len": 8,
+            "period_len": 12,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 2,
+            "tft_layers": 2,
+            "tft_ff_dim": 144,
+            "dense_hidden_dim": 160,
+            "dropout": 0.05,
+            "batch_size": 96,
+            "learning_rate": 3e-4,
+        },
+        {
             "closeness_len": 4,
             "period_len": 8,
             "trend_len": 4,
@@ -545,6 +595,24 @@ def _search_hybrid(base_config, raw_df):
             "learning_rate": 3e-4,
         },
     ]
+    if best_tft_artifact:
+        candidate_specs.insert(
+            0,
+            {
+                "closeness_len": int(branch_artifact.get("closeness_length", 4)),
+                "period_len": int(branch_artifact.get("period_length", best_tft_artifact.get("seq_len", 8))),
+                "trend_len": int(branch_artifact.get("trend_length", 4)),
+                "bilstm_hidden_dim": max(16, int(best_bilstm_artifact.get("hidden_dim", 24))),
+                "tft_hidden_dim": int(best_tft_artifact.get("hidden_dim", 48)),
+                "tft_heads": int(best_tft_artifact.get("heads", 2)),
+                "tft_layers": int(best_tft_artifact.get("layers", 1)),
+                "tft_ff_dim": int(best_tft_artifact.get("ff_dim", 96)),
+                "dense_hidden_dim": max(128, int(ensemble_artifact.get("dense_hidden_dim", 128))),
+                "dropout": float(best_tft_artifact.get("dropout", ensemble_artifact.get("dropout", 0.05))),
+                "batch_size": max(64, int(best_tft_artifact.get("batch_size", 96))),
+                "learning_rate": float(best_tft_artifact.get("learning_rate", 5e-4)),
+            },
+        )
     if branch_artifact or ensemble_artifact:
         candidate_specs.insert(
             0,
@@ -552,15 +620,15 @@ def _search_hybrid(base_config, raw_df):
                 "closeness_len": int(branch_artifact.get("closeness_length", 4)),
                 "period_len": int(branch_artifact.get("period_length", 8)),
                 "trend_len": int(branch_artifact.get("trend_length", 4)),
-                "bilstm_hidden_dim": int(_load_json(Path(base_config.output_dir) / "best_bilstm_hyperparameters.json").get("hidden_dim", 16)),
-                "tft_hidden_dim": 32,
-                "tft_heads": 2,
-                "tft_layers": 1,
-                "tft_ff_dim": 96,
-                "dense_hidden_dim": int(ensemble_artifact.get("dense_hidden_dim", 96)),
-                "dropout": float(ensemble_artifact.get("dropout", 0.1)),
-                "batch_size": 64,
-                "learning_rate": 5e-4,
+                "bilstm_hidden_dim": max(16, int(best_bilstm_artifact.get("hidden_dim", 16))),
+                "tft_hidden_dim": int(best_tft_artifact.get("hidden_dim", 32) if best_tft_artifact else 32),
+                "tft_heads": int(best_tft_artifact.get("heads", 2) if best_tft_artifact else 2),
+                "tft_layers": int(best_tft_artifact.get("layers", 1) if best_tft_artifact else 1),
+                "tft_ff_dim": int(best_tft_artifact.get("ff_dim", 96) if best_tft_artifact else 96),
+                "dense_hidden_dim": max(96, int(ensemble_artifact.get("dense_hidden_dim", 96))),
+                "dropout": float(ensemble_artifact.get("dropout", best_tft_artifact.get("dropout", 0.1) if best_tft_artifact else 0.1)),
+                "batch_size": max(64, int(best_tft_artifact.get("batch_size", 64) if best_tft_artifact else 64)),
+                "learning_rate": float(best_tft_artifact.get("learning_rate", 5e-4) if best_tft_artifact else 5e-4),
             },
         )
     candidate_specs = _limit_candidate_specs(candidate_specs, base_config)
@@ -571,7 +639,7 @@ def _search_hybrid(base_config, raw_df):
         print(
             f"Starting Hybrid trial {trial_idx}/{len(candidate_specs)} with "
             f"c={spec['closeness_len']} p={spec['period_len']} t={spec['trend_len']} "
-            f"bilstm_h={spec['bilstm_hidden_dim']} tft_h={spec['tft_hidden_dim']} "
+            f"gru_h={spec['bilstm_hidden_dim']} tft_h={spec['tft_hidden_dim']} "
             f"dense={spec['dense_hidden_dim']} dropout={spec['dropout']:.2f} "
             f"lr={spec['learning_rate']:.4g}",
             flush=True,
@@ -581,9 +649,9 @@ def _search_hybrid(base_config, raw_df):
         config.patience = 7
         config.lr_scheduler_patience = 3
         config = _apply_runtime_overrides(config, base_config)
-        config.closeness_lags = _window(spec["closeness_len"], 1)
-        config.period_lags = _window(spec["period_len"], 24)
-        config.trend_lags = _window(spec["trend_len"], 24 * 7)
+        config.closeness_lags = _lag_window_from_config(config, "closeness_lags", spec["closeness_len"], 1)
+        config.period_lags = _lag_window_from_config(config, "period_lags", spec["period_len"], 24)
+        config.trend_lags = _lag_window_from_config(config, "trend_lags", spec["trend_len"], 24 * 7)
         config.seq_len = max(spec["closeness_len"], spec["period_len"], spec["trend_len"])
         config.bilstm_hidden_dim = spec["bilstm_hidden_dim"]
         config.tft_hidden_dim = spec["tft_hidden_dim"]
@@ -617,7 +685,7 @@ def _search_hybrid(base_config, raw_df):
         print(
             f"[Hybrid {trial_idx}/{len(candidate_specs)}] "
             f"c={spec['closeness_len']} p={spec['period_len']} t={spec['trend_len']} "
-            f"bilstm_h={spec['bilstm_hidden_dim']} tft_h={spec['tft_hidden_dim']} "
+            f"gru_h={spec['bilstm_hidden_dim']} tft_h={spec['tft_hidden_dim']} "
             f"dense={spec['dense_hidden_dim']} -> "
             f"val RMSE={row['val_RMSE']:.4f}, val UPS={row['val_UPS']:.4f}",
             flush=True,
@@ -675,9 +743,9 @@ def _search_informer(base_config, raw_df):
         config.informer_heads = spec["heads"]
         config.informer_layers = spec["layers"]
         config.informer_ff_dim = spec["ff_dim"]
-        config.closeness_lags = _window(spec["seq_len"], 1)
-        config.period_lags = _window(spec["seq_len"], 24)
-        config.trend_lags = _window(spec["seq_len"], 24 * 7)
+        config.closeness_lags = _lag_window_from_config(config, "closeness_lags", spec["seq_len"], 1)
+        config.period_lags = _lag_window_from_config(config, "period_lags", spec["seq_len"], 24)
+        config.trend_lags = _lag_window_from_config(config, "trend_lags", spec["seq_len"], 24 * 7)
 
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
@@ -763,9 +831,9 @@ def _search_patchtst(base_config, raw_df):
         config.patchtst_ff_dim = spec["ff_dim"]
         config.patchtst_patch_len = spec["patch_len"]
         config.patchtst_stride = spec["stride"]
-        config.closeness_lags = _window(spec["seq_len"], 1)
-        config.period_lags = _window(spec["seq_len"], 24)
-        config.trend_lags = _window(spec["seq_len"], 24 * 7)
+        config.closeness_lags = _lag_window_from_config(config, "closeness_lags", spec["seq_len"], 1)
+        config.period_lags = _lag_window_from_config(config, "period_lags", spec["seq_len"], 24)
+        config.trend_lags = _lag_window_from_config(config, "trend_lags", spec["seq_len"], 24 * 7)
 
         datasets = create_datasets(config, raw_df)
         input_dim = datasets["train_tpt"]["closeness"].shape[-1]
@@ -835,7 +903,7 @@ def _write_search_outputs(model_name: str, rows: list[dict], best: dict, output_
 
 
 def run_project_best_track(base_config=CONFIG, models: list[str] | None = None):
-    selected = models or ["BiLSTM", "TFT", "Hybrid", "Informer", "PatchTST"]
+    selected = models or ["Hybrid"]
     set_seed(base_config.random_seed)
     base_config.output_dir.mkdir(parents=True, exist_ok=True)
     base_config.checkpoint_dir.mkdir(parents=True, exist_ok=True)
@@ -870,11 +938,12 @@ def run_project_best_track(base_config=CONFIG, models: list[str] | None = None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Focused best-result tuning for BiLSTM, TFT, Hybrid, Informer, and PatchTST.")
+    parser = argparse.ArgumentParser(description="Focused tuning for the project Hybrid model.")
+    parser.add_argument("--city", default=None, help="Use city-specific data and outputs, e.g. delhi.")
     parser.add_argument(
         "--models",
-        default="BiLSTM,TFT,Hybrid,Informer,PatchTST",
-        help="Comma-separated subset of models to tune.",
+        default="Hybrid",
+        help="Comma-separated subset of models to tune. Use all to tune BiLSTM,TFT,Hybrid,Informer,PatchTST.",
     )
     parser.add_argument(
         "--max-trials",
@@ -902,12 +971,15 @@ def main():
     )
     args = parser.parse_args()
     selected = [name.strip() for name in args.models.split(",") if name.strip()]
-    CONFIG.search_max_trials = args.max_trials
-    CONFIG.search_epochs_override = args.epochs
-    CONFIG.search_patience_override = args.patience
-    CONFIG.search_lr_patience_override = args.lr_patience
+    if len(selected) == 1 and selected[0].lower() == "all":
+        selected = ["BiLSTM", "TFT", "Hybrid", "Informer", "PatchTST"]
+    config = apply_city_config(copy.deepcopy(CONFIG), args.city)
+    config.search_max_trials = args.max_trials
+    config.search_epochs_override = args.epochs
+    config.search_patience_override = args.patience
+    config.search_lr_patience_override = args.lr_patience
 
-    summary, summary_path = run_project_best_track(CONFIG, selected)
+    summary, summary_path = run_project_best_track(config, selected)
     print("\nProject-Best Summary")
     for model_name, payload in summary["results"].items():
         test_metrics = payload["test_metrics"]

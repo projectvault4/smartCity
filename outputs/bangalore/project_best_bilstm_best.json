@@ -1,0 +1,14 @@
+{
+  "trial": 5,
+  "hidden_dim": 24,
+  "seq_len": 12,
+  "batch_size": 64,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 764.707763671875,
+  "val_MAPE": 9.870881074093983,
+  "val_RMSE": 1809.6495361328125,
+  "val_NRMSE": 0.33346829917500903,
+  "val_UPS": 49.006449337833054,
+  "checkpoint_path": "outputs/bangalore/checkpoints/project_best_bilstm_trial_5.pt"
+}

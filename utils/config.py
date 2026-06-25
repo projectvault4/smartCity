@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -14,6 +15,7 @@ def _default_device() -> str:
 
 @dataclass
 class Config:
+    city: str = "default"
     data_dir: Path = Path("data")
     data_file: Path = Path("data/urban_multivariate_timeseries.csv")
     dataset_dir: Path = Path("datasets")
@@ -88,4 +90,33 @@ class Config:
     uncertainty_quantiles: tuple = (0.1, 0.9)
 
 
-CONFIG = Config()
+def apply_city_config(config: Config, city: str | None = None) -> Config:
+    selected = (city or os.environ.get("URBAN_CITY") or config.city or "default").strip().lower()
+    if selected in {"", "default", "base"}:
+        config.city = "default"
+        return config
+    if selected in {"delhi", "new_delhi", "new-delhi"}:
+        config.city = "delhi"
+        config.data_dir = Path("data") / "delhi"
+        config.data_file = config.data_dir / "urban_multidomain_timeseries.csv"
+        config.dataset_dir = Path("datasets") / "delhi"
+        config.output_dir = Path("outputs") / "delhi"
+        config.checkpoint_dir = config.output_dir / "checkpoints"
+        config.plot_dir = config.output_dir / "plots"
+        config.trend_lags = tuple(range(48, 56))
+        config.streaming_window = 96
+        config.ensemble_error_window = 48
+        return config
+    if selected in {"bangalore", "bengaluru", "banglore", "blr"}:
+        config.city = "bangalore"
+        config.data_dir = Path("data") / "bangalore"
+        config.data_file = config.data_dir / "urban_multidomain_timeseries.csv"
+        config.dataset_dir = Path("datasets") / "banglore data"
+        config.output_dir = Path("outputs") / "bangalore"
+        config.checkpoint_dir = config.output_dir / "checkpoints"
+        config.plot_dir = config.output_dir / "plots"
+        return config
+    raise ValueError(f"Unsupported city '{selected}'. Use 'delhi' or 'bangalore'.")
+
+
+CONFIG = apply_city_config(Config())

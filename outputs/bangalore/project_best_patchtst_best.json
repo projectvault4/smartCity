@@ -1,0 +1,19 @@
+{
+  "trial": 2,
+  "seq_len": 16,
+  "d_model": 48,
+  "heads": 4,
+  "layers": 1,
+  "ff_dim": 128,
+  "patch_len": 4,
+  "stride": 2,
+  "batch_size": 128,
+  "dropout": 0.1,
+  "learning_rate": 0.0003,
+  "val_MAE": 1114.4345703125,
+  "val_MAPE": 15.47876086748431,
+  "val_RMSE": 2406.291748046875,
+  "val_NRMSE": 0.442445231295862,
+  "val_UPS": 39.890211495066275,
+  "checkpoint_path": "outputs/bangalore/checkpoints/project_best_patchtst_trial_2.pt"
+}

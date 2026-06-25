@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
-from utils.config import CONFIG
+from utils.config import CONFIG, apply_city_config
 from utils.explainable_forecasting import classify_forecast_levels
 from utils.forecast_service import build_forecast_payload, build_past_present_future_frame
 
@@ -23,7 +24,7 @@ def _aqi_health_note(aqi_value: float, status: str) -> str:
 def _format_metric_line(metric: dict) -> str:
     line = f"{metric['label']}: {metric['prediction']:.0f} ({metric['status']}, {metric['confidence']} confidence)"
     if metric["key"] == "aqi":
-        line += f" - {_aqi_health_note(metric['prediction'], metric['status'])}"
+        line += f" -- {_aqi_health_note(metric['prediction'], metric['status'])}"
     return line
 
 
@@ -156,11 +157,18 @@ def _build_alerts(metrics: list[dict]) -> list[str]:
     return alerts
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Print the next-hour forecast.")
+    parser.add_argument("--city", default=None, help="Use city-specific data and outputs, e.g. delhi.")
+    return parser.parse_args()
+
+
 def main():
-    payload = build_forecast_payload(CONFIG)
-    timeline_df = build_past_present_future_frame(CONFIG, future_steps=CONFIG.direct_forecast_steps)
+    config = apply_city_config(CONFIG, parse_args().city)
+    payload = build_forecast_payload(config)
+    timeline_df = build_past_present_future_frame(config, future_steps=config.direct_forecast_steps)
     alerts = _build_alerts(payload["metrics"])
-    output_path = Path(CONFIG.output_dir) / "past_present_future_forecast.csv"
+    output_path = Path(config.output_dir) / "past_present_future_forecast.csv"
     timeline_df.to_csv(output_path, index=False)
 
     print(f"Prediction Time: {payload['forecast_for'].replace('T', ' ')}")
@@ -197,7 +205,7 @@ def main():
         print(f"- {line}")
 
     print("\nPast Present Future File:")
-    print(f"- Saved timestamped history + {CONFIG.direct_forecast_steps} direct future hours to {output_path}")
+    print(f"- Saved timestamped history + {config.direct_forecast_steps} direct future hours to {output_path}")
 
     print("\nFuture Preview:")
     preview = timeline_df[timeline_df["time_segment"] == "future"].head(5)

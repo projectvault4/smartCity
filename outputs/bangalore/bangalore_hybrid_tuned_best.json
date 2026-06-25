@@ -1,0 +1,142 @@
+{
+  "model": "BangaloreTunedTFTGRUResidualHybrid",
+  "selection_protocol": {
+    "checkpoint_candidates": 10,
+    "calibration_feature_candidates": [
+      [
+        "model"
+      ],
+      [
+        "model",
+        "lag_1"
+      ],
+      [
+        "model",
+        "lag_1",
+        "lag_24"
+      ],
+      [
+        "model",
+        "lag_1",
+        "lag_24",
+        "lag_48"
+      ],
+      [
+        "model",
+        "lag_1",
+        "lag_24",
+        "lag_48",
+        "lag_168"
+      ]
+    ],
+    "validation_fit_ratio": 0.6,
+    "selection_rule": "lowest chronological validation holdout RMSE",
+    "test_used_for_selection": false
+  },
+  "selected_trial": 2,
+  "selected_features": [
+    "model",
+    "lag_1"
+  ],
+  "source_checkpoint": "outputs/bangalore/checkpoints/project_best_hybrid_trial_2.pt",
+  "checkpoint_path": "outputs/bangalore/checkpoints/bangalore_hybrid_tuned_best.pt",
+  "prediction_path": "outputs/bangalore/bangalore_hybrid_tuned_predictions.csv",
+  "data_manifest_path": "outputs/bangalore/bangalore_training_data_manifest.json",
+  "raw_test_metrics": {
+    "MAE": 416.5997314453125,
+    "MAPE": 6.7484864106518945,
+    "RMSE": 899.97119140625,
+    "NRMSE": 0.16691160631208296
+  },
+  "metrics": {
+    "MAE": 293.3298645019531,
+    "MAPE": 4.117681888875249,
+    "RMSE": 646.7178955078125,
+    "NRMSE": 0.1199424201582606,
+    "UPS": 89.29030475144326
+  },
+  "per_target_metrics": {
+    "traffic_flow": {
+      "MAE": 926.3753051757812,
+      "MAPE": 10.131055478556508,
+      "RMSE": 1259.68701171875,
+      "NRMSE": 0.23375301811240545,
+      "UPS": 81.05349979446952
+    },
+    "aqi": {
+      "MAE": 0.15196901559829712,
+      "MAPE": 0.3067724623595735,
+      "RMSE": 0.7104523777961731,
+      "NRMSE": 0.24979139566608227,
+      "UPS": 80.01335290574994
+    },
+    "temperature": {
+      "MAE": 0.05758873373270035,
+      "MAPE": 0.2534295187607764,
+      "RMSE": 0.18609599769115448,
+      "NRMSE": 0.28400416119307564,
+      "UPS": 77.88136753940239
+    },
+    "electricity_demand": {
+      "MAE": 246.7344970703125,
+      "MAPE": 5.779470095824137,
+      "RMSE": 293.53704833984375,
+      "NRMSE": 0.35687567385711216,
+      "UPS": 73.69871973291096
+    }
+  },
+  "calibration": {
+    "traffic_flow": {
+      "features": [
+        "model",
+        "lag_1"
+      ],
+      "ridge_alpha": 0.0001,
+      "intercept": 398.7587890625,
+      "coefficients": [
+        0.841381847858429,
+        0.19009169936180115
+      ],
+      "validation_RMSE": 863.051025390625
+    },
+    "aqi": {
+      "features": [
+        "model",
+        "lag_1"
+      ],
+      "ridge_alpha": 0.1,
+      "intercept": 1.8574981689453125,
+      "coefficients": [
+        0.013576644472777843,
+        0.9443402886390686
+      ],
+      "validation_RMSE": 0.5334214568138123
+    },
+    "temperature": {
+      "features": [
+        "model",
+        "lag_1"
+      ],
+      "ridge_alpha": 0.0001,
+      "intercept": 0.69781494140625,
+      "coefficients": [
+        0.0033862378913909197,
+        0.9674878716468811
+      ],
+      "validation_RMSE": 0.15232206881046295
+    },
+    "electricity_demand": {
+      "features": [
+        "model",
+        "lag_1"
+      ],
+      "ridge_alpha": 100.0,
+      "intercept": -22.30859375,
+      "coefficients": [
+        0.6449630856513977,
+        0.4139561057090759
+      ],
+      "validation_RMSE": 215.71263122558594
+    }
+  }
+}

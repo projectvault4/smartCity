@@ -109,6 +109,24 @@ def _estimate_future_humidity(raw_df: pd.DataFrame, step_ahead: int, next_temper
     return float(np.clip(estimated, 5.0, 100.0))
 
 
+def _bounded_target_value(target: str, value: float) -> float:
+    if target == "aqi":
+        return float(np.clip(value, 0.0, 500.0))
+    if target in {"traffic_flow", "electricity_demand"}:
+        return float(max(0.0, value))
+    return float(value)
+
+
+def _bounded_forecast_item(target: str, item: dict) -> dict:
+    prediction = _bounded_target_value(target, float(item["prediction"]))
+    lower = _bounded_target_value(target, float(item["lower"]))
+    upper = _bounded_target_value(target, float(item["upper"]))
+    if lower > upper:
+        lower, upper = upper, lower
+    prediction = float(np.clip(prediction, lower, upper)) if lower <= upper else prediction
+    return {**item, "prediction": prediction, "lower": lower, "upper": upper}
+
+
 def _uncertainty_descriptor(interval_width: float, recent_series: pd.Series) -> tuple[str, str]:
     reference = float(recent_series.tail(24).std(ddof=0))
     if reference <= 0:
@@ -135,12 +153,15 @@ def _apply_project_best_override(forecast: dict[str, dict], config=CONFIG) -> tu
     for key, values in forecast.items():
         tuned_prediction = float(override["prediction"][key])
         delta = tuned_prediction - float(values["prediction"])
-        adjusted[key] = {
-            **values,
-            "prediction": tuned_prediction,
-            "lower": float(values["lower"]) + delta,
-            "upper": float(values["upper"]) + delta,
-        }
+        adjusted[key] = _bounded_forecast_item(
+            key,
+            {
+                **values,
+                "prediction": tuned_prediction,
+                "lower": float(values["lower"]) + delta,
+                "upper": float(values["upper"]) + delta,
+            },
+        )
     return adjusted, model_name, override["timestamp"].isoformat()
 
 
@@ -162,7 +183,10 @@ def build_past_present_future_frame(config=CONFIG, future_steps: int = 24) -> pd
     future_rows: list[dict[str, Any]] = []
 
     for step_ahead in range(1, future_steps + 1):
-        forecast = direct_forecasts[step_ahead]
+        forecast = {
+            key: _bounded_forecast_item(key, values)
+            for key, values in direct_forecasts[step_ahead].items()
+        }
         next_timestamp = raw_df["timestamp"].iloc[-1] + step_ahead * time_step
         next_temperature = float(forecast["temperature"]["prediction"])
         next_row = {
@@ -398,6 +422,7 @@ def build_forecast_payload(config=CONFIG) -> Dict[str, Any]:
     forecaster = load_or_train_forecaster(datasets, config)
     explainable_artifacts = forecaster.fit(prepared_df)
     forecast = forecaster.predict_from_prepared(prepared_df)
+    forecast = {key: _bounded_forecast_item(key, values) for key, values in forecast.items()}
     forecast, tuned_model_source, tuned_timestamp = _apply_project_best_override(forecast, config)
     explanations = forecaster.explain_latest_prediction(prepared_df, top_k=2)
 

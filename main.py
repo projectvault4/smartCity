@@ -19,10 +19,10 @@ from evaluate import evaluate_models
 from train import build_models, checkpoint_name_for_model, train_all_models, train_selected_models
 from utils.analytics import compute_correlation_matrices, granger_causality_table, save_analysis_tables
 from utils.baselines import evaluate_baselines
-from utils.config import CONFIG
+from utils.config import CONFIG, apply_city_config
 from utils.data_utils import create_datasets, load_input_dataframe, rolling_mean, set_seed
 from utils.explainable_forecasting import ExplainableTimeSeriesForecaster
-from utils.metrics import compute_all_metrics, mape
+from utils.metrics import compute_all_metrics
 from utils.training import fine_tune_model, predict_model
 from utils.visualization import (
     plot_correlation_heatmap,
@@ -34,6 +34,8 @@ from utils.visualization import (
 )
 from utils.xai import save_explainability_report
 
+REFERENCE_ONLY_COMPARISON_MODELS = {"Prophet"}
+
 
 def _print_table(title: str, frame: pd.DataFrame, columns: list[str] | None = None):
     print(f"\n{title}")
@@ -42,6 +44,14 @@ def _print_table(title: str, frame: pd.DataFrame, columns: list[str] | None = No
         print(frame[available].round(4).to_string())
     else:
         print(frame.round(4).to_string())
+
+
+def _per_target_display_frame(target_metrics: dict) -> pd.DataFrame:
+    frame = pd.DataFrame(target_metrics).T
+    if "UPS" not in frame.columns and "NRMSE" in frame.columns:
+        nrmse_values = pd.to_numeric(frame["NRMSE"], errors="coerce")
+        frame["UPS"] = (100.0 * (1.0 - nrmse_values)).clip(lower=0.0)
+    return frame
 
 
 def _format_switcher_choices(switcher_models: dict, config) -> str:
@@ -122,27 +132,32 @@ def _build_paper_style_comparison(config, metrics_df: pd.DataFrame, predictions:
     for item in literature_rows:
         model_name = item["model"]
         seen_models.add(model_name)
-        if model_name in metrics_df.index and model_name in predictions:
-            rows.append(
-                {
-                    "Model": model_name,
-                    "MAE": f"{float(metrics_df.loc[model_name, 'MAE']):.2f}",
-                    "MAPE": f"{mape(y_true, predictions[model_name]):.2f}%",
-                    "RMSE": f"{float(metrics_df.loc[model_name, 'RMSE']):.2f}",
-                }
-            )
-        else:
-            rows.append({"Model": model_name, "MAE": "-", "MAPE": "-", "RMSE": "-"})
-
-    for model_name in metrics_df.index:
-        if model_name in seen_models or model_name not in predictions:
+        row = metrics_df.loc[model_name] if model_name in metrics_df.index else None
+        if row is None and model_name not in REFERENCE_ONLY_COMPARISON_MODELS:
             continue
         rows.append(
             {
                 "Model": model_name,
-                "MAE": f"{float(metrics_df.loc[model_name, 'MAE']):.2f}",
-                "MAPE": f"{mape(y_true, predictions[model_name]):.2f}%",
-                "RMSE": f"{float(metrics_df.loc[model_name, 'RMSE']):.2f}",
+                "MAE": "N/A" if row is None or pd.isna(row.get("MAE")) else f"{float(row['MAE']):.2f}",
+                "MAPE": "N/A" if row is None or pd.isna(row.get("MAPE")) else f"{float(row['MAPE']):.2f}%",
+                "RMSE": "N/A" if row is None or pd.isna(row.get("RMSE")) else f"{float(row['RMSE']):.2f}",
+                "NRMSE": "N/A" if row is None or pd.isna(row.get("NRMSE")) else f"{float(row['NRMSE']):.4f}",
+                "UPS": "N/A" if row is None or pd.isna(row.get("UPS")) else f"{float(row['UPS']):.2f}",
+            }
+        )
+
+    for model_name in metrics_df.index:
+        if model_name in seen_models:
+            continue
+        row = metrics_df.loc[model_name]
+        rows.append(
+            {
+                "Model": model_name,
+                "MAE": "N/A" if pd.isna(row.get("MAE")) else f"{float(row['MAE']):.2f}",
+                "MAPE": "N/A" if pd.isna(row.get("MAPE")) else f"{float(row['MAPE']):.2f}%",
+                "RMSE": "N/A" if pd.isna(row.get("RMSE")) else f"{float(row['RMSE']):.2f}",
+                "NRMSE": "N/A" if pd.isna(row.get("NRMSE")) else f"{float(row['NRMSE']):.4f}",
+                "UPS": "N/A" if pd.isna(row.get("UPS")) else f"{float(row['UPS']):.2f}",
             }
         )
 
@@ -167,6 +182,7 @@ def _sort_metrics_frame(config, metrics_df: pd.DataFrame) -> pd.DataFrame:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run the adaptive time-series forecasting pipeline.")
+    parser.add_argument("--city", default=None, help="Run with city-specific data and outputs, e.g. delhi.")
     parser.add_argument(
         "--fast",
         action="store_true",
@@ -324,7 +340,7 @@ def _comparison_feature_weights(feature_weights: dict, baseline_metadata: dict) 
 
 def main():
     args = parse_args()
-    config = copy.deepcopy(CONFIG)
+    config = apply_city_config(copy.deepcopy(CONFIG), args.city)
     if args.fast:
         config.epochs = min(config.epochs, 3)
         config.patience = min(config.patience, 1)
@@ -334,6 +350,7 @@ def main():
     set_seed(config.random_seed)
 
     raw_df = load_input_dataframe(config)
+    config.data_dir.mkdir(parents=True, exist_ok=True)
     raw_df.to_csv(Path(config.data_dir) / "prepared_input_snapshot.csv", index=False)
     datasets = create_datasets(config, raw_df)
     explainable_model, explainable_artifacts = _load_explainable_forecaster(datasets["prepared_df"], config)
@@ -390,8 +407,8 @@ def main():
     print(research_table_df.to_string(index=False))
     print(f"\nModel source: {model_source}")
     print(f"\nAdaptiveSwitcher chose: {_format_switcher_choices(switcher_models, config)}")
-    _print_table("Per-Target Hybrid Metrics", pd.DataFrame(per_target_metrics["Hybrid"]).T, ["MAE", "RMSE", "NRMSE"])
-    _print_table("Per-Target Adaptive Switcher Metrics", pd.DataFrame(per_target_metrics["AdaptiveSwitcher"]).T, ["MAE", "RMSE", "NRMSE"])
+    _print_table("Per-Target Hybrid Metrics", _per_target_display_frame(per_target_metrics["Hybrid"]), ["MAE", "MAPE", "RMSE", "NRMSE", "UPS"])
+    _print_table("Per-Target Adaptive Switcher Metrics", _per_target_display_frame(per_target_metrics["AdaptiveSwitcher"]), ["MAE", "MAPE", "RMSE", "NRMSE", "UPS"])
     if streaming_metrics:
         print("\nStreaming Adaptive Switcher Metrics")
         for metric_name, value in streaming_metrics.items():

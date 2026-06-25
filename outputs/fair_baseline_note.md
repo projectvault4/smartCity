@@ -1,16 +1,17 @@
 # Fair Baseline Note
 
 Evaluated in this project:
+- ARIMA
 - BiLSTM
 - GRU
 - Hybrid
 - Informer
 - LSTM
 - PatchTST
+- SARIMA
 - TFT
 
 Literature-only references:
-- ARIMA
 - Autoformer
 - DLinear
 - DeepAR
@@ -19,7 +20,6 @@ Literature-only references:
 - N-BEATS
 - N-HiTS
 - Prophet
-- SARIMA
 - TiDE
 - TimeMixer
 - TimesNet

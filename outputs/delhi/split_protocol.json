@@ -1,0 +1,32 @@
+{
+  "sequence_length": 8,
+  "forecast_horizon": 1,
+  "targets": [
+    "traffic_flow",
+    "aqi",
+    "temperature",
+    "electricity_demand"
+  ],
+  "train": {
+    "rows": 319,
+    "start": "2024-08-12 00:00:00",
+    "end": "2024-08-25 06:00:00"
+  },
+  "validation": {
+    "rows": 68,
+    "start": "2024-08-25 07:00:00",
+    "end": "2024-08-28 02:00:00"
+  },
+  "test": {
+    "rows": 69,
+    "start": "2024-08-28 03:00:00",
+    "end": "2024-08-30 23:00:00"
+  },
+  "leakage_prevention": [
+    "The dataset is split chronologically into train, validation, and test segments.",
+    "Lag and rolling-window features only use past observations because they are created with trailing shifts/rolling windows.",
+    "Rows with insufficient history are dropped after feature engineering.",
+    "Feature and target scalers are fitted on the training split only, then applied to validation and test splits.",
+    "Forecast evaluation uses future timestamps that are strictly later than the input context window."
+  ]
+}

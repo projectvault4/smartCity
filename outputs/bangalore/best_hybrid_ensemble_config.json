@@ -1,0 +1,12 @@
+{
+  "dense_hidden_dim": 96,
+  "dropout": 0.1,
+  "ensemble_error_window": 72,
+  "hybrid_MAE": 191.13296508789062,
+  "hybrid_RMSE": 482.28155517578125,
+  "ensemble_MAE": 186.48595652962533,
+  "ensemble_RMSE": 464.6813049208478,
+  "ensemble_NRMSE": 0.08130088432715159,
+  "ensemble_UPS": 56.43869308663652,
+  "checkpoint_path": "outputs/checkpoints/hybrid_d96_do01_ew72.pt"
+}

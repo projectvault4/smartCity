@@ -1,0 +1,14 @@
+{
+  "trial": 2,
+  "hidden_dim": 16,
+  "seq_len": 12,
+  "batch_size": 64,
+  "dropout": 0.1,
+  "learning_rate": 0.0005,
+  "val_MAE": 352395.34375,
+  "val_MAPE": 34.682471719608884,
+  "val_RMSE": 799122.75,
+  "val_NRMSE": 0.5465751024384421,
+  "val_UPS": 0.0,
+  "checkpoint_path": "outputs/delhi/checkpoints/project_best_bilstm_trial_2.pt"
+}

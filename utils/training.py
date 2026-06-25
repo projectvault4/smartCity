@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
@@ -46,7 +47,7 @@ class SequenceDataset(Dataset):
             features = {
                 key: torch.tensor(value[idx], dtype=torch.float32)
                 for key, value in self.x.items()
-                if key in {"closeness", "period", "trend"}
+                if key in {"closeness", "period", "trend"} or key.startswith("seasonal")
             }
         else:
             features = torch.tensor(self.x[idx], dtype=torch.float32)
@@ -88,6 +89,9 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
     history = {"train_loss": [], "val_loss": []}
 
     checkpoint_path = checkpoint_dir / f"{model_name}.pt"
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    torch.save(model.state_dict(), checkpoint_path)
+    best_loss = float("inf")
 
     if verbose:
         print(
@@ -130,13 +134,18 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
                 loss = criterion(preds, yb)
                 val_losses.append(loss.item())
 
-        train_loss = float(np.mean(train_losses))
-        val_loss = float(np.mean(val_losses))
+        train_loss = float(np.mean(train_losses)) if train_losses else float("inf")
+        val_loss = float(np.mean(val_losses)) if val_losses else train_loss
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
-        scheduler.step(val_loss)
+        finite_val_loss = math.isfinite(val_loss)
+        scheduler.step(val_loss if finite_val_loss else train_loss)
 
-        if val_loss <= early_stopper.best_loss:
+        improved = finite_val_loss and val_loss <= best_loss
+        if improved:
+            best_loss = val_loss
+            early_stopper.best_loss = val_loss
+            early_stopper.counter = 0
             torch.save(model.state_dict(), checkpoint_path)
             if verbose:
                 print(
@@ -148,16 +157,19 @@ def train_model(model, model_name: str, train_data, val_data, config, checkpoint
             print(
                 f"Epoch {epoch:03d}/{config.epochs} | "
                 f"train_loss={train_loss:.6f} | val_loss={val_loss:.6f} | "
-                f"best_val={early_stopper.best_loss:.6f}",
+                f"best_val={best_loss:.6f}",
                 flush=True,
             )
-        if early_stopper.step(val_loss):
+        if finite_val_loss and not improved and early_stopper.step(val_loss):
             if verbose:
                 print(f"Early stopping after epoch {epoch:03d}", flush=True)
             break
 
     model.load_state_dict(torch.load(checkpoint_path, map_location=device))
-    return TrainResult(model_name=model_name, best_val_loss=early_stopper.best_loss, history=history, checkpoint_path=checkpoint_path)
+    if not math.isfinite(best_loss):
+        finite_losses = [loss for loss in history["val_loss"] if math.isfinite(loss)]
+        best_loss = min(finite_losses) if finite_losses else float("inf")
+    return TrainResult(model_name=model_name, best_val_loss=best_loss, history=history, checkpoint_path=checkpoint_path)
 
 
 def fine_tune_model(model, recent_data, config, epochs: int = 2):

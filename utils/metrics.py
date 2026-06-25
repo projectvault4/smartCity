@@ -36,21 +36,20 @@ def nrmse(y_true, y_pred):
     return float(rmse(y_true, y_pred) / np.sqrt(variance))
 
 
+def urban_prediction_score_from_normalized_error(normalized_error: float) -> float:
+    if not np.isfinite(normalized_error):
+        return 0.0
+    normalized_error = max(0.0, float(normalized_error))
+    return float(100.0 / (1.0 + normalized_error))
+
+
 def compute_urban_prediction_score(y_true, y_pred, target_names):
     y_true = _as_2d(y_true)
     y_pred = _as_2d(y_pred)
-    normalized_errors = []
-    for idx, _ in enumerate(target_names):
-        variance = float(np.var(y_true[:, idx]))
-        if variance <= 1e-12:
-            continue
-        normalized_errors.append(float(rmse(y_true[:, idx], y_pred[:, idx]) / np.sqrt(variance)))
-
-    if not normalized_errors:
+    if y_true.shape[1] == 0:
         return 100.0
 
-    mean_nrmse = float(np.mean(normalized_errors))
-    return float(max(0.0, 100.0 * (1.0 - mean_nrmse)))
+    return urban_prediction_score_from_normalized_error(nrmse(y_true, y_pred))
 
 
 def compute_all_metrics(y_true, y_pred):
@@ -65,7 +64,9 @@ def compute_all_metrics(y_true, y_pred):
 def compute_metrics_by_target(y_true, y_pred, target_names):
     y_true = _as_2d(y_true)
     y_pred = _as_2d(y_pred)
-    return {
-        target_name: compute_all_metrics(y_true[:, idx], y_pred[:, idx])
-        for idx, target_name in enumerate(target_names)
-    }
+    metrics_by_target = {}
+    for idx, target_name in enumerate(target_names):
+        metrics = compute_all_metrics(y_true[:, idx], y_pred[:, idx])
+        metrics["UPS"] = urban_prediction_score_from_normalized_error(metrics["NRMSE"])
+        metrics_by_target[target_name] = metrics
+    return metrics_by_target

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
@@ -16,9 +17,10 @@ from evaluate import evaluate_models
 from train import build_models
 from utils.analytics import compute_correlation_matrices, granger_causality_table, save_analysis_tables
 from utils.baselines import evaluate_baselines
-from utils.config import CONFIG
+from utils.config import CONFIG, apply_city_config
 from utils.data_utils import create_datasets, load_input_dataframe, rolling_mean, set_seed
 from utils.explainable_forecasting import ExplainableTimeSeriesForecaster
+from utils.metrics import urban_prediction_score_from_normalized_error
 from utils.paper_artifacts import (
     evaluate_ablation_study,
     load_neural_models_for_robustness,
@@ -41,9 +43,12 @@ from utils.visualization import (
 )
 from utils.xai import save_explainability_report
 
+REFERENCE_ONLY_COMPARISON_MODELS = {"Prophet"}
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate core and paper-ready forecasting artifacts.")
+    parser.add_argument("--city", default=None, help="Use city-specific data and outputs, e.g. delhi.")
     parser.add_argument(
         "--with-reliability",
         action="store_true",
@@ -92,6 +97,14 @@ def _sort_metrics_frame(config, metrics_df: pd.DataFrame) -> pd.DataFrame:
     return metrics_df.loc[ordered_names]
 
 
+def _format_metric_value(row: pd.Series | None, metric_name: str, suffix: str = "") -> str:
+    if row is None or metric_name not in row or pd.isna(row[metric_name]):
+        return "N/A"
+    if metric_name == "NRMSE":
+        return f"{float(row[metric_name]):.4f}{suffix}"
+    return f"{float(row[metric_name]):.2f}{suffix}"
+
+
 def _build_paper_style_comparison(config, metrics_df: pd.DataFrame, predictions: dict[str, np.ndarray], y_true: np.ndarray) -> pd.DataFrame:
     literature_rows = _load_literature_models(config)
     rows = []
@@ -100,16 +113,17 @@ def _build_paper_style_comparison(config, metrics_df: pd.DataFrame, predictions:
     for item in literature_rows:
         model_name = item["model"]
         seen_models.add(model_name)
-        if model_name not in metrics_df.index:
+        row = metrics_df.loc[model_name] if model_name in metrics_df.index else None
+        if row is None and model_name not in REFERENCE_ONLY_COMPARISON_MODELS:
             continue
-
-        row = metrics_df.loc[model_name]
         rows.append(
             {
                 "Model": model_name,
-                "MAE": f"{float(row['MAE']):.2f}",
-                "MAPE": f"{float(row['MAPE']):.2f}%",
-                "RMSE": f"{float(row['RMSE']):.2f}",
+                "MAE": _format_metric_value(row, "MAE"),
+                "MAPE": _format_metric_value(row, "MAPE", "%"),
+                "RMSE": _format_metric_value(row, "RMSE"),
+                "NRMSE": _format_metric_value(row, "NRMSE"),
+                "UPS": _format_metric_value(row, "UPS"),
             }
         )
 
@@ -120,9 +134,11 @@ def _build_paper_style_comparison(config, metrics_df: pd.DataFrame, predictions:
         rows.append(
             {
                 "Model": model_name,
-                "MAE": f"{float(row['MAE']):.2f}",
-                "MAPE": f"{float(row['MAPE']):.2f}%",
-                "RMSE": f"{float(row['RMSE']):.2f}",
+                "MAE": _format_metric_value(row, "MAE"),
+                "MAPE": _format_metric_value(row, "MAPE", "%"),
+                "RMSE": _format_metric_value(row, "RMSE"),
+                "NRMSE": _format_metric_value(row, "NRMSE"),
+                "UPS": _format_metric_value(row, "UPS"),
             }
         )
 
@@ -147,21 +163,75 @@ def _hybrid_artifact_path(config) -> Path:
     return Path(config.output_dir) / "tft_gru_residual_hybrid_metrics.json"
 
 
-def _load_tft_gru_hybrid_artifact(config) -> tuple[dict | None, dict | None, np.ndarray | None]:
+def _candidate_prediction_paths(config, artifact_path: str | None, fallback_name: str) -> list[Path]:
+    output_dir = Path(config.output_dir)
+    fallback_path = output_dir / fallback_name
+    candidates = []
+    if not artifact_path:
+        return [fallback_path]
+
+    prediction_path = Path(artifact_path)
+    city_prediction_path = output_dir / prediction_path.name
+    if city_prediction_path.exists() and prediction_path.parent != output_dir:
+        candidates.append(city_prediction_path)
+    candidates.append(prediction_path)
+    candidates.append(fallback_path)
+
+    unique_candidates = []
+    seen = set()
+    for candidate in candidates:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        unique_candidates.append(candidate)
+    return unique_candidates
+
+
+def _load_tft_gru_hybrid_artifact(
+    config,
+    expected_rows: int | None = None,
+) -> tuple[dict | None, dict | None, np.ndarray | None]:
     metrics_path = _hybrid_artifact_path(config)
     if not metrics_path.exists():
         return None, None, None
 
     artifact = _load_json(metrics_path)
     predictions = None
-    prediction_path = Path(artifact.get("prediction_path", Path(config.output_dir) / "tft_gru_residual_hybrid_predictions.csv"))
-    if prediction_path.exists():
+    prediction_paths = _candidate_prediction_paths(
+        config,
+        artifact.get("prediction_path"),
+        "tft_gru_residual_hybrid_predictions.csv",
+    )
+    for prediction_path in prediction_paths:
+        if not prediction_path.exists():
+            continue
         prediction_df = pd.read_csv(prediction_path)
         prediction_columns = [f"predicted_{target}" for target in config.target_columns]
-        if all(column in prediction_df.columns for column in prediction_columns):
-            predictions = prediction_df[prediction_columns].to_numpy(dtype=float)
+        if not all(column in prediction_df.columns for column in prediction_columns):
+            continue
 
-    return artifact.get("metrics"), artifact.get("per_target_metrics"), predictions
+        candidate_predictions = prediction_df[prediction_columns].to_numpy(dtype=float)
+        if expected_rows is None or len(candidate_predictions) == expected_rows:
+            predictions = candidate_predictions
+            break
+        print(
+            "Skipping stale hybrid prediction overlay | "
+            f"{prediction_path} has {len(candidate_predictions)} rows, expected {expected_rows}.",
+            flush=True,
+        )
+
+    metrics = artifact.get("metrics")
+    per_target_metrics = artifact.get("per_target_metrics")
+    if metrics and per_target_metrics:
+        for target_metrics in per_target_metrics.values():
+            if "NRMSE" not in target_metrics:
+                continue
+            target_metrics["UPS"] = urban_prediction_score_from_normalized_error(target_metrics["NRMSE"])
+        metrics = dict(metrics)
+        if "NRMSE" in metrics:
+            metrics["UPS"] = urban_prediction_score_from_normalized_error(metrics["NRMSE"])
+
+    return metrics, per_target_metrics, predictions
 
 
 def _overlay_tft_gru_hybrid_artifact(
@@ -170,9 +240,20 @@ def _overlay_tft_gru_hybrid_artifact(
     all_metrics_df: pd.DataFrame,
     all_per_target_metrics: dict,
     all_predictions: dict[str, np.ndarray],
+    expected_rows: int | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict, dict[str, np.ndarray], bool]:
-    metrics, per_target_metrics, predictions = _load_tft_gru_hybrid_artifact(config)
+    metrics, per_target_metrics, predictions = _load_tft_gru_hybrid_artifact(config, expected_rows)
     if metrics is None or per_target_metrics is None:
+        return core_metrics_df, all_metrics_df, all_per_target_metrics, all_predictions, False
+
+    existing_rmse = all_metrics_df.loc["Hybrid", "RMSE"] if "Hybrid" in all_metrics_df.index and "RMSE" in all_metrics_df.columns else None
+    artifact_rmse = metrics.get("RMSE")
+    if existing_rmse is not None and artifact_rmse is not None and float(artifact_rmse) > float(existing_rmse):
+        print(
+            "Skipping hybrid artifact override because it is worse than finalized metrics | "
+            f"artifact RMSE={float(artifact_rmse):.4f}, finalized RMSE={float(existing_rmse):.4f}.",
+            flush=True,
+        )
         return core_metrics_df, all_metrics_df, all_per_target_metrics, all_predictions, False
 
     for frame in (core_metrics_df, all_metrics_df):
@@ -192,12 +273,30 @@ def _comparison_feature_weights(feature_weights: dict, baseline_metadata: dict) 
     }
 
 
+def _filter_predictions_by_length(
+    all_predictions: dict[str, np.ndarray],
+    expected_rows: int,
+) -> dict[str, np.ndarray]:
+    aligned_predictions = {}
+    for name, prediction in all_predictions.items():
+        if len(prediction) == expected_rows:
+            aligned_predictions[name] = prediction
+            continue
+        print(
+            "Skipping prediction series with mismatched length | "
+            f"{name}: {len(prediction)} rows, expected {expected_rows}.",
+            flush=True,
+        )
+    return aligned_predictions
+
+
 def main():
     args = parse_args()
-    config = CONFIG
+    config = apply_city_config(copy.deepcopy(CONFIG), args.city)
     config.output_dir.mkdir(parents=True, exist_ok=True)
     config.checkpoint_dir.mkdir(parents=True, exist_ok=True)
     config.plot_dir.mkdir(parents=True, exist_ok=True)
+    config.data_dir.mkdir(parents=True, exist_ok=True)
 
     set_seed(config.random_seed)
     raw_df = load_input_dataframe(config)
@@ -248,8 +347,8 @@ def main():
         per_target_metrics = finalized_summary.get("per_target_metrics")
         if not offline_metrics or not per_target_metrics:
             raise RuntimeError(
-                "outputs/summary.json does not contain finalized metrics needed for artifact fallback. "
-                "Run `python3 finalize_project_best_outputs.py` first."
+                f"{Path(config.output_dir) / 'summary.json'} does not contain finalized metrics needed for artifact fallback. "
+                f"Run `python3 finalize_project_best_outputs.py --city {config.city}` first."
             )
         core_model_names = ["BiLSTM", "TFT", "Hybrid", "Informer", "PatchTST"]
         all_metrics_df = pd.DataFrame(offline_metrics).T
@@ -270,8 +369,10 @@ def main():
             all_metrics_df,
             all_per_target_metrics,
             all_predictions,
+            expected_rows=len(y_true),
         )
     )
+    all_predictions = _filter_predictions_by_length(all_predictions, len(y_true))
     all_metrics_df = _sort_metrics_frame(config, all_metrics_df)
     research_table_df = _build_paper_style_comparison(config, all_metrics_df, all_predictions, y_true)
     error_traces = (

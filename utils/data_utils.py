@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 from typing import List, Tuple
 
@@ -255,6 +257,411 @@ def _compute_traffic_sensitive_aqi(
     return (0.15 * baseline_aqi + 0.85 * derived_aqi).clip(0, 500)
 
 
+def _date_from_probe_filename(path: Path) -> pd.Timestamp:
+    match = re.search(r"(\d{4}-\d{2}-\d{2})", path.name)
+    if not match:
+        raise ValueError(f"Cannot infer date from Delhi probe file name: {path}")
+    return pd.to_datetime(match.group(1))
+
+
+def _load_delhi_probe_counts(probe_dir: Path) -> pd.DataFrame:
+    files = sorted(probe_dir.glob("new_delhi__*_to_*_.geojson"))
+    if not files:
+        raise FileNotFoundError(f"No Delhi probe-count GeoJSON files found under {probe_dir}")
+
+    rows = []
+    for path in files:
+        day = _date_from_probe_filename(path)
+        with path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+
+        hourly_counts = np.zeros(24, dtype=float)
+        speed_limits = []
+        distances = []
+        frc_values = []
+        for feature in payload.get("features", []):
+            props = feature.get("properties", {})
+            counts = props.get("segmentProbeCounts")
+            if not counts:
+                continue
+            speed_limits.append(float(props.get("speedLimit") or 0))
+            distances.append(float(props.get("distance") or 0))
+            frc_values.append(float(props.get("frc") or 0))
+            for item in counts:
+                time_set = int(item.get("timeSet", 0))
+                hour = time_set - 2
+                if 0 <= hour < 24:
+                    hourly_counts[hour] += float(item.get("probeCount") or 0)
+
+        speed_limit = float(np.mean(speed_limits)) if speed_limits else 35.0
+        network_distance = float(np.sum(distances)) if distances else 1.0
+        frc_mean = float(np.mean(frc_values)) if frc_values else 5.0
+        for hour, probe_count in enumerate(hourly_counts):
+            timestamp = day + pd.Timedelta(hours=hour)
+            traffic_flow = probe_count
+            congestion = np.clip((traffic_flow / max(network_distance, 1.0)) * 120 + (6 - frc_mean) * 4, 0, 100)
+            rows.append(
+                {
+                    "timestamp": timestamp,
+                    "traffic_flow": traffic_flow,
+                    "traffic_congestion": congestion,
+                    "traffic_speed": np.clip(speed_limit * (1.0 - congestion / 145.0), 8.0, speed_limit),
+                    "traffic_incidents": max(0.0, congestion - 55.0) * 0.08,
+                    "traffic_environmental_impact": congestion * traffic_flow / max(hourly_counts.max(), 1.0),
+                }
+            )
+
+    return pd.DataFrame(rows).sort_values("timestamp").reset_index(drop=True)
+
+
+def _expand_daily_delhi_signal(daily_df: pd.DataFrame, timestamp_col: str, value_columns: list[str]) -> pd.DataFrame:
+    daily = daily_df.copy()
+    daily["timestamp"] = pd.to_datetime(daily[timestamp_col], errors="coerce")
+    daily = daily.dropna(subset=["timestamp"]).sort_values("timestamp")
+    frames = []
+    for _, row in daily.iterrows():
+        hours = pd.date_range(row["timestamp"].normalize(), periods=24, freq="h")
+        frame = pd.DataFrame({"timestamp": hours})
+        for col in value_columns:
+            frame[col] = pd.to_numeric(row[col], errors="coerce")
+        frames.append(frame)
+    return pd.concat(frames, ignore_index=True).drop_duplicates("timestamp", keep="last")
+
+
+def _align_hourly_values(source_df: pd.DataFrame, target_timestamps: pd.Series, value_columns: list[str]) -> pd.DataFrame:
+    source = source_df.copy()
+    source["timestamp"] = pd.to_datetime(source["timestamp"], errors="coerce")
+    source = source.dropna(subset=["timestamp"]).sort_values("timestamp").drop_duplicates(subset=["timestamp"], keep="last")
+    source = source.set_index("timestamp")
+
+    target_index = pd.DatetimeIndex(pd.to_datetime(target_timestamps))
+    aligned = source.reindex(target_index)
+    aligned[value_columns] = aligned[value_columns].apply(pd.to_numeric, errors="coerce")
+    aligned[value_columns] = aligned[value_columns].interpolate(method="time", limit_direction="both")
+    aligned[value_columns] = aligned[value_columns].ffill().bfill()
+    return aligned[value_columns].reset_index(drop=True)
+
+
+def _normalize_excel_header(value) -> str:
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
+    return text
+
+
+def _parse_bangalore_aqi_workbook(path: Path) -> pd.DataFrame:
+    import xlrd
+
+    workbook = xlrd.open_workbook(path)
+    rows = []
+    for sheet_name in workbook.sheet_names():
+        sheet = workbook.sheet_by_name(sheet_name)
+        header_row = None
+        header_values = None
+        for row_idx in range(min(sheet.nrows, 8)):
+            values = [_normalize_excel_header(sheet.cell_value(row_idx, col_idx)) for col_idx in range(sheet.ncols)]
+            if not values:
+                continue
+            first_value = values[0].lower()
+            if first_value.startswith("date") and any("aqi" in value.lower() for value in values):
+                header_row = row_idx
+                header_values = values
+                break
+        if header_row is None or header_values is None:
+            continue
+
+        date_idx = 0
+        aqi_idx = next((idx for idx, value in enumerate(header_values) if "aqi" in value.lower()), None)
+        temp_idx = next((idx for idx, value in enumerate(header_values) if "temp" in value.lower()), None)
+        humidity_idx = next(
+            (
+                idx
+                for idx, value in enumerate(header_values)
+                if "rh" in value.lower() or value.lower().startswith("hr")
+            ),
+            None,
+        )
+        if aqi_idx is None:
+            continue
+
+        for row_idx in range(header_row + 1, sheet.nrows):
+            raw_date = sheet.cell_value(row_idx, date_idx)
+            date_text = _normalize_excel_header(raw_date)
+            if not date_text:
+                continue
+            timestamp = pd.to_datetime(date_text, dayfirst=True, errors="coerce")
+            if pd.isna(timestamp):
+                continue
+
+            record = {"timestamp": timestamp.normalize()}
+            record["aqi"] = pd.to_numeric(str(sheet.cell_value(row_idx, aqi_idx)).replace("*", "").replace("-", ""), errors="coerce")
+            if temp_idx is not None:
+                record["temperature"] = pd.to_numeric(
+                    str(sheet.cell_value(row_idx, temp_idx)).replace("*", "").replace("-", ""),
+                    errors="coerce",
+                )
+            if humidity_idx is not None:
+                record["humidity"] = pd.to_numeric(
+                    str(sheet.cell_value(row_idx, humidity_idx)).replace("*", "").replace("-", ""),
+                    errors="coerce",
+                )
+            rows.append(record)
+
+    if not rows:
+        raise ValueError(f"No AQI rows parsed from Bangalore workbook: {path}")
+
+    frame = pd.DataFrame(rows)
+    aggregations = {"aqi": "median"}
+    if "temperature" in frame.columns:
+        aggregations["temperature"] = "mean"
+    if "humidity" in frame.columns:
+        aggregations["humidity"] = "mean"
+    return frame.groupby("timestamp", as_index=False).agg(aggregations)
+
+
+def _load_bangalore_aqi_daily(dataset_dir: Path) -> pd.DataFrame:
+    workbook_paths = sorted(dataset_dir.glob("*AQI*.xls")) + sorted(dataset_dir.glob("*data for Bengaluru*.xls"))
+    if not workbook_paths:
+        raise FileNotFoundError(f"No Bangalore AQI workbooks found under {dataset_dir}")
+
+    frames = [_parse_bangalore_aqi_workbook(path) for path in workbook_paths]
+    merged = pd.concat(frames, ignore_index=True)
+    aggregations = {"aqi": "median"}
+    if "temperature" in merged.columns:
+        aggregations["temperature"] = "mean"
+    if "humidity" in merged.columns:
+        aggregations["humidity"] = "mean"
+    return merged.groupby("timestamp", as_index=False).agg(aggregations).sort_values("timestamp").reset_index(drop=True)
+
+
+def _load_bangalore_electricity_hourly(power_dir: Path) -> pd.DataFrame:
+    from openpyxl import load_workbook
+
+    workbook_paths = sorted(power_dir.glob("ALLOCATIONVSACTUAL*.xlsx"))
+    if not workbook_paths:
+        raise FileNotFoundError(f"No Bangalore BESCOM load-curve workbooks found under {power_dir}")
+
+    rows = []
+    for path in workbook_paths:
+        day_match = re.search(r"(\d{2}-\d{2}-\d{4})", path.name)
+        if not day_match:
+            continue
+        day = pd.to_datetime(day_match.group(1), dayfirst=True, errors="coerce")
+        if pd.isna(day):
+            continue
+
+        workbook = load_workbook(path, read_only=True, data_only=True)
+        sheet = workbook[workbook.sheetnames[0]]
+        sheet_rows = list(sheet.iter_rows(values_only=True))
+        workbook.close()
+        if len(sheet_rows) < 4:
+            continue
+
+        total_row = None
+        for row in sheet_rows:
+            first_value = row[0] if len(row) > 0 else None
+            if str(first_value).strip().upper() == "BESCOM TOTAL":
+                total_row = row
+                break
+        if total_row is None:
+            continue
+
+        time_row = sheet_rows[2]
+        label_row = sheet_rows[3]
+        for col_idx, label in enumerate(label_row):
+            if str(label).strip().lower() != "actuals":
+                continue
+            hour_source = time_row[col_idx] if col_idx < len(time_row) else None
+            if pd.isna(hour_source) and col_idx > 0:
+                hour_source = time_row[col_idx - 1]
+            hour_value = pd.to_datetime(str(hour_source), errors="coerce")
+            if pd.isna(hour_value):
+                continue
+            actual_source = total_row[col_idx] if col_idx < len(total_row) else None
+            actual_value = pd.to_numeric(actual_source, errors="coerce")
+            if pd.isna(actual_value):
+                continue
+            rows.append(
+                {
+                    "timestamp": day.normalize() + pd.Timedelta(hours=int(hour_value.hour)),
+                    "electricity_demand": float(actual_value),
+                }
+            )
+
+    if not rows:
+        raise ValueError(f"No hourly Bangalore electricity rows parsed from {power_dir}")
+    return pd.DataFrame(rows).sort_values("timestamp").drop_duplicates(subset=["timestamp"], keep="last").reset_index(drop=True)
+
+
+def build_bangalore_multidomain_dataset(config) -> pd.DataFrame:
+    dataset_dir = Path(config.dataset_dir)
+    traffic_path = dataset_dir / "Banglore_traffic_Dataset.csv"
+    weather_path = dataset_dir / "export.csv"
+    power_dir = dataset_dir / "BESCOM_2024_LoadCurves"
+
+    required = [traffic_path, weather_path, power_dir]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing required Bangalore dataset files: {missing}")
+
+    traffic_raw = pd.read_csv(traffic_path)
+    traffic_daily = (
+        traffic_raw.groupby("Date", as_index=False)
+        .agg(
+            traffic_flow=("Traffic Volume", "sum"),
+            traffic_speed=("Average Speed", "mean"),
+            traffic_congestion=("Congestion Level", "mean"),
+            traffic_incidents=("Incident Reports", "sum"),
+            traffic_environmental_impact=("Environmental Impact", "mean"),
+        )
+        .rename(columns={"Date": "timestamp"})
+    )
+    traffic_daily["timestamp"] = pd.to_datetime(traffic_daily["timestamp"], errors="coerce")
+    traffic_daily = traffic_daily.dropna(subset=["timestamp"]).sort_values("timestamp").reset_index(drop=True)
+    traffic_daily = traffic_daily[traffic_daily["timestamp"].dt.year == 2024].reset_index(drop=True)
+
+    weather_daily = pd.read_csv(weather_path)
+    weather_daily["timestamp"] = pd.to_datetime(weather_daily["date"], errors="coerce")
+    weather_daily = weather_daily[["timestamp", "tavg"]].rename(columns={"tavg": "weather_temperature"})
+    weather_daily["weather_temperature"] = pd.to_numeric(weather_daily["weather_temperature"], errors="coerce")
+    weather_daily = weather_daily.dropna(subset=["timestamp"]).sort_values("timestamp").reset_index(drop=True)
+
+    aqi_daily = _load_bangalore_aqi_daily(dataset_dir)
+    electricity_hourly = _load_bangalore_electricity_hourly(power_dir)
+
+    overlap_start = max(
+        traffic_daily["timestamp"].min(),
+        weather_daily["timestamp"].min(),
+        aqi_daily["timestamp"].min(),
+        electricity_hourly["timestamp"].min().normalize(),
+    )
+    overlap_end = min(
+        traffic_daily["timestamp"].max(),
+        weather_daily["timestamp"].max(),
+        aqi_daily["timestamp"].max(),
+        electricity_hourly["timestamp"].max().normalize(),
+    )
+    if overlap_start > overlap_end:
+        raise ValueError("No overlapping Bangalore date range found across traffic, weather, AQI, and electricity sources.")
+
+    traffic_daily = traffic_daily[
+        traffic_daily["timestamp"].between(overlap_start, overlap_end)
+    ].reset_index(drop=True)
+    traffic_hourly = _expand_daily_traffic_to_hourly(traffic_daily)
+    target_timestamps = traffic_hourly["timestamp"]
+
+    daily_environment = weather_daily.merge(aqi_daily, on="timestamp", how="outer")
+    daily_environment["temperature"] = daily_environment[["weather_temperature", "temperature"]].mean(axis=1)
+    daily_environment = daily_environment[["timestamp", "aqi", "temperature", "humidity"]].sort_values("timestamp")
+    environment_hourly = _expand_daily_delhi_signal(daily_environment, "timestamp", ["aqi", "temperature", "humidity"])
+
+    aligned_environment = _align_hourly_values(environment_hourly, target_timestamps, ["aqi", "temperature", "humidity"])
+    aligned_electricity = _align_hourly_values(electricity_hourly, target_timestamps, ["electricity_demand"])
+
+    merged = pd.concat(
+        [
+            traffic_hourly[
+                ["timestamp", "traffic_flow", "traffic_congestion", "traffic_incidents", "traffic_environmental_impact"]
+            ].reset_index(drop=True),
+            aligned_environment,
+            aligned_electricity,
+        ],
+        axis=1,
+    )
+    return merged[["timestamp", "traffic_flow", "aqi", "electricity_demand", "temperature", "humidity"]]
+
+
+def build_delhi_multidomain_dataset(config) -> pd.DataFrame:
+    dataset_dir = Path(config.dataset_dir)
+    traffic_probe_dir = dataset_dir / "new_delhi_traffic_dataset" / "probe_counts" / "geojson"
+    weather_path = dataset_dir / "kaggel_weather_2013_to_2024.csv"
+    electricity_path = dataset_dir / "electricity" / "df_final.csv"
+
+    required = [traffic_probe_dir, weather_path, electricity_path]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing required Delhi dataset files: {missing}")
+
+    traffic_hourly = _load_delhi_probe_counts(traffic_probe_dir)
+    target_timestamps = traffic_hourly["timestamp"]
+    target_len = len(traffic_hourly)
+
+    weather_raw = pd.read_csv(weather_path)
+    weather_daily = weather_raw[["DATE", "temp", "humidity"]].copy()
+    weather_daily[["temp", "humidity"]] = weather_daily[["temp", "humidity"]].apply(pd.to_numeric, errors="coerce")
+    weather_hourly = _expand_daily_delhi_signal(weather_daily, "DATE", ["temp", "humidity"]).rename(
+        columns={"temp": "temperature"}
+    )
+    weather_calendar = _calendar_align(
+        weather_hourly,
+        target_timestamps,
+        ["temperature", "humidity"],
+        grouping_levels=[
+            ("month", "day_of_week", "hour"),
+            ("month", "hour"),
+            ("day_of_week", "hour"),
+            ("hour",),
+        ],
+    )
+    weather_aligned = pd.DataFrame(
+        {
+            "temperature": _blend_aligned_signals(
+                weather_calendar["temperature"].to_numpy(),
+                _resample_sequence(weather_hourly["temperature"].to_numpy(), target_len),
+                calendar_weight=0.85,
+            ),
+            "humidity": _blend_aligned_signals(
+                weather_calendar["humidity"].to_numpy(),
+                _resample_sequence(weather_hourly["humidity"].to_numpy(), target_len),
+                calendar_weight=0.85,
+            ),
+        }
+    )
+
+    electricity_raw = pd.read_csv(electricity_path)
+    electricity_daily = electricity_raw[["DATE", "POWER_DEMAND"]].copy()
+    electricity_daily["POWER_DEMAND"] = pd.to_numeric(electricity_daily["POWER_DEMAND"], errors="coerce")
+    electricity_hourly = _expand_daily_delhi_signal(electricity_daily, "DATE", ["POWER_DEMAND"])
+    electricity_calendar = _calendar_align(
+        electricity_hourly.rename(columns={"POWER_DEMAND": "electricity_demand"}),
+        target_timestamps,
+        ["electricity_demand"],
+        grouping_levels=[
+            ("month", "day_of_week", "hour"),
+            ("month", "hour"),
+            ("day_of_week", "hour"),
+            ("hour",),
+        ],
+    )
+
+    hour = target_timestamps.dt.hour.to_numpy()
+    demand_shape = 1.0 + 0.06 * np.maximum(0, np.sin(2 * np.pi * (hour - 8) / 24))
+    electricity_demand = _blend_aligned_signals(
+        electricity_calendar["electricity_demand"].to_numpy() * demand_shape,
+        _resample_sequence(electricity_hourly["POWER_DEMAND"].to_numpy(), target_len),
+        calendar_weight=0.75,
+    )
+
+    merged = pd.concat(
+        [
+            traffic_hourly[
+                ["timestamp", "traffic_flow", "traffic_congestion", "traffic_incidents", "traffic_environmental_impact"]
+            ].reset_index(drop=True),
+            weather_aligned,
+        ],
+        axis=1,
+    )
+    baseline_aqi = 72 + 1.45 * _minmax_scale(merged["traffic_flow"].to_numpy()) * 100
+    merged["aqi"] = _compute_traffic_sensitive_aqi(
+        baseline_aqi=baseline_aqi,
+        traffic_flow=merged["traffic_flow"].to_numpy(),
+        congestion=merged["traffic_congestion"].to_numpy(),
+        incidents=merged["traffic_incidents"].to_numpy(),
+        environmental_impact=merged["traffic_environmental_impact"].to_numpy(),
+        humidity=merged["humidity"].to_numpy(),
+    )
+    merged["electricity_demand"] = electricity_demand
+    return merged[["timestamp", "traffic_flow", "aqi", "electricity_demand", "temperature", "humidity"]]
+
+
 def build_multidomain_dataset_from_bundle(config) -> pd.DataFrame:
     dataset_dir = Path(config.dataset_dir)
     traffic_path = dataset_dir / "Banglore_traffic_Dataset.csv"
@@ -504,6 +911,55 @@ def build_multidomain_dataset_from_raw_sources(config) -> pd.DataFrame:
 
 def load_input_dataframe(config) -> pd.DataFrame:
     data_path = Path(config.data_file)
+    if getattr(config, "city", "default") == "delhi":
+        source_files = [
+            *sorted((Path(config.dataset_dir) / "new_delhi_traffic_dataset" / "probe_counts" / "geojson").glob("*.geojson")),
+            Path(config.dataset_dir) / "kaggel_weather_2013_to_2024.csv",
+            Path(config.dataset_dir) / "electricity" / "df_final.csv",
+        ]
+        if _needs_rebuild(data_path, source_files):
+            df = build_delhi_multidomain_dataset(config)
+            data_path.parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(data_path, index=False)
+        else:
+            df = pd.read_csv(data_path)
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        expected_columns = {"timestamp", *config.domain_columns}
+        missing_columns = expected_columns.difference(df.columns)
+        if missing_columns:
+            raise ValueError(f"Missing required columns in dataset: {sorted(missing_columns)}")
+        df = df.sort_values("timestamp").reset_index(drop=True)
+        return clean_fuzzy_data(df, config)
+
+    if getattr(config, "city", "default") == "bangalore":
+        aqi_workbooks = sorted(Path(config.dataset_dir).glob("*AQI*.xls")) + sorted(
+            Path(config.dataset_dir).glob("*data for Bengaluru*.xls")
+        )
+        source_files = [
+            Path(config.dataset_dir) / "Banglore_traffic_Dataset.csv",
+            Path(config.dataset_dir) / "export.csv",
+            *aqi_workbooks,
+            *sorted((Path(config.dataset_dir) / "BESCOM_2024_LoadCurves").glob("*.xlsx")),
+        ]
+        if source_files and _needs_rebuild(data_path, source_files):
+            df = build_bangalore_multidomain_dataset(config)
+            data_path.parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(data_path, index=False)
+        elif data_path.exists():
+            df = pd.read_csv(data_path)
+        else:
+            df = build_bangalore_multidomain_dataset(config)
+            data_path.parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(data_path, index=False)
+
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        expected_columns = {"timestamp", *config.domain_columns}
+        missing_columns = expected_columns.difference(df.columns)
+        if missing_columns:
+            raise ValueError(f"Missing required columns in dataset: {sorted(missing_columns)}")
+        df = df.sort_values("timestamp").reset_index(drop=True)
+        return clean_fuzzy_data(df, config)
+
     bundle_files = [
         Path(config.dataset_dir) / "Banglore_traffic_Dataset.csv",
         Path(config.dataset_dir) / "AQI Data.csv",
@@ -679,18 +1135,29 @@ def build_temporal_groups(
     all_lags = tuple(closeness_lags) + tuple(period_lags) + tuple(trend_lags)
     max_lag = max(all_lags)
 
+    # Seasonal-naive baselines (same hour on the previous day / previous week).
+    # Only past observed targets are used, so this introduces no leakage.
+    daily_period = 24
+    weekly_period = 24 * 7
+
     closeness_x, period_x, trend_x, ys, ts = [], [], [], [], []
+    seasonal_daily, seasonal_weekly = [], []
     for end_idx in range(max_lag, len(features) - horizon + 1):
         closeness_x.append(np.stack([features[end_idx - lag] for lag in closeness_lags], axis=0))
         period_x.append(np.stack([features[end_idx - lag] for lag in period_lags], axis=0))
         trend_x.append(np.stack([features[end_idx - lag] for lag in trend_lags], axis=0))
-        ys.append(targets[end_idx + horizon - 1])
-        ts.append(timestamps.iloc[end_idx + horizon - 1])
+        pred_idx = end_idx + horizon - 1
+        ys.append(targets[pred_idx])
+        ts.append(timestamps.iloc[pred_idx])
+        seasonal_daily.append(targets[max(0, pred_idx - daily_period)])
+        seasonal_weekly.append(targets[max(0, pred_idx - weekly_period)])
 
     return {
         "closeness": np.asarray(closeness_x, dtype=np.float32),
         "period": np.asarray(period_x, dtype=np.float32),
         "trend": np.asarray(trend_x, dtype=np.float32),
+        "seasonal_daily": np.asarray(seasonal_daily, dtype=np.float32),
+        "seasonal_weekly": np.asarray(seasonal_weekly, dtype=np.float32),
         "target": np.asarray(ys, dtype=np.float32),
         "timestamp": pd.Series(ts, name="timestamp"),
     }
@@ -711,6 +1178,8 @@ def build_temporal_groups_for_inference(features: np.ndarray, timestamps: pd.Ser
         "closeness": grouped["closeness"],
         "period": grouped["period"],
         "trend": grouped["trend"],
+        "seasonal_daily": grouped["seasonal_daily"],
+        "seasonal_weekly": grouped["seasonal_weekly"],
         "timestamp": grouped["timestamp"],
     }
 

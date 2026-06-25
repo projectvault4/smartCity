@@ -1,0 +1,21 @@
+{
+  "trial": 9,
+  "closeness_len": 8,
+  "period_len": 12,
+  "trend_len": 4,
+  "bilstm_hidden_dim": 24,
+  "tft_hidden_dim": 48,
+  "tft_heads": 2,
+  "tft_layers": 2,
+  "tft_ff_dim": 144,
+  "dense_hidden_dim": 160,
+  "dropout": 0.05,
+  "batch_size": 96,
+  "learning_rate": 0.0003,
+  "val_MAE": 58306.4921875,
+  "val_MAPE": 5.523790627563791,
+  "val_RMSE": 132558.375,
+  "val_NRMSE": 0.07610865860329277,
+  "val_UPS": 92.92741880712343,
+  "checkpoint_path": "outputs/delhi/checkpoints/project_best_hybrid_trial_9.pt"
+}

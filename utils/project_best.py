@@ -167,7 +167,8 @@ def select_finalized_forecast_model(config) -> str | None:
     if not registry or not summary:
         return None
     project_best_names = set(summary["results"].keys())
-    for row in registry.get("top_4_models_by_rmse", []):
+    ranked_rows = registry.get("top_3_models_by_rmse", registry.get("top_4_models_by_rmse", []))
+    for row in ranked_rows:
         model_name = row.get("model")
         if model_name in project_best_names:
             return model_name
@@ -201,6 +202,23 @@ def latest_project_best_prediction(model_name: str, base_config):
         "period": grouped["period"][-1:].astype(np.float32),
         "trend": grouped["trend"][-1:].astype(np.float32),
     }
+    if model_name == "Hybrid":
+        # The residual hybrid expects seasonal anchors (same hour previous
+        # day/week). Build them from the actual recent target history so the
+        # forecast matches the trained model rather than using zero fallbacks.
+        scaled_targets = processor.target_scaler.transform(
+            prepared[list(model_config.target_columns)].to_numpy(dtype=float)
+        )
+        n = len(scaled_targets)
+
+        def _lagged(lag: int) -> np.ndarray:
+            idx = n - lag
+            row = scaled_targets[idx] if idx >= 0 else scaled_targets[0]
+            return row.astype(np.float32)[None, :]
+
+        latest_x["seasonal_daily"] = _lagged(24)
+        latest_x["seasonal_weekly"] = _lagged(24 * 7)
+        latest_x["seasonal_stat"] = latest_x["seasonal_daily"]
     pred_scaled = predict_model(model, latest_x, model_config)
     prediction = processor.inverse_transform_targets(pred_scaled)[0]
     next_timestamp = grouped["timestamp"].iloc[-1] + pd.Timedelta(hours=model_config.forecast_horizon)

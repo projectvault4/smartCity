@@ -64,12 +64,11 @@ class AdaptiveHybridModel(nn.Module):
             nn.Dropout(config.dropout),
             nn.Linear(expert_dim, output_dim),
         )
-        self.residual_scale = nn.Parameter(torch.full((output_dim,), 0.1))
+        self.residual_scale = nn.Parameter(torch.ones(output_dim))
         final_gate = self.gate_network[-1]
         nn.init.zeros_(final_gate.weight)
         with torch.no_grad():
-            final_gate.bias.view(output_dim, 3)[:, 0] = 2.0
-            final_gate.bias.view(output_dim, 3)[:, 1:] = -1.0
+            final_gate.bias.view(output_dim, 3)[:] = 0.0
         self.latest_feature_weights = None
         self.latest_gate_values = None
         self._last_bilstm_pred = None
@@ -180,12 +179,13 @@ class TFTGRUResidualHybrid(nn.Module):
             nn.Dropout(config.dropout),
             nn.Linear(max(config.bilstm_hidden_dim // 2, output_dim), output_dim),
         )
-        fusion_dim = expert_dim * 4 + output_dim * 3
+        fusion_dim = expert_dim * 4 + output_dim * 6
+        self.n_experts = 6
         self.gate_network = nn.Sequential(
             nn.Linear(fusion_dim, expert_dim),
             nn.GELU(),
             nn.Dropout(config.dropout),
-            nn.Linear(expert_dim, output_dim * 3),
+            nn.Linear(expert_dim, output_dim * self.n_experts),
         )
         self.fused_expert = nn.Sequential(
             nn.Linear(expert_dim * 4, expert_dim),
@@ -225,13 +225,31 @@ class TFTGRUResidualHybrid(nn.Module):
             dim=-1,
         )
 
+        # Seasonal-naive experts (same hour previous day / previous week) plus an
+        # optional statistical one-step expert (SARIMA). These inject the periodic
+        # and autoregressive structure that classical models exploit; the gate
+        # learns how much to rely on each per target.
+        if isinstance(x, dict) and "seasonal_daily" in x:
+            seasonal_daily = x["seasonal_daily"]
+            seasonal_weekly = x.get("seasonal_weekly", seasonal_daily)
+            seasonal_stat = x.get("seasonal_stat", seasonal_daily)
+        else:
+            seasonal_daily = torch.zeros_like(tft_pred)
+            seasonal_weekly = torch.zeros_like(tft_pred)
+            seasonal_stat = torch.zeros_like(tft_pred)
+
         fused_pred = self.fused_expert(expert_context)
         pred_disagreement = torch.abs(tft_pred - gru_pred)
-        routing_features = torch.cat([expert_context, tft_pred, gru_pred, pred_disagreement], dim=-1)
-        gate_logits = self.gate_network(routing_features).view(-1, tft_pred.shape[-1], 3)
+        routing_features = torch.cat(
+            [expert_context, tft_pred, gru_pred, pred_disagreement, seasonal_daily, seasonal_weekly, seasonal_stat],
+            dim=-1,
+        )
+        gate_logits = self.gate_network(routing_features).view(-1, tft_pred.shape[-1], self.n_experts)
         gate = torch.softmax(gate_logits, dim=-1)
 
-        expert_predictions = torch.stack([tft_pred, gru_pred, fused_pred], dim=-1)
+        expert_predictions = torch.stack(
+            [tft_pred, gru_pred, fused_pred, seasonal_daily, seasonal_weekly, seasonal_stat], dim=-1
+        )
         mixture_prediction = torch.sum(gate * expert_predictions, dim=-1)
         residual_features = torch.cat([routing_features, mixture_prediction], dim=-1)
         residual = self.residual_corrector(residual_features)
@@ -252,21 +270,33 @@ class TFTGRUResidualHybrid(nn.Module):
 
     def compute_loss(self, preds: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         weights = getattr(self, "target_loss_weights", None)
+        mae_objective = bool(getattr(self, "mae_objective", False))
         if weights is not None:
             weights = weights.to(device=preds.device, dtype=preds.dtype)
             mse_loss = ((preds - targets) ** 2 * weights).mean()
             smooth_loss = (F.smooth_l1_loss(preds, targets, beta=0.25, reduction="none") * weights).mean()
+            l1_loss = (torch.abs(preds - targets) * weights).mean()
         else:
             mse_loss = F.mse_loss(preds, targets)
             smooth_loss = F.smooth_l1_loss(preds, targets, beta=0.25)
-        loss = 0.65 * mse_loss + 0.35 * smooth_loss
+            l1_loss = F.l1_loss(preds, targets)
+        if mae_objective:
+            # Emphasize absolute error to optimize MAE/MAPE.
+            loss = 0.25 * mse_loss + 0.75 * l1_loss
+        else:
+            loss = 0.65 * mse_loss + 0.35 * smooth_loss
         aux_losses = []
         for branch_pred in (self._last_tft_pred, self._last_gru_pred, self._last_fused_pred):
             if branch_pred is not None:
                 if weights is not None:
-                    aux_losses.append(((branch_pred - targets) ** 2 * weights).mean())
+                    if mae_objective:
+                        aux_losses.append((torch.abs(branch_pred - targets) * weights).mean())
+                    else:
+                        aux_losses.append(((branch_pred - targets) ** 2 * weights).mean())
                 else:
-                    aux_losses.append(F.mse_loss(branch_pred, targets))
+                    aux_losses.append(
+                        F.l1_loss(branch_pred, targets) if mae_objective else F.mse_loss(branch_pred, targets)
+                    )
         if aux_losses:
             loss = loss + 0.12 * torch.stack(aux_losses).mean()
         return loss

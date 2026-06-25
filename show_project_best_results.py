@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import argparse
+import copy
 import json
 from pathlib import Path
 
 import pandas as pd
+
+from utils.config import CONFIG, apply_city_config
 
 
 def _print_header(title: str) -> None:
@@ -11,12 +15,19 @@ def _print_header(title: str) -> None:
     print("-" * len(title))
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Show project-best tuning results.")
+    parser.add_argument("--city", default=None, help="Use city-specific outputs, e.g. delhi.")
+    return parser.parse_args()
+
+
 def main() -> None:
-    output_dir = Path("outputs")
+    config = apply_city_config(copy.deepcopy(CONFIG), parse_args().city)
+    output_dir = Path(config.output_dir)
     summary_path = output_dir / "project_best_summary.json"
     if not summary_path.exists():
         raise FileNotFoundError(
-            "Missing outputs/project_best_summary.json. Run `venv/bin/python tune_project_best_models.py` first."
+            f"Missing {summary_path}. Run `python3 tune_project_best_models.py --city {config.city}` first."
         )
 
     with open(summary_path, "r", encoding="utf-8") as handle:

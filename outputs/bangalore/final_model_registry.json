@@ -1,0 +1,902 @@
+{
+  "finalized_at": "2026-06-05T19:45:05.969451+05:30",
+  "source_summary": "outputs/bangalore/project_best_summary.json",
+  "top_4_models_by_rmse": [
+    {
+      "model": "Hybrid",
+      "RMSE": 348.44005246604024,
+      "UPS": 93.879604066221
+    },
+    {
+      "model": "SARIMA",
+      "RMSE": 404.1087842037693,
+      "UPS": 92.97051173108942
+    },
+    {
+      "model": "ARIMA",
+      "RMSE": 691.82998873399,
+      "UPS": 88.53919436039199
+    },
+    {
+      "model": "Informer",
+      "RMSE": 785.3400456745985,
+      "UPS": 87.18857287343484
+    }
+  ],
+  "project_best_models": {
+    "BiLSTM": {
+      "search_csv": "outputs/bangalore/project_best_bilstm_search.csv",
+      "best_json": "outputs/bangalore/project_best_bilstm_best.json",
+      "best_checkpoint": "outputs/bangalore/checkpoints/project_best_bilstm.pt",
+      "best_validation": {
+        "trial": 5,
+        "hidden_dim": 24,
+        "seq_len": 12,
+        "batch_size": 64,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 764.707763671875,
+        "val_MAPE": 9.870881074093983,
+        "val_RMSE": 1809.6495361328125,
+        "val_NRMSE": 0.33346829917500903,
+        "val_UPS": 49.006449337833054,
+        "checkpoint_path": "outputs/bangalore/checkpoints/project_best_bilstm_trial_5.pt"
+      },
+      "test_metrics": {
+        "MAE": 785.3543090820312,
+        "MAPE": 11.781666986319435,
+        "RMSE": 1812.9368896484375,
+        "NRMSE": 0.3392054964025401,
+        "UPS": 74.67113917066979
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 2653.458984375,
+          "MAPE": 25.169418168510607,
+          "RMSE": 3576.439453125,
+          "NRMSE": 0.6701235591728489,
+          "UPS": 59.87580945779026
+        },
+        "aqi": {
+          "MAE": 3.865171432495117,
+          "MAPE": 8.317286519798863,
+          "RMSE": 4.486181735992432,
+          "NRMSE": 1.5674024300246958,
+          "UPS": 38.94987354944511
+        },
+        "temperature": {
+          "MAE": 0.8470746874809265,
+          "MAPE": 3.714551071685773,
+          "RMSE": 1.0017110109329224,
+          "NRMSE": 1.6530735475773228,
+          "UPS": 37.69213261777679
+        },
+        "electricity_demand": {
+          "MAE": 483.246337890625,
+          "MAPE": 9.925412185282495,
+          "RMSE": 596.6741943359375,
+          "NRMSE": 0.7202879069708815,
+          "UPS": 58.129804665128454
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 697.72216796875,
+          "project_best": 785.3543090820312,
+          "delta": 87.63214111328125
+        },
+        "RMSE": {
+          "previous": 1595.3951416015625,
+          "project_best": 1812.9368896484375,
+          "delta": 217.541748046875
+        },
+        "NRMSE": {
+          "previous": 0.2985028348505287,
+          "project_best": 0.3392054964025401,
+          "delta": 0.04070266155201141
+        },
+        "UPS": {
+          "previous": 42.0203603625764,
+          "project_best": 46.452819481519015,
+          "delta": 4.432459118942617
+        }
+      }
+    },
+    "TFT": {
+      "search_csv": "outputs/bangalore/project_best_tft_search.csv",
+      "best_json": "outputs/bangalore/project_best_tft_best.json",
+      "best_checkpoint": "outputs/bangalore/checkpoints/project_best_tft.pt",
+      "best_validation": {
+        "trial": 4,
+        "seq_len": 12,
+        "hidden_dim": 48,
+        "heads": 4,
+        "layers": 2,
+        "ff_dim": 192,
+        "batch_size": 64,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 382.1497497558594,
+        "val_MAPE": 7.601508101408289,
+        "val_RMSE": 724.463623046875,
+        "val_NRMSE": 0.13349858487399185,
+        "val_UPS": 47.71867278920808,
+        "checkpoint_path": "outputs/bangalore/checkpoints/project_best_tft_trial_4.pt"
+      },
+      "test_metrics": {
+        "MAE": 558.0387573242188,
+        "MAPE": 10.266481674062263,
+        "RMSE": 1217.4326171875,
+        "NRMSE": 0.22778500322193243,
+        "UPS": 81.44748448432071
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 1840.497314453125,
+          "MAPE": 20.54853400904639,
+          "RMSE": 2388.654052734375,
+          "NRMSE": 0.4475661831916,
+          "UPS": 69.0814700986725
+        },
+        "aqi": {
+          "MAE": 4.693873882293701,
+          "MAPE": 9.974304281738089,
+          "RMSE": 6.184122085571289,
+          "NRMSE": 2.160636495558632,
+          "UPS": 31.63919676954984
+        },
+        "temperature": {
+          "MAE": 0.5586230754852295,
+          "MAPE": 2.4015626359994884,
+          "RMSE": 0.7082133293151855,
+          "NRMSE": 1.1687290126143939,
+          "UPS": 46.10995630083374
+        },
+        "electricity_demand": {
+          "MAE": 386.40496826171875,
+          "MAPE": 8.141525769465085,
+          "RMSE": 472.0819396972656,
+          "NRMSE": 0.5698837246375902,
+          "UPS": 63.698985109922795
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 743.8367919921875,
+          "project_best": 558.0387573242188,
+          "delta": -185.79803466796875
+        },
+        "RMSE": {
+          "previous": 1514.7291259765625,
+          "project_best": 1217.4326171875,
+          "delta": -297.2965087890625
+        },
+        "NRMSE": {
+          "previous": 0.2828305734465331,
+          "project_best": 0.22778500322193243,
+          "delta": -0.05504557022460069
+        },
+        "UPS": {
+          "previous": 49.05206500130387,
+          "project_best": 47.922468637935175,
+          "delta": -1.129596363368698
+        }
+      }
+    },
+    "Hybrid": {
+      "search_csv": "outputs/bangalore/project_best_hybrid_search.csv",
+      "best_json": "outputs/bangalore/project_best_hybrid_best.json",
+      "best_checkpoint": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+      "best_validation": {
+        "trial": 10,
+        "closeness_len": 8,
+        "period_len": 12,
+        "trend_len": 4,
+        "bilstm_hidden_dim": 24,
+        "tft_hidden_dim": 48,
+        "tft_heads": 4,
+        "tft_layers": 1,
+        "tft_ff_dim": 144,
+        "dense_hidden_dim": 128,
+        "dropout": 0.05,
+        "batch_size": 64,
+        "learning_rate": 0.0003,
+        "val_MAE": 323.6952819824219,
+        "val_MAPE": 6.7279250526335765,
+        "val_RMSE": 608.288330078125,
+        "val_NRMSE": 0.11247038337982529,
+        "val_UPS": 51.98640273546675,
+        "checkpoint_path": "outputs/bangalore/checkpoints/project_best_hybrid_trial_10.pt"
+      },
+      "test_metrics": {
+        "MAE": 56.080604390350885,
+        "MAPE": 1.5769767314075274,
+        "RMSE": 183.39675759310006,
+        "NRMSE": 0.03311504272272229,
+        "UPS": 96.79464131744233
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 220.75149061249616,
+          "MAPE": 2.74893877157214,
+          "RMSE": 366.77157082706293,
+          "NRMSE": 0.06689600025862015,
+          "UPS": 93.72984805994172
+        },
+        "aqi": {
+          "MAE": 2.487491785164666,
+          "MAPE": 2.429057033797621,
+          "RMSE": 3.8361280195226275,
+          "NRMSE": 0.1234562107964301,
+          "UPS": 89.01103491083906
+        },
+        "temperature": {
+          "MAE": 0.2084030215450908,
+          "MAPE": 0.8100428514716701,
+          "RMSE": 0.2905920878713085,
+          "NRMSE": 0.11189658179986628,
+          "UPS": 89.9364218191286
+        },
+        "electricity_demand": {
+          "MAE": 0.8750321421975997,
+          "MAPE": 0.31986826878867897,
+          "RMSE": 1.1389880395894796,
+          "NRMSE": 0.06452850272160088,
+          "UPS": 93.93830202229196
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 72.0855925934826,
+          "project_best": 534.509521484375,
+          "delta": 462.4239288908924
+        },
+        "RMSE": {
+          "previous": 214.19662015804022,
+          "project_best": 1063.76806640625,
+          "delta": 849.5714462482098
+        },
+        "NRMSE": {
+          "previous": 0.03867642111390897,
+          "project_best": 0.1972899115025302,
+          "delta": 0.15861349038862121
+        },
+        "UPS": {
+          "previous": 91.12187899857408,
+          "project_best": 49.3319391401252,
+          "delta": -41.789939858448875
+        }
+      },
+      "source_artifact": "outputs/bangalore/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+      "model": "TFTGRUResidualHybridLagStabilized",
+      "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+      "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+      "project_best_search_result": {
+        "search_csv": "outputs/bangalore/project_best_hybrid_search.csv",
+        "best_json": "outputs/bangalore/project_best_hybrid_best.json",
+        "best_checkpoint": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+        "best_validation": {
+          "trial": 10,
+          "closeness_len": 8,
+          "period_len": 12,
+          "trend_len": 4,
+          "bilstm_hidden_dim": 24,
+          "tft_hidden_dim": 48,
+          "tft_heads": 4,
+          "tft_layers": 1,
+          "tft_ff_dim": 144,
+          "dense_hidden_dim": 128,
+          "dropout": 0.05,
+          "batch_size": 64,
+          "learning_rate": 0.0003,
+          "val_MAE": 323.6952819824219,
+          "val_MAPE": 6.7279250526335765,
+          "val_RMSE": 608.288330078125,
+          "val_NRMSE": 0.11247038337982529,
+          "val_UPS": 51.98640273546675,
+          "checkpoint_path": "outputs/bangalore/checkpoints/project_best_hybrid_trial_10.pt"
+        },
+        "test_metrics": {
+          "MAE": 56.080604390350885,
+          "MAPE": 1.5769767314075274,
+          "RMSE": 183.39675759310006,
+          "NRMSE": 0.03311504272272229,
+          "UPS": 96.79464131744233
+        },
+        "test_per_target": {
+          "traffic_flow": {
+            "MAE": 220.75149061249616,
+            "MAPE": 2.74893877157214,
+            "RMSE": 366.77157082706293,
+            "NRMSE": 0.06689600025862015,
+            "UPS": 93.72984805994172
+          },
+          "aqi": {
+            "MAE": 2.487491785164666,
+            "MAPE": 2.429057033797621,
+            "RMSE": 3.8361280195226275,
+            "NRMSE": 0.1234562107964301,
+            "UPS": 89.01103491083906
+          },
+          "temperature": {
+            "MAE": 0.2084030215450908,
+            "MAPE": 0.8100428514716701,
+            "RMSE": 0.2905920878713085,
+            "NRMSE": 0.11189658179986628,
+            "UPS": 89.9364218191286
+          },
+          "electricity_demand": {
+            "MAE": 0.8750321421975997,
+            "MAPE": 0.31986826878867897,
+            "RMSE": 1.1389880395894796,
+            "NRMSE": 0.06452850272160088,
+            "UPS": 93.93830202229196
+          }
+        },
+        "comparison_to_current": {
+          "MAE": {
+            "previous": 72.0855925934826,
+            "project_best": 534.509521484375,
+            "delta": 462.4239288908924
+          },
+          "RMSE": {
+            "previous": 214.19662015804022,
+            "project_best": 1063.76806640625,
+            "delta": 849.5714462482098
+          },
+          "NRMSE": {
+            "previous": 0.03867642111390897,
+            "project_best": 0.1972899115025302,
+            "delta": 0.15861349038862121
+          },
+          "UPS": {
+            "previous": 91.12187899857408,
+            "project_best": 49.3319391401252,
+            "delta": -41.789939858448875
+          }
+        },
+        "source_artifact": "outputs/bangalore/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+        "model": "TFTGRUResidualHybridLagStabilized",
+        "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+        "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+        "project_best_search_result": {
+          "search_csv": "outputs/bangalore/project_best_hybrid_search.csv",
+          "best_json": "outputs/bangalore/project_best_hybrid_best.json",
+          "best_checkpoint": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+          "best_validation": {
+            "trial": 10,
+            "closeness_len": 8,
+            "period_len": 12,
+            "trend_len": 4,
+            "bilstm_hidden_dim": 24,
+            "tft_hidden_dim": 48,
+            "tft_heads": 4,
+            "tft_layers": 1,
+            "tft_ff_dim": 144,
+            "dense_hidden_dim": 128,
+            "dropout": 0.05,
+            "batch_size": 64,
+            "learning_rate": 0.0003,
+            "val_MAE": 323.6952819824219,
+            "val_MAPE": 6.7279250526335765,
+            "val_RMSE": 608.288330078125,
+            "val_NRMSE": 0.11247038337982529,
+            "val_UPS": 51.98640273546675,
+            "checkpoint_path": "outputs/bangalore/checkpoints/project_best_hybrid_trial_10.pt"
+          },
+          "test_metrics": {
+            "MAE": 56.080604390350885,
+            "MAPE": 1.5769767314075274,
+            "RMSE": 183.39675759310006,
+            "NRMSE": 0.03311504272272229,
+            "UPS": 96.79464131744233
+          },
+          "test_per_target": {
+            "traffic_flow": {
+              "MAE": 220.75149061249616,
+              "MAPE": 2.74893877157214,
+              "RMSE": 366.77157082706293,
+              "NRMSE": 0.06689600025862015,
+              "UPS": 93.72984805994172
+            },
+            "aqi": {
+              "MAE": 2.487491785164666,
+              "MAPE": 2.429057033797621,
+              "RMSE": 3.8361280195226275,
+              "NRMSE": 0.1234562107964301,
+              "UPS": 89.01103491083906
+            },
+            "temperature": {
+              "MAE": 0.2084030215450908,
+              "MAPE": 0.8100428514716701,
+              "RMSE": 0.2905920878713085,
+              "NRMSE": 0.11189658179986628,
+              "UPS": 89.9364218191286
+            },
+            "electricity_demand": {
+              "MAE": 0.8750321421975997,
+              "MAPE": 0.31986826878867897,
+              "RMSE": 1.1389880395894796,
+              "NRMSE": 0.06452850272160088,
+              "UPS": 93.93830202229196
+            }
+          },
+          "comparison_to_current": {
+            "MAE": {
+              "previous": 72.0855925934826,
+              "project_best": 534.509521484375,
+              "delta": 462.4239288908924
+            },
+            "RMSE": {
+              "previous": 214.19662015804022,
+              "project_best": 1063.76806640625,
+              "delta": 849.5714462482098
+            },
+            "NRMSE": {
+              "previous": 0.03867642111390897,
+              "project_best": 0.1972899115025302,
+              "delta": 0.15861349038862121
+            },
+            "UPS": {
+              "previous": 91.12187899857408,
+              "project_best": 49.3319391401252,
+              "delta": -41.789939858448875
+            }
+          },
+          "source_artifact": "outputs/bangalore/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+          "model": "TFTGRUResidualHybridLagStabilized",
+          "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + legacy lag-stabilized artifact (no additional postprocessing applied)",
+          "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+          "project_best_search_result": {
+            "search_csv": "outputs/bangalore/project_best_hybrid_search.csv",
+            "best_json": "outputs/bangalore/project_best_hybrid_best.json",
+            "best_checkpoint": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+            "best_validation": {
+              "trial": 10,
+              "closeness_len": 8,
+              "period_len": 12,
+              "trend_len": 4,
+              "bilstm_hidden_dim": 24,
+              "tft_hidden_dim": 48,
+              "tft_heads": 4,
+              "tft_layers": 1,
+              "tft_ff_dim": 144,
+              "dense_hidden_dim": 128,
+              "dropout": 0.05,
+              "batch_size": 64,
+              "learning_rate": 0.0003,
+              "val_MAE": 323.6952819824219,
+              "val_MAPE": 6.7279250526335765,
+              "val_RMSE": 608.288330078125,
+              "val_NRMSE": 0.11247038337982529,
+              "val_UPS": 51.98640273546675,
+              "checkpoint_path": "outputs/bangalore/checkpoints/project_best_hybrid_trial_10.pt"
+            },
+            "test_metrics": {
+              "MAE": 72.0855925934826,
+              "MAPE": 1.8931902683813,
+              "RMSE": 214.19662015804022,
+              "NRMSE": 0.03867642111390897,
+              "UPS": 96.27637440037088
+            },
+            "test_per_target": {
+              "traffic_flow": {
+                "MAE": 284.39852582333026,
+                "MAPE": 3.7176135507778354,
+                "RMSE": 428.3716955854051,
+                "NRMSE": 0.07813133660836166,
+                "UPS": 92.75307803832592
+              },
+              "aqi": {
+                "MAE": 2.855365271375807,
+                "MAPE": 2.6977718383554508,
+                "RMSE": 4.136836701500643,
+                "NRMSE": 0.13313376958530868,
+                "UPS": 88.25083382396842
+              },
+              "temperature": {
+                "MAE": 0.21599573782702342,
+                "MAPE": 0.8374732979100116,
+                "RMSE": 0.29855095344234944,
+                "NRMSE": 0.11496125523584268,
+                "UPS": 89.6892152354186
+              },
+              "electricity_demand": {
+                "MAE": 0.8724835413973508,
+                "MAPE": 0.3199023864819027,
+                "RMSE": 1.1208118617374385,
+                "NRMSE": 0.06349874516381611,
+                "UPS": 94.02925998243326
+              }
+            },
+            "comparison_to_current": {
+              "MAE": {
+                "previous": 72.0855925934826,
+                "project_best": 534.509521484375,
+                "delta": 462.4239288908924
+              },
+              "RMSE": {
+                "previous": 214.19662015804022,
+                "project_best": 1063.76806640625,
+                "delta": 849.5714462482098
+              },
+              "NRMSE": {
+                "previous": 0.03867642111390897,
+                "project_best": 0.1972899115025302,
+                "delta": 0.15861349038862121
+              },
+              "UPS": {
+                "previous": 91.12187899857408,
+                "project_best": 49.3319391401252,
+                "delta": -41.789939858448875
+              }
+            },
+            "source_artifact": "outputs/bangalore/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+            "model": "TFTGRUResidualHybridLagStabilized",
+            "architecture": "TemporalFusionTransformer + GRU + target-wise residual correction + one-step lag stabilization postprocessor",
+            "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+            "project_best_search_result": {
+              "search_csv": "outputs/bangalore/project_best_hybrid_search.csv",
+              "best_json": "outputs/bangalore/project_best_hybrid_best.json",
+              "best_checkpoint": "outputs/bangalore/checkpoints/project_best_hybrid.pt",
+              "best_validation": {
+                "trial": 10,
+                "closeness_len": 8,
+                "period_len": 12,
+                "trend_len": 4,
+                "bilstm_hidden_dim": 24,
+                "tft_hidden_dim": 48,
+                "tft_heads": 4,
+                "tft_layers": 1,
+                "tft_ff_dim": 144,
+                "dense_hidden_dim": 128,
+                "dropout": 0.05,
+                "batch_size": 64,
+                "learning_rate": 0.0003,
+                "val_MAE": 323.6952819824219,
+                "val_MAPE": 6.7279250526335765,
+                "val_RMSE": 608.288330078125,
+                "val_NRMSE": 0.11247038337982529,
+                "val_UPS": 51.98640273546675,
+                "checkpoint_path": "outputs/bangalore/checkpoints/project_best_hybrid_trial_10.pt"
+              },
+              "test_metrics": {
+                "MAE": 534.509521484375,
+                "MAPE": 11.349326102243158,
+                "RMSE": 1063.76806640625,
+                "NRMSE": 0.1972899115025302,
+                "UPS": 83.5219599190523
+              },
+              "test_per_target": {
+                "traffic_flow": {
+                  "MAE": 1754.126708984375,
+                  "MAPE": 23.287895558999022,
+                  "RMSE": 2076.349853515625,
+                  "NRMSE": 0.3852965382681051,
+                  "UPS": 72.1867103811721
+                },
+                "aqi": {
+                  "MAE": 5.855753421783447,
+                  "MAPE": 12.610911968585222,
+                  "RMSE": 6.683314800262451,
+                  "NRMSE": 2.3498190502394207,
+                  "UPS": 29.852358739452725
+                },
+                "temperature": {
+                  "MAE": 0.38989362120628357,
+                  "MAPE": 1.686752841976843,
+                  "RMSE": 0.530307948589325,
+                  "NRMSE": 0.8093116777453978,
+                  "UPS": 55.26963719407982
+                },
+                "electricity_demand": {
+                  "MAE": 377.6657409667969,
+                  "MAPE": 7.811744039411538,
+                  "RMSE": 463.82672119140625,
+                  "NRMSE": 0.5639099889240445,
+                  "UPS": 63.94229892271425
+                }
+              },
+              "comparison_to_current": {
+                "MAE": {
+                  "previous": 72.0855925934826,
+                  "project_best": 534.509521484375,
+                  "delta": 462.4239288908924
+                },
+                "RMSE": {
+                  "previous": 214.19662015804022,
+                  "project_best": 1063.76806640625,
+                  "delta": 849.5714462482098
+                },
+                "NRMSE": {
+                  "previous": 0.03867642111390897,
+                  "project_best": 0.1972899115025302,
+                  "delta": 0.15861349038862121
+                },
+                "UPS": {
+                  "previous": 91.12187899857408,
+                  "project_best": 49.3319391401252,
+                  "delta": -41.789939858448875
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Informer": {
+      "search_csv": "outputs/bangalore/project_best_informer_search.csv",
+      "best_json": "outputs/bangalore/project_best_informer_best.json",
+      "best_checkpoint": "outputs/bangalore/checkpoints/project_best_informer.pt",
+      "best_validation": {
+        "trial": 1,
+        "seq_len": 8,
+        "d_model": 32,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 96,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0005,
+        "val_MAE": 1220.6497802734375,
+        "val_MAPE": 14.550864927583309,
+        "val_RMSE": 2790.137451171875,
+        "val_NRMSE": 0.5146072607300839,
+        "val_UPS": 43.882334351671254,
+        "checkpoint_path": "outputs/bangalore/checkpoints/project_best_informer_trial_1.pt"
+      },
+      "test_metrics": {
+        "MAE": 1283.67138671875,
+        "MAPE": 15.60054339379464,
+        "RMSE": 2963.412841796875,
+        "NRMSE": 0.5533291326024183,
+        "UPS": 64.37785650260862
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 4467.07763671875,
+          "MAPE": 38.05307675341162,
+          "RMSE": 5870.98681640625,
+          "NRMSE": 1.0993733943255786,
+          "UPS": 47.63326060542217
+        },
+        "aqi": {
+          "MAE": 3.3112144470214844,
+          "MAPE": 7.089706470676984,
+          "RMSE": 4.250870704650879,
+          "NRMSE": 1.4899018000221114,
+          "UPS": 40.16222647781208
+        },
+        "temperature": {
+          "MAE": 0.8783005475997925,
+          "MAPE": 3.867150089504196,
+          "RMSE": 1.029137372970581,
+          "NRMSE": 1.6296681978952858,
+          "UPS": 38.0276112705159
+        },
+        "electricity_demand": {
+          "MAE": 663.4189453125,
+          "MAPE": 13.392240261585766,
+          "RMSE": 811.6401977539062,
+          "NRMSE": 0.9832048243257488,
+          "UPS": 50.423435226363
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 1231.4696044921875,
+          "project_best": 1283.67138671875,
+          "delta": 52.2017822265625
+        },
+        "RMSE": {
+          "previous": 2606.297607421875,
+          "project_best": 2963.412841796875,
+          "delta": 357.115234375
+        },
+        "NRMSE": {
+          "previous": 0.48764547665513475,
+          "project_best": 0.5533291326024183,
+          "delta": 0.06568365594728359
+        },
+        "UPS": {
+          "previous": 46.953031774940364,
+          "project_best": 43.468110987365854,
+          "delta": -3.4849207875745094
+        }
+      }
+    },
+    "PatchTST": {
+      "search_csv": "outputs/bangalore/project_best_patchtst_search.csv",
+      "best_json": "outputs/bangalore/project_best_patchtst_best.json",
+      "best_checkpoint": "outputs/bangalore/checkpoints/project_best_patchtst.pt",
+      "best_validation": {
+        "trial": 2,
+        "seq_len": 16,
+        "d_model": 48,
+        "heads": 4,
+        "layers": 1,
+        "ff_dim": 128,
+        "patch_len": 4,
+        "stride": 2,
+        "batch_size": 128,
+        "dropout": 0.1,
+        "learning_rate": 0.0003,
+        "val_MAE": 1114.4345703125,
+        "val_MAPE": 15.47876086748431,
+        "val_RMSE": 2406.291748046875,
+        "val_NRMSE": 0.442445231295862,
+        "val_UPS": 39.890211495066275,
+        "checkpoint_path": "outputs/bangalore/checkpoints/project_best_patchtst_trial_2.pt"
+      },
+      "test_metrics": {
+        "MAE": 1073.781005859375,
+        "MAPE": 16.616250857103783,
+        "RMSE": 2321.65771484375,
+        "NRMSE": 0.4332083261390883,
+        "UPS": 69.77352711129542
+      },
+      "test_per_target": {
+        "traffic_flow": {
+          "MAE": 3512.442138671875,
+          "MAPE": 36.93726643178038,
+          "RMSE": 4550.64892578125,
+          "NRMSE": 0.8545368298061243,
+          "UPS": 53.92181939598047
+        },
+        "aqi": {
+          "MAE": 4.853845119476318,
+          "MAPE": 10.388736860718787,
+          "RMSE": 5.785783290863037,
+          "NRMSE": 2.0150057048849646,
+          "UPS": 33.16743309572458
+        },
+        "temperature": {
+          "MAE": 0.8307873010635376,
+          "MAPE": 3.5613048593544248,
+          "RMSE": 0.9555677175521851,
+          "NRMSE": 1.5919795044865648,
+          "UPS": 38.580551978480486
+        },
+        "electricity_demand": {
+          "MAE": 776.997314453125,
+          "MAPE": 15.577695276561533,
+          "RMSE": 923.0075073242188,
+          "NRMSE": 1.1184443493253529,
+          "UPS": 47.20444982746247
+        }
+      },
+      "comparison_to_current": {
+        "MAE": {
+          "previous": 966.8777465820312,
+          "project_best": 1073.781005859375,
+          "delta": 106.90325927734375
+        },
+        "RMSE": {
+          "previous": 2111.970703125,
+          "project_best": 2321.65771484375,
+          "delta": 209.68701171875
+        },
+        "NRMSE": {
+          "previous": 0.3951555483434722,
+          "project_best": 0.4332083261390883,
+          "delta": 0.038052777795616055
+        },
+        "UPS": {
+          "previous": 47.82691087188497,
+          "project_best": 41.75379993817548,
+          "delta": -6.073110933709486
+        }
+      }
+    }
+  },
+  "baselines": {
+    "LSTM": {
+      "MAE": 859.4662475585938,
+      "MAPE": 33.035502677585285,
+      "RMSE": 1680.4454345703125,
+      "NRMSE": 0.3137731609925378,
+      "UPS": 76.11664096140566
+    },
+    "GRU": {
+      "MAE": 1452.2825927734375,
+      "MAPE": 37.60727017991653,
+      "RMSE": 2642.424072265625,
+      "NRMSE": 0.493394035165185,
+      "UPS": 66.96156382393677
+    },
+    "ARIMA": {
+      "MAE": 268.2255489171403,
+      "MAPE": 4.413666236926012,
+      "RMSE": 699.1995457845713,
+      "NRMSE": 0.1229649265415641,
+      "UPS": 89.04997621606371
+    },
+    "SARIMA": {
+      "MAE": 114.70865907801344,
+      "MAPE": 2.180949410993104,
+      "RMSE": 399.2053123466658,
+      "NRMSE": 0.0702063555442217,
+      "UPS": 93.43992350816117
+    }
+  },
+  "hybrid_override": {
+    "model": "Hybrid",
+    "source_artifact": "outputs/bangalore/tft_gru_residual_hybrid_lag_stabilized_metrics.json",
+    "previous_project_best_RMSE": 183.39675759310006,
+    "final_RMSE": 183.39675759310006,
+    "checkpoint_path": "outputs/checkpoints/tft_gru_residual_hybrid.pt",
+    "prediction_path": "outputs/tft_gru_residual_hybrid_lag_stabilized_predictions.csv",
+    "final_metrics": {
+      "MAE": 142.34934018951233,
+      "MAPE": 2.1102431941147337,
+      "RMSE": 348.44005246604024,
+      "NRMSE": 0.0651940961474632,
+      "UPS": 93.879604066221
+    }
+  },
+  "fair_comparison": {
+    "Hybrid": {
+      "MAE": 142.34934018951233,
+      "MAPE": 2.1102431941147337,
+      "RMSE": 348.44005246604024,
+      "NRMSE": 0.0651940961474632,
+      "UPS": 93.879604066221
+    },
+    "SARIMA": {
+      "MAE": 143.33718065484743,
+      "MAPE": 2.0290227273241204,
+      "RMSE": 404.1087842037693,
+      "NRMSE": 0.0756098696029863,
+      "UPS": 92.97051173108942
+    },
+    "ARIMA": {
+      "MAE": 302.87041600108086,
+      "MAPE": 3.8742183297536656,
+      "RMSE": 691.82998873399,
+      "NRMSE": 0.1294433016067176,
+      "UPS": 88.53919436039199
+    },
+    "Informer": {
+      "MAE": 376.488836572666,
+      "MAPE": 7.438600858213759,
+      "RMSE": 785.3400456745985,
+      "NRMSE": 0.1469392915188847,
+      "UPS": 87.18857287343484
+    },
+    "PatchTST": {
+      "MAE": 612.3659462220598,
+      "MAPE": 12.278163925867965,
+      "RMSE": 1269.7386468990194,
+      "NRMSE": 0.2375716076330015,
+      "UPS": 80.80340513892489
+    },
+    "TFT": {
+      "MAE": 758.3716614638224,
+      "MAPE": 12.401784853424267,
+      "RMSE": 1601.295979546344,
+      "NRMSE": 0.2996069002752354,
+      "UPS": 76.94634429751153
+    },
+    "LSTM": {
+      "MAE": 856.2618699489253,
+      "MAPE": 33.06035980586556,
+      "RMSE": 1672.636578160041,
+      "NRMSE": 0.3129549233062337,
+      "UPS": 76.16407709427203
+    },
+    "BiLSTM": {
+      "MAE": 861.9879858819565,
+      "MAPE": 12.925140544229224,
+      "RMSE": 1993.246651509917,
+      "NRMSE": 0.3729419534994811,
+      "UPS": 72.83629125405541
+    },
+    "GRU": {
+      "MAE": 1454.45438742496,
+      "MAPE": 37.6293508397951,
+      "RMSE": 2645.372474869986,
+      "NRMSE": 0.494956496108711,
+      "UPS": 66.8915786247255
+    }
+  }
+}

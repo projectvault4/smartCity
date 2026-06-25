@@ -16,7 +16,12 @@ from models.hybrid_ablation import StaticFusionHybridModel
 from models.recurrent_baselines import PlainGRU, PlainLSTM
 from train import build_models, checkpoint_name_for_model, train_selected_models
 from utils.baselines import _load_or_train_neural_baselines, evaluate_baselines
-from utils.metrics import compute_all_metrics, compute_metrics_by_target, compute_urban_prediction_score
+from utils.metrics import (
+    compute_all_metrics,
+    compute_metrics_by_target,
+    compute_urban_prediction_score,
+    urban_prediction_score_from_normalized_error,
+)
 from utils.training import predict_model, train_model
 from utils.visualization import (
     plot_forecast_windows,
@@ -53,11 +58,14 @@ def save_per_target_tables(
     rows = []
     for model_name, target_map in per_target_metrics.items():
         for target_name, metrics in target_map.items():
+            metric_values = {metric_name: float(metric_value) for metric_name, metric_value in metrics.items()}
+            if "NRMSE" in metric_values:
+                metric_values["UPS"] = urban_prediction_score_from_normalized_error(metric_values["NRMSE"])
             rows.append(
                 {
                     "model": model_name,
                     "target": target_name,
-                    **{metric_name: float(metric_value) for metric_name, metric_value in metrics.items()},
+                    **metric_values,
                 }
             )
 
@@ -73,7 +81,7 @@ def save_per_target_tables(
     long_df.to_csv(long_path, index=False)
 
     metric_paths = {}
-    for metric_name in ("MAE", "MAPE", "RMSE", "NRMSE"):
+    for metric_name in ("MAE", "MAPE", "RMSE", "NRMSE", "UPS"):
         pivot = long_df.pivot(index="model", columns="target", values=metric_name)
         pivot = pivot.reindex(order)
         metric_path = output_dir / f"{stem}per_target_{metric_name.lower()}.csv"

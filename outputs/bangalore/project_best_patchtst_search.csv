@@ -1,0 +1,3 @@
+trial,seq_len,d_model,heads,layers,ff_dim,patch_len,stride,batch_size,dropout,learning_rate,val_MAE,val_MAPE,val_RMSE,val_NRMSE,val_UPS,checkpoint_path
+2,16,48,4,1,128,4,2,128,0.1,0.0003,1114.4345703125,15.47876086748431,2406.291748046875,0.442445231295862,39.890211495066275,outputs/bangalore/checkpoints/project_best_patchtst_trial_2.pt
+1,12,32,4,1,96,4,2,128,0.1,0.0005,1129.483642578125,12.437182069729952,2660.259033203125,0.49021207557289903,45.41479347558556,outputs/bangalore/checkpoints/project_best_patchtst_trial_1.pt

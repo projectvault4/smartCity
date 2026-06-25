@@ -1,0 +1,1908 @@
+{
+  "city": "bangalore",
+  "dataset_dir": "datasets/banglore data",
+  "prepared_data_file": "data/bangalore/urban_multidomain_timeseries.csv",
+  "prepared_rows": 4584,
+  "prepared_start": "2024-02-01 00:00:00",
+  "prepared_end": "2024-08-09 23:00:00",
+  "loader_source_count": 378,
+  "loader_sources": [
+    {
+      "path": "datasets/banglore data/Banglore_traffic_Dataset.csv",
+      "bytes": 1535462,
+      "sha256": "2d7636e53b641a0427eb2d675f9b7747de7f68661c5c97d9dc8ee8e0b42e3d77"
+    },
+    {
+      "path": "datasets/banglore data/export.csv",
+      "bytes": 18965,
+      "sha256": "4e23e66a700a37213ec7825939e8375dfb3a0112658c42c3b636af0d6062bbf9"
+    },
+    {
+      "path": "datasets/banglore data/1.November 2025 AQI conv.xls",
+      "bytes": 187904,
+      "sha256": "903b86705c5b84519434ab8d99dff72d78877759d3dfd9b149a084fd9918a8e1"
+    },
+    {
+      "path": "datasets/banglore data/Air data - September-2024 AQI conv.xls",
+      "bytes": 184832,
+      "sha256": "5d053631ce909043cf05d3bd53921bffb53b7137bf6e08406b544bc8c5ea9f6e"
+    },
+    {
+      "path": "datasets/banglore data/Air data of Bengaluru October 2024 AQI conv.xls",
+      "bytes": 182272,
+      "sha256": "3c3756e9d5b3e2b94fe6b809507b88dd1e0d7cc194a734a2c5ce906bd0fb67f1"
+    },
+    {
+      "path": "datasets/banglore data/April-2024 AQI of Bengaluru conv.xls",
+      "bytes": 189440,
+      "sha256": "50a56e2a55116d9cace84ca75bfb1213d6ad7797725e08c30c393963950e5e88"
+    },
+    {
+      "path": "datasets/banglore data/August-2024 AQI of Bengaluru conv.xls",
+      "bytes": 182784,
+      "sha256": "745b598baa9678fad2d1c56d603bf337bd2c78caf4f8b7b0a6ba0a6f2a4c63de"
+    },
+    {
+      "path": "datasets/banglore data/Bengaluru AQI-May-2024 (1) conv.xls",
+      "bytes": 171520,
+      "sha256": "ec187416831673ac95abc530b729686e99fe6bf2fac6b36d6251c6431ff9eecb"
+    },
+    {
+      "path": "datasets/banglore data/Bengaluru AQI-May-2024 conv.xls",
+      "bytes": 171520,
+      "sha256": "cb9d8f91c6bebd8b7fd643b7b75d5113cd222523bf3863fb468fa69ecf819406"
+    },
+    {
+      "path": "datasets/banglore data/Bengaluru December 2024 AQI conv.xls",
+      "bytes": 181248,
+      "sha256": "ef7afd0ef3e2b16e7bd68346b921a3141fc415b123e4b4d085ff4eeaf6b0f3c3"
+    },
+    {
+      "path": "datasets/banglore data/Bengaluru March-2024 AQI conv.xls",
+      "bytes": 182272,
+      "sha256": "eb19640bfabb3c87de51e021b74b82d597cfc55f4594f44698d608bbd8430ab3"
+    },
+    {
+      "path": "datasets/banglore data/Bengaluru-February-2024 AQI conv.xls",
+      "bytes": 180736,
+      "sha256": "4dde47b06a92ac2d4651b476708aea786192f190833080bb6d3466cc8dda25aa"
+    },
+    {
+      "path": "datasets/banglore data/June-2024 AQI of Bengaluru conv.xls",
+      "bytes": 186880,
+      "sha256": "f27978940b7f3c861dcd33d63576391b38a829af78913f51c17750bc31efe610"
+    },
+    {
+      "path": "datasets/banglore data/November 2024 data for Bengaluru conv.xls",
+      "bytes": 182272,
+      "sha256": "33f815d3523b67e00e8e59b0e5094b7831b3580ffe1ed568e98bef5c0ae42ad5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-01-2024.xlsx",
+      "bytes": 349336,
+      "sha256": "33317addd811ab75794de5b424f8f6f48b28e814cd9a5e05e02dbb48db464c38"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-02-2024.xlsx",
+      "bytes": 350354,
+      "sha256": "8d72e863c060d5762cbb7de47453a029a84462e3a3c66e10a6c3680ef1d6ae1c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-03-2024.xlsx",
+      "bytes": 349875,
+      "sha256": "8a47b6381e7ccd89523b9a9ca75bf95df086a53e8d14ff8a0c6cb326e43fd329"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-04-2024.xlsx",
+      "bytes": 351270,
+      "sha256": "2e700ef6d0a53bb633ebcdc7edebd24fac01eeacd70aea19b1f7f51e7ad64d0a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-05-2024.xlsx",
+      "bytes": 350147,
+      "sha256": "6a0706743adc16b3766b082167a9bb0019b0ad08ff8918808ef212a1fae12c28"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-06-2024.xlsx",
+      "bytes": 351191,
+      "sha256": "ac0b336e8fbdef253d90aae5d75f7df9d06c0d384b14b2797d22560155697a9d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-07-2024.xlsx",
+      "bytes": 351626,
+      "sha256": "48f3f4e2514ff2a6366e1446043861c13da21bbec4c4e36451c6e7fa8a9113d1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-08-2024.xlsx",
+      "bytes": 356759,
+      "sha256": "747ac31d118083329d67a1335d9bc68fb50de84c998b647e6c97cb2445725a5a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-09-2024.xlsx",
+      "bytes": 358327,
+      "sha256": "3a3ded5b6d8765858049fdc823eb5e02365e018d25352f42880c9020447f5770"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-10-2024.xlsx",
+      "bytes": 315268,
+      "sha256": "27acfb0dc5d4aa096133a66333161bde770d068711ee1869b00dfeceb7ca8956"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-11-2024.xlsx",
+      "bytes": 321273,
+      "sha256": "8548e954b6cb417249ef07a9e03e50eb4b6e2537e982d8edb4c59662f0cb3b90"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL01-12-2024.xlsx",
+      "bytes": 359341,
+      "sha256": "b26d36aff340b8bf9c05354561571018aefa6ce38eaf0eaa5dab626caada90fd"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-01-2024.xlsx",
+      "bytes": 349135,
+      "sha256": "ce46bf244c9d9e65cd5c08996b0facbe9174dd281172044b2cdb07954c67c082"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-02-2024.xlsx",
+      "bytes": 350889,
+      "sha256": "193bd77b57c335046302f211e012df849e82ec128560461a353388b5582848ce"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-03-2024.xlsx",
+      "bytes": 350000,
+      "sha256": "013f6583b9e3db03a6fba28c79bca32d3c7be573b25c3abd677d6f7f66fa7977"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-04-2024.xlsx",
+      "bytes": 349825,
+      "sha256": "4c258bdd132851d80dd682c0c890cbf2dea01e2bca4166a423b0a0878ff65b40"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-05-2024.xlsx",
+      "bytes": 350557,
+      "sha256": "f24e2d209cfdaf4ec1d4a67d1ce32c8b168183c714066d9ebac9952fdd4a0b7d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-06-2024.xlsx",
+      "bytes": 351495,
+      "sha256": "c9145df0d12807da9053c2598782cf060d5f14ded408f77ea5aa21cd6f8a6b7c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-07-2024.xlsx",
+      "bytes": 358269,
+      "sha256": "3353652e597257295663951ac2e1e8cf706616849070b92ee49a8c2e291d1a8d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-08-2024.xlsx",
+      "bytes": 356983,
+      "sha256": "de0c5e095dfc15ca3b3b33e690c40c7566ece3725996fa1471cf9df7caf6bcd4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-09-2024.xlsx",
+      "bytes": 349697,
+      "sha256": "b095d88e4a437aae87e41db4c9d538fe954ca667183b34e00763b3873ba37f97"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-10-2024.xlsx",
+      "bytes": 296943,
+      "sha256": "98684093079ebf3add1099589d8ef66c6593afcf5b00b57c40f499af5a17d90f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-11-2024.xlsx",
+      "bytes": 321414,
+      "sha256": "60971f648333287b966337fabcec375619899bae3677188e1ded86445d9eaca9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL02-12-2024.xlsx",
+      "bytes": 359276,
+      "sha256": "51f5a1c7fd004153519e9a3e3c8d52005e5102b22948039fbb2c217b2ae9c283"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-01-2024.xlsx",
+      "bytes": 349772,
+      "sha256": "3646c592fb41183f123771d68482323d612d1fa42002f51d1edee6490e104f6f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-02-2024.xlsx",
+      "bytes": 350861,
+      "sha256": "7987c791e8cc8f2c8f2c9b15701e6c84aa4a342f412956f68b3acb7160c149a4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-03-2024.xlsx",
+      "bytes": 350145,
+      "sha256": "efe154747bc55488bd6baa48380abaf49266ad8a685336f91e65bb6f094a3c96"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-04-2024.xlsx",
+      "bytes": 348484,
+      "sha256": "dc549a320016b418b4f3dda46abdf91b54f5019e8660d0ff503b965e2aae1cc9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-05-2024.xlsx",
+      "bytes": 350998,
+      "sha256": "6606285f252958527ffb0cf24a2bea1dfb72279672953ec40e3a4a743fea13df"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-06-2024.xlsx",
+      "bytes": 350866,
+      "sha256": "ce018b86688021a250f582ffbfceb4ccc1cdff4bf3b727c3f154f24d201b3678"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-07-2024.xlsx",
+      "bytes": 351206,
+      "sha256": "90cea5b9a343468a4332b6ed86fc92bfb60fe1cbe41fbf5014d7e801e8c5593d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-08-2024.xlsx",
+      "bytes": 358337,
+      "sha256": "a0570a6133443c918ef546d1d40f9e1a19cd9d96166803c9ffce7c39d5a1177b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-09-2024.xlsx",
+      "bytes": 322634,
+      "sha256": "e4ea9a8d481263031ecc6c0004175e582d85d742771618bdcca8fc98e7ad9f3d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-10-2024.xlsx",
+      "bytes": 296658,
+      "sha256": "3c53674bcee05cbf5ddbf8f196f1f9b22b8455e6007367908b3f3aefde9ba511"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-11-2024.xlsx",
+      "bytes": 321086,
+      "sha256": "6bb70c94f1a32df1341cc8bb7adbecdbc7092a682fac0c7a16895ac215e173fa"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL03-12-2024.xlsx",
+      "bytes": 359076,
+      "sha256": "f76981e8df4aba1f25ebd3004a21ae0a18b71f98531f4a0e95e68cb6e7ca96f2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-01-2024.xlsx",
+      "bytes": 349850,
+      "sha256": "dd0944dc745cf33b08fd25b26f80894a67d8432098a9f419b0ebcdd9177a03a9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-02-2024.xlsx",
+      "bytes": 349579,
+      "sha256": "057adc502ad0e21a3b8dfe5d64fd1e927af0e4e7cc3c3e18200268b2c43aebae"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-03-2024.xlsx",
+      "bytes": 350790,
+      "sha256": "2c10631ca0f5bdee2159c57c315655e2669bfb8424112ee0197655b0f17192f6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-04-2024.xlsx",
+      "bytes": 348658,
+      "sha256": "f0ab768a86bb44277618cf005b645f5474208712cdf6a78c4457962cae3f3f75"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-05-2024.xlsx",
+      "bytes": 351000,
+      "sha256": "8309e81a50a3e93013f239d499fbd41a8fe771aa7a55bcd56eba05aa6ac01ae9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-06-2024.xlsx",
+      "bytes": 351242,
+      "sha256": "139b7d4c77f5b92b8d24c18bd8ba57e80e21b2afd739dfaaf2a4e4daaca73cc6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-07-2024.xlsx",
+      "bytes": 348416,
+      "sha256": "6b288e485f318af240206dbaa0487eb94ed1db5f833b52dcb90766943ef1db18"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-08-2024.xlsx",
+      "bytes": 358150,
+      "sha256": "08d9b734bdd336985313674afa921bdc4c46165f607d7b67f6f67c32441f98d2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-09-2024.xlsx",
+      "bytes": 322424,
+      "sha256": "fc7aab5d7d524ae0ea0e26020d2cef46fb4c3331f2995d0fd6592166533453f7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-10-2024.xlsx",
+      "bytes": 296515,
+      "sha256": "cfa8c8117ca3706e9593fba18464f591c8a0545ed54a88f22556f79342cce610"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-11-2024.xlsx",
+      "bytes": 321063,
+      "sha256": "51543df1cb6f8b08f909adf0f8472a085b292a1e687adb4efa854b6d5f089c81"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL04-12-2024.xlsx",
+      "bytes": 357884,
+      "sha256": "121846110071da68fb8b9500b161672d38ef4bb0269b069990c32eaaa211b4ff"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-01-2024.xlsx",
+      "bytes": 349678,
+      "sha256": "bf8d50a10c7709ec222b8328ef7c86c29c11964ddf4b2941061c1039f630c92c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-02-2024.xlsx",
+      "bytes": 349084,
+      "sha256": "a959ab578917e8dd4bf659706aaeb4f26946263517c92d0330e0bf02cacd88e9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-03-2024.xlsx",
+      "bytes": 349983,
+      "sha256": "d5c9d33ff8bbf7f005af4716d3f1ef7cb1b340faab26020c6b98e01662417945"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-04-2024.xlsx",
+      "bytes": 349918,
+      "sha256": "5bbab5c443243da82f0fb13cdf1ea18d33ba70dce254a49d172cca836782f52e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-05-2024.xlsx",
+      "bytes": 350437,
+      "sha256": "c066730149425c053d524a3f62b09b2150bdf2193cc6bfc3e724499d1a83053b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-06-2024.xlsx",
+      "bytes": 349846,
+      "sha256": "e25a7e915722a6f4bd483e056f6fa0c1568f3f6a495853f085f87b8088f9c75c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-07-2024.xlsx",
+      "bytes": 350796,
+      "sha256": "61bdb558fcd903b4359fa81cfab5b1aa400303bbae7f560fe00d5fdb8426a1ea"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-08-2024.xlsx",
+      "bytes": 351068,
+      "sha256": "5013be95cd9e0dd1f5877ed230b407cb8d4a7567251dc68b41f7a71776dfca68"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-09-2024.xlsx",
+      "bytes": 322161,
+      "sha256": "e54e9d4a2eda702ce50c9bd6d4c31b17007f66cf5c5ead10a09663891f6b6c68"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-10-2024.xlsx",
+      "bytes": 315430,
+      "sha256": "4785ef320e4fd95246bd6bfc82f53c6d66044329973046b0b8f6386a83666083"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-11-2024.xlsx",
+      "bytes": 319676,
+      "sha256": "88dd8a13bb4e3897509c6cf06ba967563aa98a1df0c4f9bcf4078a6b9807f23d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL05-12-2024.xlsx",
+      "bytes": 359135,
+      "sha256": "16b55b2ef233db6355b6d8697ffefe07464de07b169b9bcfb2b51d03ecaf21c4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-01-2024.xlsx",
+      "bytes": 348493,
+      "sha256": "b0c78ca19a8c6f823e4deaaf147a94b0b8edae2e4d4938e5874157174389e270"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-02-2024.xlsx",
+      "bytes": 350726,
+      "sha256": "6005e2ee5db65efc4cc012a3bb543f92266f1ca2189e78240b50affa92f35cc2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-03-2024.xlsx",
+      "bytes": 350105,
+      "sha256": "a90939575bacef016ad9aa01a7549ed6110a33e96e120d3f007325d0743b7185"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-04-2024.xlsx",
+      "bytes": 349843,
+      "sha256": "ab9d092b1926f1947a8e62e0ce468379e46ce73bcede17d197e28899a3d87c78"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-05-2024.xlsx",
+      "bytes": 350735,
+      "sha256": "3dd32cab394f25cc83867ceeea65dc1949213a913ed0f8452b174b456c4dd157"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-06-2024.xlsx",
+      "bytes": 351559,
+      "sha256": "28d969c4ea87678282bf29e616fc0bf69a814f8182b76ec306af7c1de72698a7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-07-2024.xlsx",
+      "bytes": 350105,
+      "sha256": "29d1dc744a2285e5ca813184aeb41b40c621d5210f6368849cc5fac545f30d7e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-08-2024.xlsx",
+      "bytes": 358129,
+      "sha256": "383ef03c7a45f69fca60de4b351e70872eb6a831d8819c2fe5791a9a0330b3d1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-09-2024.xlsx",
+      "bytes": 321940,
+      "sha256": "0eb40717d3aed0ba715fa77331c31342479b59cbe6b700dc7f84e6e5306d8a5e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-10-2024.xlsx",
+      "bytes": 295944,
+      "sha256": "fe2a4d81fc0e0191ec258f74912c1ef22fe010510215bef6cc2feb3df79adde4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-11-2024.xlsx",
+      "bytes": 302193,
+      "sha256": "a800d8c2750bdcbfc5ea01d065d22303a2e131405ea9e7305fe729518a4f75e9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL06-12-2024.xlsx",
+      "bytes": 357742,
+      "sha256": "bf1a601806c164f4adac76b328c96533e7cdc6ab94cdb7c55a5df55ff99bffcb"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-01-2024.xlsx",
+      "bytes": 348763,
+      "sha256": "6bbbebd9931a8d1eb89d88c77eff168633534820b3c08f639df51ddb6aa29536"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-02-2024.xlsx",
+      "bytes": 350704,
+      "sha256": "2c36da505021df5c82b72188dcf4e319903d5b1efddb7e69bba1a5a22cc9ec86"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-03-2024.xlsx",
+      "bytes": 446167,
+      "sha256": "98c7fc91d0697ef617223769841d83361181e1a83ac008725e988e4fa2b80cf2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-04-2024.xlsx",
+      "bytes": 350245,
+      "sha256": "57be7192d79740dfe14391677c3f7c4ce7fd78279cbfe41fa13c8b9fa8938fab"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-05-2024.xlsx",
+      "bytes": 351127,
+      "sha256": "23112079db26cb3841261ac251b8c60af1d9f908389b07934269b69f1bfb6f8f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-06-2024.xlsx",
+      "bytes": 351207,
+      "sha256": "8c1f55eaa78905ae2a01c4621c1305971c181f645321b629d75dc7673ecbc3ff"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-07-2024.xlsx",
+      "bytes": 357016,
+      "sha256": "5b1710f10312ce7bca94cdbd72bd0f0f9eb62bfa7e50a7e4fa8aace7a9dcb866"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-08-2024.xlsx",
+      "bytes": 358190,
+      "sha256": "78003bc9b31460c3ae5dad73ed29e9377500b1d816896e0452eb1480c72833f2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-09-2024.xlsx",
+      "bytes": 351662,
+      "sha256": "43b9439f549b5e82a0f7439adb853ae9b92537b2506a2b5e372c046566360ef7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-10-2024.xlsx",
+      "bytes": 315403,
+      "sha256": "3ac79f1d6121398730df2ce64797e638d2588fa2a65de97dfbccfc9a61b1e363"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-11-2024.xlsx",
+      "bytes": 302188,
+      "sha256": "50267174f08eb6d2fb4e4f2ba09f6a3001398f0bcbcca50b81f6485484cd45ba"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL07-12-2024.xlsx",
+      "bytes": 359236,
+      "sha256": "5d98fc105d2898caeea1c765e1de5f216931f8b62e7ff4cac15c88da680e72d3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-01-2024.xlsx",
+      "bytes": 348693,
+      "sha256": "3f1e49f7cf1b59ddaf5393748377a0dc0b117cea938507568cc2b813ac698db9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-02-2024.xlsx",
+      "bytes": 350509,
+      "sha256": "3403e74efc0a4ce97db7d7d29fc981bc4397bbde00d6235441075500c4ff5bde"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-03-2024.xlsx",
+      "bytes": 350053,
+      "sha256": "ff5305984d2390104394ade70f1437f4b64a1b6511c9c7d3c62b3f38edf71735"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-04-2024.xlsx",
+      "bytes": 350932,
+      "sha256": "e3d6b419e7ce4c33fa63819e5168931a95d704ad4b70aa759832102469209a8c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-05-2024.xlsx",
+      "bytes": 350556,
+      "sha256": "d6ed488b63fa1d12cfaea7c0cf1f5ccf219edfea0fd40c0dcb676bde7308c632"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-06-2024.xlsx",
+      "bytes": 351173,
+      "sha256": "9b74e333be0d3aa645f91045571f0ee1c0570340cf9c85a4cf0d82aca0122758"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-07-2024.xlsx",
+      "bytes": 350783,
+      "sha256": "557b53edd5af60dfd8468e4ba2cd1bed4567300b470cc5dcbb139ce038c1c900"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-08-2024.xlsx",
+      "bytes": 357948,
+      "sha256": "a62fdb52dcd68fd30c3072e8e4fb0147dcb5c92bef44d96a2b95f4c27475d9ee"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-09-2024.xlsx",
+      "bytes": 344585,
+      "sha256": "b302fbd9ea405484af15af472817129ada4f74597c8136861f711127f17a5bfa"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-10-2024.xlsx",
+      "bytes": 321524,
+      "sha256": "db8c573e84d298c174e581fadfb243ac90c92c63587f8acba23a9e6b7d3b87c6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-11-2024.xlsx",
+      "bytes": 321180,
+      "sha256": "e302167b818316de0a5d94e3d5013e827c9db0cd91f56165a7f10408c5d61361"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL08-12-2024.xlsx",
+      "bytes": 359389,
+      "sha256": "f12f1926e899ad913a5d6f1a9a99eb2d62a7d969f84c0805870c33314f8256c5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-01-2024.xlsx",
+      "bytes": 350470,
+      "sha256": "70063907138391708dc59cea2ee2bb44f8946bdb1ac01dcdd8ed63caa8dd33c7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-02-2024.xlsx",
+      "bytes": 350531,
+      "sha256": "edf01fa247f8702616f5bc78230644494d63250ee459024e630f1113aaa9059b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-03-2024.xlsx",
+      "bytes": 447719,
+      "sha256": "9d8e7c0a46218062530db2f742c513d48a0b30eb06148071aad8ff2cc28140b0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-04-2024.xlsx",
+      "bytes": 350290,
+      "sha256": "45c5ea0bd7f2c6b444302689903ed35b92d95cbcb9b48a801b0fe23ec38a6a78"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-05-2024.xlsx",
+      "bytes": 350875,
+      "sha256": "726b795775e36bb541453943bc023956e197b94118dfc637acc4a44643132ced"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-06-2024.xlsx",
+      "bytes": 350921,
+      "sha256": "5ca1832d413049349671b15876785cc7773b6005dd934e50df081b16f7f9b850"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-07-2024.xlsx",
+      "bytes": 358069,
+      "sha256": "7201b5ecc3d4ecc011a15ab365da0a683fba10a0b964411c932e4f54c4758ae8"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-08-2024.xlsx",
+      "bytes": 358050,
+      "sha256": "9cd31988500717bb403562b3c186723d421ab5d0a52a51b7a0c3be8c8c6a5781"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-09-2024.xlsx",
+      "bytes": 351509,
+      "sha256": "af6335fa648f500c00c503671a1358bbc7cdf39726fa56242608962f3b591597"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-10-2024.xlsx",
+      "bytes": 321461,
+      "sha256": "32bd11cce22e3d4400598f24281fd415d478f3de604cfad61df466a6f93f31ad"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-11-2024.xlsx",
+      "bytes": 321117,
+      "sha256": "354d63ca30d323045fd74542b7592d492f0dc463420167755ff3c4985cf7b70a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL09-12-2024.xlsx",
+      "bytes": 357611,
+      "sha256": "4ac9819cf38ea0b7fd352ba4ddf513c7050409c19f86f1bab096e7cceef061f3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-01-2024.xlsx",
+      "bytes": 350176,
+      "sha256": "a7b65f28f6287f8bcbc81e53c70eea66705257dcab3fd1211fa55cec48bc595e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-02-2024.xlsx",
+      "bytes": 350582,
+      "sha256": "f0909101f2a2c2b732c12a21d358c55a4661c1f7e44fe32783a772d1203d356b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-03-2024.xlsx",
+      "bytes": 350659,
+      "sha256": "c8e047bdcc1503c3042f378dc102116b165eb14943510e06bb8ec712a404e048"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-04-2024.xlsx",
+      "bytes": 351047,
+      "sha256": "153ac6c94e74e10501c834998a22e094709baf17758075f7d2493d17a7949da5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-05-2024.xlsx",
+      "bytes": 350698,
+      "sha256": "616cc17ca7d181e9abb768af9cd175e42dbc5e100945f7cae66703c0284757e8"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-06-2024.xlsx",
+      "bytes": 350934,
+      "sha256": "447362323cbc6fe2c4fa55a79b4e2ef6cf21543cc1b6cca663b75640d11debf7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-07-2024.xlsx",
+      "bytes": 358332,
+      "sha256": "2f21155fca5a408981db08603ccb87d24f0f7e3a92280fbe31d9314f4f88cb05"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-08-2024.xlsx",
+      "bytes": 350952,
+      "sha256": "94d75b7d01a4f6506281fb0ab35802e768ca0fc15fbc0a90546b04f181b7fab0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-09-2024.xlsx",
+      "bytes": 351328,
+      "sha256": "1ffa0b3ccff1cd8f993d323da991a47d10da9bdd4675bf8f941494f7007ad334"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-10-2024.xlsx",
+      "bytes": 321688,
+      "sha256": "991d2f20462ef0659ca1b22ebfac81ab84ea5a0c33332a7612f00df387a37621"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-11-2024.xlsx",
+      "bytes": 321190,
+      "sha256": "9a29c52abf949c8da5617cce3a86e6125ac806fb0f9aa63003664e5cdbdebe44"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL10-12-2024.xlsx",
+      "bytes": 358751,
+      "sha256": "e45a1584ea02ede2a2e15f2156bf2c200dfa9281833797cbc68182f3b0526ff6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-01-2024.xlsx",
+      "bytes": 348048,
+      "sha256": "ee4d123e494affe974bb50f15ed24e163714c833baf694b1563cf017ca141092"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-02-2024.xlsx",
+      "bytes": 350300,
+      "sha256": "cee4f5e5142dfbc7966f290e8228084495d283c665ed8fdc1531a5737687e898"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-03-2024.xlsx",
+      "bytes": 350574,
+      "sha256": "2e67f6b493b2c1d23ad52c8e5b6ac71b3bac36b992bf6c90c663e06d401f79f6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-04-2024.xlsx",
+      "bytes": 351046,
+      "sha256": "b1e9383cef4110c87d772082b912aabfd53a5d7db7146f6be22f727c35ac16a2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-05-2024.xlsx",
+      "bytes": 351033,
+      "sha256": "862ea545030c33ca03f5715434c6c5b0bacaff4e5aae7703db93ee0a1ec857d1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-06-2024.xlsx",
+      "bytes": 351120,
+      "sha256": "92e821ee646784b3d7724ed77cd053654da2c909d61971d262cd2f75751e3a4a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-07-2024.xlsx",
+      "bytes": 358444,
+      "sha256": "17125ec6bb2181a0f7a91f545c5225b159630519e0e4dac928376604c52b5871"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-08-2024.xlsx",
+      "bytes": 351049,
+      "sha256": "98dc4cb59e1ada6d8dad42d4a934d7bd4fdc678ddc6fc817253abd5c51714048"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-09-2024.xlsx",
+      "bytes": 344908,
+      "sha256": "66ab654e1aea7dacaea3703b935ff512c4eeff25ea5caba6946e95109750b67a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-10-2024.xlsx",
+      "bytes": 321648,
+      "sha256": "8597379c5b2f40b21d172a77f7a7b90af1f5bd09b2a89780ab0bb90f5b4be932"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-11-2024.xlsx",
+      "bytes": 302360,
+      "sha256": "2b9b026c4a455b709929870439215afd49711bb91e7413e43fc14662ef54eb53"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL11-12-2024.xlsx",
+      "bytes": 359159,
+      "sha256": "d83c39f54b00ba914cef9fa064c29c9ea86847713e95649e32875f9225439561"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-01-2024.xlsx",
+      "bytes": 347651,
+      "sha256": "cd6f1912c1dfe9f2a72042dcf29d31d89263cb20476a1c96ccc942042333c9fd"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-02-2024.xlsx",
+      "bytes": 350518,
+      "sha256": "fa634d9f1bd14c3bb3b4c2b8a02d21d4b8f532d9b115ab6af3663028857848c3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-03-2024.xlsx",
+      "bytes": 349267,
+      "sha256": "f5f4d4538e98fe18116adffd4a92d7ab063c3e763381c703babe791c67e18a28"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-04-2024.xlsx",
+      "bytes": 349547,
+      "sha256": "6165d48040dd49c233bf9fca93e210bc08700ff9f178fd9a24f5badfd2ac3b36"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-05-2024.xlsx",
+      "bytes": 350775,
+      "sha256": "b67a27bb02f847149569f044e57264e305b30dda32bf27d3cdb4b0757fee60ad"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-06-2024.xlsx",
+      "bytes": 351252,
+      "sha256": "65af2e77b23685557d57cb3b3642a07b8c0c23487ff46a896f38e6558f49ae08"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-07-2024.xlsx",
+      "bytes": 358083,
+      "sha256": "f1a1515e49b34035c74e780a8c2385a48533c8a0516a54aabe548fa47a295ec5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-08-2024.xlsx",
+      "bytes": 351328,
+      "sha256": "a8abbde131b9d5d07af0c35aa965cd7e5b41e0b9c816ff81dc5dcc0ec5c37f66"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-09-2024.xlsx",
+      "bytes": 344957,
+      "sha256": "01c13a0c197553cba64d89f483d864638eb6c2c02027480ed8f05434b4fe691b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-10-2024.xlsx",
+      "bytes": 321735,
+      "sha256": "9f60c922be18886a5d97b1641d565059dfb8ef5d6c90bee85e3987542c9ee41c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-11-2024.xlsx",
+      "bytes": 321383,
+      "sha256": "e9dbd16a657ba3c063d9597bbca0efd875b07e00d5738d4f6603cb6c3570fd87"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL12-12-2024.xlsx",
+      "bytes": 358923,
+      "sha256": "83bb2d7452b1acd9a5f9eb13dc9c3006a008b956004889a593d56bad0771f844"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-01-2024.xlsx",
+      "bytes": 348060,
+      "sha256": "e5404145f5c05a0a3fa73e5fbfddeb71269dff5a662eeface29f7b084702b94c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-02-2024.xlsx",
+      "bytes": 350221,
+      "sha256": "2ca808044f625c48d07715f4f9160655f99b63c83b0bfe0d3d0c680dbdd70a76"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-03-2024.xlsx",
+      "bytes": 349940,
+      "sha256": "171cefd258091ec010bc5061088d86c14ccd93107099d26cccedfd57e766c3f1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-04-2024.xlsx",
+      "bytes": 350248,
+      "sha256": "8e68638e4385c88d1ce7c19cea3a139b92e28e5f826a114df549e24a5f982de3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-05-2024.xlsx",
+      "bytes": 350947,
+      "sha256": "43296310b3a5f1b0da49012c5730e53fc3bb77332a8045a49aefdcd0564cd8ac"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-06-2024.xlsx",
+      "bytes": 349671,
+      "sha256": "90866fdb6b50b58057a796dc0facd355182f5473c67d0e7e5fc096709ff3f0f9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-07-2024.xlsx",
+      "bytes": 358542,
+      "sha256": "3f03cc52dcc6048cea79d64e9c3ff1f7ab79a228eefa9cec7df57446a71a4c24"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-08-2024.xlsx",
+      "bytes": 358105,
+      "sha256": "2fe0df007f6ec302e4c61d6c4a674d27b67ab1293d800d95f54909d7bf4b9308"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-09-2024.xlsx",
+      "bytes": 344819,
+      "sha256": "b7319511fbdb55cd1a2736ca45583c35a01dd99bab8cd5b68f113c3f0e1bdc4a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-10-2024.xlsx",
+      "bytes": 321735,
+      "sha256": "3ea9f15f6fb369c10ce84fa43c52f101f8e8a98b8356ff1a6869737f5135f8ad"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-11-2024.xlsx",
+      "bytes": 351018,
+      "sha256": "c63a64ec1c481d835df1ed837f26905d1b354584b52726b7f84bcbfa6a472789"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL13-12-2024.xlsx",
+      "bytes": 358902,
+      "sha256": "3805a9fe2406c6e6842c10d1848e06d000c9dde67858dbe7ca0dbaf040a967cc"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-01-2024.xlsx",
+      "bytes": 348476,
+      "sha256": "77792cb5b6098ffdad294642af046a3ce5747384f2a7ce17dde41509abe2554e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-02-2024.xlsx",
+      "bytes": 350344,
+      "sha256": "02485f2492687d02c4ccabfc50b3a600aed3fb9fdbbbf08efc0d4815e84a190b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-03-2024.xlsx",
+      "bytes": 348867,
+      "sha256": "af8435f8604a93adf5982276cb8c64c4240617e857e2d8816eaf29f3c9ef384c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-04-2024.xlsx",
+      "bytes": 350295,
+      "sha256": "00214b7e4d54c2f8da3701a7a2c58be611c534f944fc0e5032e7bf2c1c3882ce"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-05-2024.xlsx",
+      "bytes": 351684,
+      "sha256": "deaa4e8528ff6a5d51c613090e5955281f3111e86a5ff48737ae658815b7a995"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-06-2024.xlsx",
+      "bytes": 349315,
+      "sha256": "6dfe91eb9b9c36d316712542ea4b3533bceae7370114b104510898cb64400427"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-07-2024.xlsx",
+      "bytes": 351270,
+      "sha256": "1d70cd60baf65dae300c5e28ad5aebb53792df1f3c82679a45c1879579ca912a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-08-2024.xlsx",
+      "bytes": 357979,
+      "sha256": "d52a21b3ceaa4bcb14fef072623292cddc213fdd6f1b1c0b22068ef0bb027537"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-09-2024.xlsx",
+      "bytes": 344281,
+      "sha256": "1e534a98996e11e7ee06088a29cf5f4679496246f0e1c45464c152f7bca7047b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-10-2024.xlsx",
+      "bytes": 309485,
+      "sha256": "07a4956c11219fd933699c6f137a8456cb6d7423261ca5edda816c21794055d3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-11-2024.xlsx",
+      "bytes": 358450,
+      "sha256": "4da2de58914d88cb53f5c648b2cb624078ff4be80512ba04ce17c33e55c98744"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL14-12-2024.xlsx",
+      "bytes": 359052,
+      "sha256": "3d5e8c5098cdd7c94490fb0c52c7517a2050cc357b76af20d7692309893f6f32"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-01-2024.xlsx",
+      "bytes": 444280,
+      "sha256": "dc490c0244a559db1065e3bb926dc65a4c5e5bd8d31cab07c72dabee8f4cb9b7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-02-2024.xlsx",
+      "bytes": 348675,
+      "sha256": "978be2650a8e7db61193fc0b3d3c8169978620404d697003f756acf5ade308d3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-03-2024.xlsx",
+      "bytes": 347138,
+      "sha256": "b583c846fd79458f3fe4b5d10aeface94e2a4969caec2e9a1145c6fe72b46593"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-04-2024.xlsx",
+      "bytes": 350875,
+      "sha256": "5ddc245165a5a5cff018bbc7ecedfa438243323615df163db21d6cf436899bc2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-05-2024.xlsx",
+      "bytes": 350874,
+      "sha256": "e27364b3f3a6fc9c60de663ad188acdbc2d7f2f1a7e637b02340d59266c95837"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-06-2024.xlsx",
+      "bytes": 350593,
+      "sha256": "e941b34ecc9661ed8ba8cc669e682465b67555a80c7edb8e9c703b0e8c5ce33b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-07-2024.xlsx",
+      "bytes": 351204,
+      "sha256": "f4aa309b961985d463694ed20edbb0c742ae107740fd7edb810fddf71e66fdcf"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-08-2024.xlsx",
+      "bytes": 358104,
+      "sha256": "7c793dd5e30c81b1d756baafbeaca2642d3ad83d2eda2e71a2cc641b5fd6600e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-09-2024.xlsx",
+      "bytes": 344179,
+      "sha256": "7866761a28d93b4f1dde362fca38a22d31661ec4ff7419be1ccfd475e3e4a0a0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-10-2024.xlsx",
+      "bytes": 321546,
+      "sha256": "8ccc70584f5b6ebefa3d5bbc9a026a6468d583101d9805e5f0f22b6d65dcac80"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-11-2024.xlsx",
+      "bytes": 359149,
+      "sha256": "b933f3219647867da12064260ff6b2a98b13b9b9dd52112af490a4281a9f8946"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL15-12-2024.xlsx",
+      "bytes": 359948,
+      "sha256": "9e47bf56ea0041e40258c8baf873b6f00d28303c71a4233eb36e45a86125935b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-01-2024.xlsx",
+      "bytes": 349639,
+      "sha256": "866eeca42c1806f4ce81a5087b332b21d49d9a14e4b1e0df9e0705e2fa155462"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-02-2024.xlsx",
+      "bytes": 350591,
+      "sha256": "9e5e01ecd480254e0d22e6c3260fd5b619f068988c83f112d87c1d32fd97ef8e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-03-2024.xlsx",
+      "bytes": 350350,
+      "sha256": "f479ddf63edb65dd2d99d3a616c1b7a300596b47a38569d2b2be3686bee1da24"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-04-2024.xlsx",
+      "bytes": 350420,
+      "sha256": "4d7334904a604792769f91f16ea35d4aebdcb56d343b688ab0c931cd89df0159"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-05-2024.xlsx",
+      "bytes": 350893,
+      "sha256": "b5a141cc489ae207c0c0965623e804171685c112de5e784a8f7b4ee706121317"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-06-2024.xlsx",
+      "bytes": 350588,
+      "sha256": "59bab91154b3a936016ab95f4386863169fc9c78a4364d2542b4ac248e951b78"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-07-2024.xlsx",
+      "bytes": 357933,
+      "sha256": "10ed37a0c991d1f000946cea2006c7a156ea7b801a0e764cd3fb31beb142b45c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-08-2024.xlsx",
+      "bytes": 350905,
+      "sha256": "046cc03e5c513549a94ef84fe571cdb87ad84e11cd840ec54b6ab57f920115ac"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-09-2024.xlsx",
+      "bytes": 344309,
+      "sha256": "173108dfd9126327990e0b48ff2c7c29143921268e8e80ea3169ea3b71660de5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-10-2024.xlsx",
+      "bytes": 321292,
+      "sha256": "fa7ad1619ea569a83c7aee45767b5631bcf811d150bf54ad70c618c0b6a731ef"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-11-2024.xlsx",
+      "bytes": 358864,
+      "sha256": "3ef6cba7c139a6d7c935828e44c5e2410f6bc45b03225eba9c597d8c05909010"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL16-12-2024.xlsx",
+      "bytes": 359921,
+      "sha256": "51e5c41aa5508d9f15c9d5da1e6d50e43f43ea2d7fb207bc599611116fa40564"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-01-2024.xlsx",
+      "bytes": 350071,
+      "sha256": "ddaafad0f7edcbbe7ff3db1e96b11ab41f6859e3f67350d9b7021a0e9dee6ea8"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-02-2024.xlsx",
+      "bytes": 348709,
+      "sha256": "8f98ab0706ac94c19eea57e78f836fad0f7a3e94d96a1b5edf91d3d3b95cd420"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-03-2024.xlsx",
+      "bytes": 348762,
+      "sha256": "58c45ffba39ca653eb00d0e71414117e44d4eb6f77e46cb9a8b85556d94d9849"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-04-2024.xlsx",
+      "bytes": 351350,
+      "sha256": "1b259a13649004124214539812ef240113d44a8aced281a64a25182064621896"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-05-2024.xlsx",
+      "bytes": 349273,
+      "sha256": "c4c8004e20478508fb9c77931a93175842434a5e0e157595e28e3d01669e066c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-06-2024.xlsx",
+      "bytes": 350866,
+      "sha256": "7b0b475948d88743593bd3891ae1b16d399a31dc8088b1309dafb2ab23479d7a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-07-2024.xlsx",
+      "bytes": 358040,
+      "sha256": "75acc713aed0dca126c074a3f2403bbcfe44f8e3d00c36ce3e479562a0a0d086"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-08-2024.xlsx",
+      "bytes": 358537,
+      "sha256": "95f0b23df30ae16bf7da08a0da09b8b5cf1f207e37bbe009d74b61343ffee672"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-09-2024.xlsx",
+      "bytes": 344165,
+      "sha256": "3cc05cd50171fa325ea748af0a63d5812a9dfde2bfaa44c3d51b81641e906439"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-10-2024.xlsx",
+      "bytes": 321546,
+      "sha256": "01b0f66eed3e804094262efbab00bb8bd5b0c3df229b86fdc4c696cc45627506"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-11-2024.xlsx",
+      "bytes": 358650,
+      "sha256": "606544d72d2a0d485ff0576e62b40cc7736d3771b0cb7a05cc050341d8b431c4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL17-12-2024.xlsx",
+      "bytes": 359654,
+      "sha256": "58fc08702bd5ec325b76c9acd62e81e6950a2aa45182bf4f165a9ffd5d500f56"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-01-2024.xlsx",
+      "bytes": 349700,
+      "sha256": "c523879169f42fb845da2c22eed65a22017be4b11063678c22c0ce126e7e4dd0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-02-2024.xlsx",
+      "bytes": 349297,
+      "sha256": "172361b20562734245efe7535e2567139db0bfb4e8fbdbc335b588b7949abbf9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-03-2024.xlsx",
+      "bytes": 350832,
+      "sha256": "badf8c8d8d859552385f6313d787bdf354fc0836ce1d81af80a9d1407d672f6d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-04-2024.xlsx",
+      "bytes": 349334,
+      "sha256": "dd3f4c79bb569039b961b31fff05deb959e9db13947dd35b0c3a683369b3d9e5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-05-2024.xlsx",
+      "bytes": 351117,
+      "sha256": "149a3551cce6842a6ac5e4a3475c69f5310a9dce93523f911140feba88aa8f12"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-06-2024.xlsx",
+      "bytes": 351353,
+      "sha256": "d09c781bba528815f0ca455796890c45bda76d18da2fadc125dd27c3ce9adbd9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-07-2024.xlsx",
+      "bytes": 358082,
+      "sha256": "7f31b6c59159c5eeb4bceb1ca800b39cda0b3b0dbb8982b09c18b51a6497be17"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-08-2024.xlsx",
+      "bytes": 358285,
+      "sha256": "86495447bf89c92f4d4bf9ebc8840507a6c8cad26f3d1784e117ba0f44d2212a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-09-2024.xlsx",
+      "bytes": 344263,
+      "sha256": "417278cb6a969ecba7ebcae427bd041a010dbcccb4facaf775198e91b4f7ade3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-10-2024.xlsx",
+      "bytes": 321541,
+      "sha256": "7d3a5cde61b7a88947b2335b01314d78bb4decfda366e79902d9fb0d5520a8cd"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-11-2024.xlsx",
+      "bytes": 351515,
+      "sha256": "a4bf2518afbd0782af1beb99ee48f289527ea31de276b8a6411e1e2cab9810fb"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL18-12-2024.xlsx",
+      "bytes": 357420,
+      "sha256": "0bedd3d92d11c56ad7fadf4b0c12bae289f37c242187a27283b1d8518af46050"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-01-2024.xlsx",
+      "bytes": 348912,
+      "sha256": "5c65f915aeddfc2f232c6a7479271399b5db007261ea8d4a32c52ad352a7e093"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-02-2024.xlsx",
+      "bytes": 350873,
+      "sha256": "f2113a95fc1c173f49cb6a0bbaa5f7d56c9bb48151e6e48ff1dc0de8803fcfa6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-03-2024.xlsx",
+      "bytes": 348460,
+      "sha256": "9b901bbee62bbaef6dc33a375a82ddcbf0d18ac15c38991280bda24db9c38356"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-04-2024.xlsx",
+      "bytes": 350444,
+      "sha256": "547f5f8f83ba2038e6938ac1d2a67f52bfdea8919bc52fca6d8d3d93b8258fe5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-05-2024.xlsx",
+      "bytes": 351532,
+      "sha256": "411a3a588ff9d5b9beef42239d52b262820f07cbc2d36e25a608e236941030eb"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-07-2024.xlsx",
+      "bytes": 358389,
+      "sha256": "caeb7d3dc6225ec1f99288d8e009f35f7a38fbb87a15bb7f1a1c8cab49ea1fb5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-08-2024.xlsx",
+      "bytes": 351011,
+      "sha256": "014d0b6bd57aa64e7913ab12bb411aff4f7682bba4d142283ca51297227abf8e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-09-2024.xlsx",
+      "bytes": 344256,
+      "sha256": "b01831c03fc65f43b6a379aa25b7e4c60a80c033c888634d6323b6d8aa0c3143"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-10-2024.xlsx",
+      "bytes": 398314,
+      "sha256": "b40a83ecc1add47098cc963345eb925a015844fdd0e06cedaa06520aab11be23"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-11-2024.xlsx",
+      "bytes": 357647,
+      "sha256": "9f9ac057fdaf42eb6a04527205256664779e25af821b0d590b4aca701176c1f4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL19-12-2024.xlsx",
+      "bytes": 358789,
+      "sha256": "a1727a25abd0f04847141611942e9d9af72ba6a63a77242cf19e3aaad5efea1d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-01-2024.xlsx",
+      "bytes": 350139,
+      "sha256": "1585c8ac01fc5407e2a7ad079af695b97d60c81315018b8d78060a2345798a8d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-02-2024.xlsx",
+      "bytes": 350364,
+      "sha256": "473778f02e23fbb13707bf74abe1abc26f4b82607e4fd8ce0968aaf9b5737be4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-03-2024.xlsx",
+      "bytes": 349646,
+      "sha256": "2893465d009bbe26996392ac8fbb5b93843838857a7eb110f272e8baae58b30d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-04-2024.xlsx",
+      "bytes": 350909,
+      "sha256": "2f03ca235d7365bc191a4f8b37d644c310d063191e3646452a0b94fdba08a40d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-05-2024.xlsx",
+      "bytes": 351410,
+      "sha256": "c12a22135197b11f25e2b7e106f963c70d41c56f99d5aef9e165cd6953fd4829"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-06-2024.xlsx",
+      "bytes": 350983,
+      "sha256": "84d9792349d1a11b9048a311e7bbb72d6c9f81a165e7702d0ccbb10e74ae9da1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-07-2024.xlsx",
+      "bytes": 358748,
+      "sha256": "a8a3cce363ba48bd5150a83e5ac75c0b2b19723dce09fa62397871069f55f370"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-08-2024.xlsx",
+      "bytes": 357736,
+      "sha256": "c30b2d4221c2f260fe93a402e3f0a45a0755606a73fa5eab345fde16a4537886"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-09-2024.xlsx",
+      "bytes": 428068,
+      "sha256": "dd0e219f2c1abb25c5639735bc647045e5b8408bccc446ad0994bd483385afdc"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-10-2024.xlsx",
+      "bytes": 315346,
+      "sha256": "085eb6f1bcb61d2b4a6b70fe9bc1f35e361d81ef105bfbec4caf2ed78cbd9d0d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-11-2024.xlsx",
+      "bytes": 357609,
+      "sha256": "b9934d32693879bed395940d865926974ea22438886f17b9ee74564bf449b1e3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL20-12-2024.xlsx",
+      "bytes": 357384,
+      "sha256": "723761eb40aae5bafb022f1b110ffa2fe96a016eb1bf8df7d43388bdb4a3bf78"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-01-2024.xlsx",
+      "bytes": 351190,
+      "sha256": "e70130d378a75ef6c1db2c446321605525c8f006af14e1aff262517af3d85057"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-02-2024.xlsx",
+      "bytes": 350069,
+      "sha256": "18e9a7c4b6ee307120484aa79de2aade2cd0e934690d4086b0128fb2a14c0a46"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-03-2024.xlsx",
+      "bytes": 348570,
+      "sha256": "179bbe83f930f0d6b0624e954b91c7caa99916918b42ff7a7f7fd0eed13f6c8c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-04-2024.xlsx",
+      "bytes": 350890,
+      "sha256": "07f33a80d3f6d3a71246fe6b22a22690094d452b3ccf86d210811cb1e868dc3a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-05-2024.xlsx",
+      "bytes": 352043,
+      "sha256": "34378522458c3879e21251be6e1448e7071881e5ba73f71f06d764c8f8227b3d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-06-2024.xlsx",
+      "bytes": 350977,
+      "sha256": "236ea759f618938679b128592c214bbb250fb404ba379bd15fbbff452e5ced9f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-07-2024.xlsx",
+      "bytes": 351213,
+      "sha256": "34e43a719b91c99f00a6330f958785c5740dc89f21037ec92df03602d07c7c54"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-08-2024.xlsx",
+      "bytes": 357597,
+      "sha256": "cf62bcb2388e4e7612bde4e33a7d1f54fe4a36fdb76427ba7fd268fbf3c601b3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-09-2024.xlsx",
+      "bytes": 344690,
+      "sha256": "31ae21b692d2a16aa1f47b377cffe588bb8f0f69011a2f86872181203903511f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-10-2024.xlsx",
+      "bytes": 296285,
+      "sha256": "8d55e937dc39a583ab0a271479b1fb182bc91b84182220317b34e67665c642b7"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-11-2024.xlsx",
+      "bytes": 357222,
+      "sha256": "5b107f47b8db0f6adccdde9067a420cf7f42050b57b90b18dcf18fe219f7f43c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL21-12-2024.xlsx",
+      "bytes": 357378,
+      "sha256": "177851fff0fce3faf6953ba1935c07e763dc7065086cd6f5f44f88fd8c0b69bf"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-01-2024.xlsx",
+      "bytes": 351177,
+      "sha256": "f0c0fc69fc0424b664c3665146228032565bf423e8bb7b2aa575bac56d533948"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-02-2024.xlsx",
+      "bytes": 350439,
+      "sha256": "bc1fcedd3f2c9e18bd2f52a5e0eaef6fd5de2f1e2cf939c1df736fae71e086b1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-03-2024.xlsx",
+      "bytes": 349787,
+      "sha256": "46fd7e48789b76beee053c7e5f7b54fc60f9b93743937d1fd3a8a977d3bd7038"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-04-2024.xlsx",
+      "bytes": 350249,
+      "sha256": "bcd22527e276a3af4f76e6fd834097635f198a2348ad3da5bb7e1d2d5454c128"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-05-2024.xlsx",
+      "bytes": 351455,
+      "sha256": "91e6d546a749bb343063ef95f9ee520948a30933077abf718ba75feae717c68a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-06-2024.xlsx",
+      "bytes": 351162,
+      "sha256": "a7a1121e24c98e13a3ba6ee4d451b9c2e0f6945b50132929736c0ef9df17235b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-07-2024.xlsx",
+      "bytes": 351307,
+      "sha256": "b9612d4a1b3472611424084be0cd63e2a26b0eeb480deb47216917d11b217cec"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-08-2024.xlsx",
+      "bytes": 358127,
+      "sha256": "5333c40451840452ff187c5fc5f3585d06d6dd9f36139f037b2f4fcce12b36db"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-09-2024.xlsx",
+      "bytes": 351660,
+      "sha256": "547e4c46c42658d8edf70d1b23853ef5b35478f6637afde9a7c567adcb984951"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-10-2024.xlsx",
+      "bytes": 296531,
+      "sha256": "cda987bb17a50228a07b193eba642a9b3be1e8c665b284655fc147c4b6d1de2b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-11-2024.xlsx",
+      "bytes": 357483,
+      "sha256": "9bd2cf85eac162ecde163b1895f429a27cb2ef177a914c6a540a7609d130d2e4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL22-12-2024.xlsx",
+      "bytes": 357539,
+      "sha256": "9396b373a5097931c614a971226426014e036f7f32f230223cf122c49d284a57"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-01-2024.xlsx",
+      "bytes": 349689,
+      "sha256": "12f319efe1f0b4793166822ff7b3408a7bc8da212be6788896c43914c88fbf19"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-02-2024.xlsx",
+      "bytes": 349719,
+      "sha256": "31391266101c00cd60b5b1b434c166a900e9a8a2f24b49b9f0c3efa1f1b0d832"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-03-2024.xlsx",
+      "bytes": 349664,
+      "sha256": "f41fcf66af8d752d04b33d7c845ec842c32850acb1fe04ca24438441dfcf34cc"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-04-2024.xlsx",
+      "bytes": 348836,
+      "sha256": "251faa4f25d57c0fe572d0a35f7705af94e76f2b39f17fb7c4b4eb0bb911f70c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-05-2024.xlsx",
+      "bytes": 351484,
+      "sha256": "ef86b16c811419466ba3efdccb5d0e705112f4cf96779dca7882ec8bc686e8b5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-06-2024.xlsx",
+      "bytes": 351097,
+      "sha256": "149558af8367a7263ad1775c7dafb4a7c72b3ef5eef291bbb0b84e4e7cc0cf74"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-07-2024.xlsx",
+      "bytes": 358455,
+      "sha256": "f16fb7418edc83798149ae658671b54c1fdbaca9ce209ed69fcaced64528c43d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-08-2024.xlsx",
+      "bytes": 357928,
+      "sha256": "ee79024a1ce28d65ba6bc618d658469bac257fc4ad41ea48d85d146f6f771768"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-09-2024.xlsx",
+      "bytes": 344892,
+      "sha256": "70883dccaa47899785455739a8b33b8cfe830b439da4139516b82763c149274c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-10-2024.xlsx",
+      "bytes": 296742,
+      "sha256": "16fee80ea5e388c57b1e856ca201cc0ff7a29485a96e7a9c05b4fb9e124a602e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-11-2024.xlsx",
+      "bytes": 357492,
+      "sha256": "48c07a41256553dc532c091f8a6343045bc2c7495cc4149c1e1d2e9eacb3c023"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL23-12-2024.xlsx",
+      "bytes": 357563,
+      "sha256": "c2043d91e36ea2274dd50c1dd9d7e82ab170934841d56402241a70902d53be5d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-01-2024.xlsx",
+      "bytes": 348217,
+      "sha256": "726e1d75265696c933a2eef5c2807cfa3d97d43f369ce461cb2eb667cf4f7d65"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-02-2024.xlsx",
+      "bytes": 349989,
+      "sha256": "255b8d03e5e0b7427c27e354dedc39f8df6eead06ba4050c5105495ece27519d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-03-2024.xlsx",
+      "bytes": 351061,
+      "sha256": "78de013e73ca79add24802fd9dd3ea4adee485e3900b6822eef2516fa96b686a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-04-2024.xlsx",
+      "bytes": 450581,
+      "sha256": "8c722e418c395eaca1c6f4d0e5200c375baa8db41aa5e3330b07802b610127d2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-05-2024.xlsx",
+      "bytes": 358573,
+      "sha256": "8bf6d28ada4492503e521e90cc7d8a759cc99a0a318e99dea69d912f2f806440"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-06-2024.xlsx",
+      "bytes": 351047,
+      "sha256": "6c4499fae7cf571211a1b93afdf5166cbe0d451385afddca86e7380ace873ad5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-07-2024.xlsx",
+      "bytes": 358026,
+      "sha256": "b34f0e30c02e6a59111deaa0c9a4c950993ee1e62bd6c7271da9d17daac79f37"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-08-2024.xlsx",
+      "bytes": 358084,
+      "sha256": "60b2ac9fbcc5018ae0c5c68652e38eb4b260f19f061b6e9811294b76983816f9"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-09-2024.xlsx",
+      "bytes": 320876,
+      "sha256": "b786c1eef5dd1541c2fdd87416e1794bf5d8be471232ac5c517d9f41e37b2884"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-10-2024.xlsx",
+      "bytes": 296597,
+      "sha256": "997744af348f4515fc6f596aec0fdb6222f4a01dcd2d104241b87dbd1aa42adb"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-11-2024.xlsx",
+      "bytes": 350198,
+      "sha256": "4802f67d0705a20caef0a996a586dcc3619ee5e5a717857f22faf8ce089aed46"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL24-12-2024.xlsx",
+      "bytes": 358725,
+      "sha256": "0537f96c217184ce1e7726a275aacf6625b0ddf4789d23ad2b1c115630641265"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-01-2024.xlsx",
+      "bytes": 349543,
+      "sha256": "7c7cd73625e84bd576aa8bcb8c13485432db936ecaeb20e06edcc91ecbab9b04"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-02-2024.xlsx",
+      "bytes": 350478,
+      "sha256": "be02a3995d9242fb4e08466506c0a27710728325995f87a3df0f94c56609ffeb"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-03-2024.xlsx",
+      "bytes": 350996,
+      "sha256": "a5cdd831480ef2a910462e146b8553b6180684a945196bdc4b6c6aa068ec9453"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-04-2024.xlsx",
+      "bytes": 350641,
+      "sha256": "7b184b1173b8b7898fff1a7e3c950b8d023892dd80ca893e10687cb2b19d56cd"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-05-2024.xlsx",
+      "bytes": 358462,
+      "sha256": "f4956cfccbfba1f8d67931f81d969bbe5cc45963f664f66e69d08f374af13838"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-06-2024.xlsx",
+      "bytes": 351204,
+      "sha256": "448803f064eee3fe7eaf973eb3fb8e4032816ae6cbe520bf99fc8f051d9d65f5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-07-2024.xlsx",
+      "bytes": 357812,
+      "sha256": "344aae997991ddd0faf24290680d5a8d7ec165107c5047138f647d337a5c656e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-08-2024.xlsx",
+      "bytes": 357790,
+      "sha256": "162b045ca432aee74394e6d2e20c44821cf58a4a306a7a5a634fea997c59ccc4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-09-2024.xlsx",
+      "bytes": 314810,
+      "sha256": "ef56b896b1cb55d819b8759c50c91a4baa64024ee51e80c547a4a6cde90130c3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-10-2024.xlsx",
+      "bytes": 320102,
+      "sha256": "0ac03d587e3a5ca5c77ca5728bf2e660bca70068e5b93bd89ef11998fbc6566a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-11-2024.xlsx",
+      "bytes": 350222,
+      "sha256": "c6cd8f622930f59e6e1e66c662dbbae306d03206f753b5ad65cf4fcd667ab4bf"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL25-12-2024.xlsx",
+      "bytes": 358746,
+      "sha256": "deb04c5ba7215a229e4fe315e11d1862010e26c0cbbe17e0a941ce905334750b"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-01-2024.xlsx",
+      "bytes": 350781,
+      "sha256": "708c46e921e112bb86b482a01b444031b77f0303c34939589835bebc19b5a1ba"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-02-2024.xlsx",
+      "bytes": 350999,
+      "sha256": "893913cbf18463af04c5990f401083930f58a26cc38967283d97216b09d5120d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-03-2024.xlsx",
+      "bytes": 349813,
+      "sha256": "562931c227a71c00323e8eb2d472bc2c000688a8ac5fd3b82251f75396c4c5b1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-04-2024.xlsx",
+      "bytes": 349100,
+      "sha256": "f450ab437932a1f4887ae01bb0b784715931dfce7add735931cb9e7580aa672d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-05-2024.xlsx",
+      "bytes": 350850,
+      "sha256": "c3a9ab593bad110d9747e8b52ab46cbab1b4be4582b7670456420d3a504bd88f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-06-2024.xlsx",
+      "bytes": 351428,
+      "sha256": "18a550f1c0618f6e77aa8bb996d218fe9c2f14355663f2530f606932ba876358"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-07-2024.xlsx",
+      "bytes": 358119,
+      "sha256": "b73609c3c1b87f295b4e1e25b9775d01d8c7d66256eb640d85321bb9b9a7a50f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-08-2024.xlsx",
+      "bytes": 351111,
+      "sha256": "38bbfc90539b91347da43ef8c3dba85283d545e51f90c2a2cb38407b5923a6d3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-09-2024.xlsx",
+      "bytes": 320922,
+      "sha256": "aaba8a444618ce0029013135c4354e9a3dbb7e9542b5eb37ceda8acf7b84a353"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-10-2024.xlsx",
+      "bytes": 321573,
+      "sha256": "dd840d6f8a6f4a3b57b0d8c00e4819a12dbfb585f2956e6672b7549d25a8003f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-11-2024.xlsx",
+      "bytes": 358714,
+      "sha256": "67b98943316b8eaf45ed976d23d295bca159ddb86207039537c90b7f3f423608"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL26-12-2024.xlsx",
+      "bytes": 358745,
+      "sha256": "4f6f14f94448dcd69e480ccddfd0cf12e5d091337e013606d569d9161f0cfa59"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-01-2024.xlsx",
+      "bytes": 350866,
+      "sha256": "ec7c72285526266291480926c66ff81d35c7098db0988a64a9b9ab3ab0b8c5ed"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-02-2024.xlsx",
+      "bytes": 349034,
+      "sha256": "166d1cec7aa8065bacf313bcab11b2407f892202aa0b6144b9e28f14364e1e28"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-03-2024.xlsx",
+      "bytes": 349233,
+      "sha256": "3c70c53e248133e9c1a0462983cb0095b8f659a036d0f37a8d3bd28675b39876"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-04-2024.xlsx",
+      "bytes": 350555,
+      "sha256": "051033eaea7ee8f2530dfa6c70f3d030bd9c32193754f5493ef128c6535cf51f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-05-2024.xlsx",
+      "bytes": 350829,
+      "sha256": "4bf59eb65d12c5de08c8571f4212a800c9dcfe835cc9bbf28851b59912ed45d4"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-06-2024.xlsx",
+      "bytes": 351620,
+      "sha256": "92b7fc5c3cd1ee5e33595f9aff66b2f5ce7a19ef92f09911b13d98b62636a462"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-07-2024.xlsx",
+      "bytes": 358159,
+      "sha256": "52deb5a93ac853ae8db882d88bbf21f157b59a9c18fd3c711a1a1b053b832efd"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-08-2024.xlsx",
+      "bytes": 357847,
+      "sha256": "e121b6a33e313bbbaffc612a210f54abd2ee65270fc91c670553600a33aa4c53"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-09-2024.xlsx",
+      "bytes": 295589,
+      "sha256": "8331dd2cbfe24cb6a1d0b4ed3175aa17ce91c86cf441efea25b5c892ef0ed1e2"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-10-2024.xlsx",
+      "bytes": 321526,
+      "sha256": "09f3b8378bcde3f7eb314e21367389a1d0f58a5ffc3e7513c072f5f4a37b2585"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-11-2024.xlsx",
+      "bytes": 357435,
+      "sha256": "a93be7c9badafb3f3f215eeeb19eaaeb74ab5a323924245d52db84653091b34d"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL27-12-2024.xlsx",
+      "bytes": 359133,
+      "sha256": "5a5a238e4ce8c0ca658f29a8ab4a53ac0b55b0cd8bf01b3294cbe123e25fd17a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-01-2024.xlsx",
+      "bytes": 351028,
+      "sha256": "435afa74a93a469cb04a3de0be7dedcad83d88462901de2885c124e898151891"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-02-2024.xlsx",
+      "bytes": 350091,
+      "sha256": "df65fa6a02f7775c621073025132bd019455c2a179e37867599ce0ec8f7e421f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-03-2024.xlsx",
+      "bytes": 349799,
+      "sha256": "718eeda8eeaaf2a69f3a052cb19a37fe58f1eec44daa1e042089b8ef9bfceaf3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-04-2024.xlsx",
+      "bytes": 350711,
+      "sha256": "fc4ba023eb410c50d6b85b049e7158459ce61670942ced42480ecbec9744c695"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-05-2024.xlsx",
+      "bytes": 358102,
+      "sha256": "aa4b2ced0eb32135f7a0baa7af0e676a499bf4bc434101e51aadd59460e9836f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-06-2024.xlsx",
+      "bytes": 351657,
+      "sha256": "de84726603fd423a05fdc61aeb761f1c07abc4322472222678cff70493e38b7e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-07-2024.xlsx",
+      "bytes": 358342,
+      "sha256": "d3d7b68ad8a4c04adb1edb2d58a47179e501af2d974a57365ed0307cb7158c7f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-08-2024.xlsx",
+      "bytes": 349482,
+      "sha256": "632a39e89e7acb52690c50141d0151f0dba7b565fa49a15ed27dafb1ae421ba3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-09-2024.xlsx",
+      "bytes": 315007,
+      "sha256": "4f6a9f64b28f1a8762267b96df632625254f1a0d3f3f84e719e834212f96f7d0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-10-2024.xlsx",
+      "bytes": 321299,
+      "sha256": "2f8b4185fb479992131b9a2ec39f686ee892a0f065703c6e2db6a9e3467c0bad"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-11-2024.xlsx",
+      "bytes": 359105,
+      "sha256": "f0ff26becc91b19ffec80096bbf3664623ead286183c83d748ebd629d5839188"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL28-12-2024.xlsx",
+      "bytes": 359174,
+      "sha256": "362cd500266f4fd6f440af01c6f205c71180f69da1ca6808251bd9f52a81f61e"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-01-2024.xlsx",
+      "bytes": 351058,
+      "sha256": "83caa3625efea55008a10db91a16e738bf3f5409741c9052ee0cf8d3c1763885"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-02-2024.xlsx",
+      "bytes": 348786,
+      "sha256": "0e1d10609ea504c8599447e607aab5a4488789903eab7708095bf5eb7e4cf73a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-03-2024.xlsx",
+      "bytes": 350061,
+      "sha256": "64eabfc98caef173e959dff7e0826209ea2d169015faaa5d64d02fa05619c4a0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-04-2024.xlsx",
+      "bytes": 350483,
+      "sha256": "4e73e7f198bf6ed387ff5cfc8781f7c8bba85df45af4362092ac2a1af626da39"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-05-2024.xlsx",
+      "bytes": 357928,
+      "sha256": "f722cb649fe8924ac7c443cde8378b9f3fb5e084262e3a813eacd7928cbfb41a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-06-2024.xlsx",
+      "bytes": 358448,
+      "sha256": "0bbf70f392867981b24d1da9cd4d2aa36c4911f5492b0e40e343d14c5f619a61"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-07-2024.xlsx",
+      "bytes": 351188,
+      "sha256": "00d47b2dcacc05ec078c44452f2388da92418299bfbaa79979aeddf1caed42a0"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-08-2024.xlsx",
+      "bytes": 357737,
+      "sha256": "91a8707d0e330ddc296157f04b2dd9095ce256b40f19a28f56494dbc4700a630"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-09-2024.xlsx",
+      "bytes": 398849,
+      "sha256": "efa739b6563e3e624370f8b770412dc8e31acb780396eae12ccde752b4091479"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-10-2024.xlsx",
+      "bytes": 321264,
+      "sha256": "48588140629e851e9f826203d2c3cb54b332d8b8f3d15b3674842458f310b88c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-11-2024.xlsx",
+      "bytes": 357389,
+      "sha256": "8053381969930777235f48b37bc88b9dd951a6941769ce5aac689f64544c5c6a"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL29-12-2024.xlsx",
+      "bytes": 359101,
+      "sha256": "00f37c98fc49bfb68d9b3f5dc5583f18d726ae3253879123fceeddc936e1a765"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-01-2024.xlsx",
+      "bytes": 350823,
+      "sha256": "51db6bc8a2a8430111f817972563aceef26dec7790b0864b6736c8d0a66f23d6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-03-2024.xlsx",
+      "bytes": 349895,
+      "sha256": "fd41ade2ab05a1611d3ae293e1623075ed48ed5699709cb90853a6d68a4c6496"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-04-2024.xlsx",
+      "bytes": 350691,
+      "sha256": "08b8558bed0c80e9f03247a3042204dd2b526e6590cbdef94cf3dccc3458b8c3"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-05-2024.xlsx",
+      "bytes": 358189,
+      "sha256": "e7b091db3d65b7fe4f64628d7b1d4b873876db0d9baa891c33eb03cc961fc1e5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-06-2024.xlsx",
+      "bytes": 357823,
+      "sha256": "25f50336f6381492beb4cd1f88fc93bbf3788feba6531ac5da3a25b76b923252"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-07-2024.xlsx",
+      "bytes": 357089,
+      "sha256": "11e3f3fcef4ce6c2c94caa0c9096b2a1f3aa1614a0506d38361a8eeed701abb1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-08-2024.xlsx",
+      "bytes": 357763,
+      "sha256": "2a91089ce952e8aec8d5a70463b146a9b9566dc5f7f1c4ddb83e0f11eec2cfa8"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-09-2024.xlsx",
+      "bytes": 321524,
+      "sha256": "db8c573e84d298c174e581fadfb243ac90c92c63587f8acba23a9e6b7d3b87c6"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-10-2024.xlsx",
+      "bytes": 302121,
+      "sha256": "385e8f6ad2a171a8d71c95ee2195d8fa1243df7d3833f92fd15858d0b01c712f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-11-2024.xlsx",
+      "bytes": 358935,
+      "sha256": "5f6e584e4041482818fd2caba31f7c32ed9ffdd54330442fa190106ce09291c1"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL30-12-2024.xlsx",
+      "bytes": 358858,
+      "sha256": "d5ad2b485d6fe7013d7a9be804393336251dba46d81d188cd20d18e4cd5076c8"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-01-2024.xlsx",
+      "bytes": 350699,
+      "sha256": "fe7edbc63bad5046893cf6aa9b6220fce3d62bcde549396d6a3739afffce708f"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-03-2024.xlsx",
+      "bytes": 350100,
+      "sha256": "d67f95a0c6e4b18be965afde0ed5142c96312bd81885d004968496adfa35a204"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-05-2024.xlsx",
+      "bytes": 349890,
+      "sha256": "d389a7d66115afae260031f7871399c63cfc07d5623e708240f48867fa8a563c"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-07-2024.xlsx",
+      "bytes": 357168,
+      "sha256": "4207857f091726bbf1440e6221a0abeaf5bb217db4180c75bcc2a52ef70100a5"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-08-2024.xlsx",
+      "bytes": 358096,
+      "sha256": "072d57db97c16693a4d78a04f66d36ea476403e70cd3efe21398dd04383ac7dc"
+    },
+    {
+      "path": "datasets/banglore data/BESCOM_2024_LoadCurves/ALLOCATIONVSACTUAL31-10-2024.xlsx",
+      "bytes": 321358,
+      "sha256": "05a001cfe5fa01070522c67580caa950d5ee4c12b8c2637cf60266007dd96b71"
+    }
+  ],
+  "effective_observation_note": "These files are discovered and parsed by the Bangalore loader. Only observations overlapping the prepared_start/prepared_end window affect the training table; files or rows outside that window do not.",
+  "not_used_patterns": [
+    "BESCOM_2024_LoadCurves/LOADCURVE-*.xlsx",
+    "BESCOM_2024_LoadCurves/KERC.xlsx",
+    "BESCOM_2024_LoadCurves/PIO*.xlsx",
+    "BESCOM_2024_LoadCurves/Power Interruptions*.xlsx"
+  ]
+}

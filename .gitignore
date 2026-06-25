@@ -1,4 +1,32 @@
+# Archives
 major_project.zip
 major_project_clean.zip
-.venv/lib/python3.13/site-packages/torch/lib/libtorch_cpu.dylib
-venv/lib/python3.11/site-packages/torch/lib/libtorch_cpu.dylib
+*.zip
+
+# Virtual environment
+venv/
+.venv/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Raw datasets (kept locally, too large for git)
+datasets/
+
+# Large model checkpoints and binaries (kept locally)
+*.pt
+*.pkl
+outputs/**/checkpoints/
+outputs/**/fair_tuning_checkpoints/
+outputs/checkpoints/
+outputs/fair_tuning_checkpoints/
+outputs/cache/
+
+# Logs
+*.log

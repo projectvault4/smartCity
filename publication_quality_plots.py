@@ -22,12 +22,13 @@ from models.bilstm import EnhancedBiLSTM
 from models.hybrid import TFTGRUResidualHybrid
 from models.recurrent_baselines import PlainGRU
 from models.transformer import TemporalFusionTransformer
-from utils.config import CONFIG
+from utils.config import CONFIG, apply_city_config
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
-from utils.metrics import compute_urban_prediction_score, mae, mape, rmse
+from utils.metrics import compute_urban_prediction_score, mae, mape, nrmse, rmse
 from utils.training import predict_model
 
-COMPARISON_MODELS = ["TFT", "GRU", "Hybrid"]
+COMPARISON_MODELS = ["Hybrid", "SARIMA", "TFT", "GRU"]
+METRIC_COLUMNS = ("MAE", "MAPE", "RMSE", "NRMSE", "UPS")
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,6 +38,7 @@ def parse_args() -> argparse.Namespace:
         default="outputs",
         help="Directory where PNG files will be saved.",
     )
+    parser.add_argument("--city", default=None, help="Use city-specific data and outputs, e.g. bangalore or delhi.")
     parser.add_argument(
         "--prediction-model",
         default="Hybrid",
@@ -62,6 +64,35 @@ def _load_json(path: Path) -> dict:
         return json.load(handle)
 
 
+def _city_graph_folder_name() -> str:
+    if CONFIG.city == "bangalore":
+        return "banglore"
+    return CONFIG.city
+
+
+def _resolve_output_dir(args: argparse.Namespace) -> Path:
+    if args.output_dir == "outputs" and args.city:
+        return Path("outputs") / "graph_outputs" / _city_graph_folder_name()
+    return Path(args.output_dir)
+
+
+def _load_finalized_metric_rows() -> dict[str, dict[str, float]]:
+    metrics_path = Path(CONFIG.output_dir) / "metrics.csv"
+    if not metrics_path.exists():
+        return {}
+
+    metrics_df = pd.read_csv(metrics_path, index_col=0)
+    finalized_rows: dict[str, dict[str, float]] = {}
+    for model_name in COMPARISON_MODELS:
+        if model_name not in metrics_df.index:
+            continue
+        row = metrics_df.loc[model_name]
+        if not all(column in row.index and pd.notna(row[column]) for column in METRIC_COLUMNS):
+            continue
+        finalized_rows[model_name] = {column: float(row[column]) for column in METRIC_COLUMNS}
+    return finalized_rows
+
+
 def _set_publication_style() -> None:
     plt.rcParams.update(
         {
@@ -81,6 +112,10 @@ def _set_publication_style() -> None:
 
 def _window(length: int, anchor: int) -> tuple[int, ...]:
     return tuple(range(anchor, anchor + length))
+
+
+def _trend_anchor(config) -> int:
+    return int(config.trend_lags[0])
 
 
 def _load_model_artifacts() -> dict[str, dict]:
@@ -118,7 +153,7 @@ def _config_for_model(model_name: str, best: dict) -> object:
         config.bilstm_hidden_dim = int(best["hidden_dim"])
         config.closeness_lags = _window(seq_len, 1)
         config.period_lags = _window(seq_len, 24)
-        config.trend_lags = _window(seq_len, 24 * 7)
+        config.trend_lags = _window(seq_len, _trend_anchor(config))
         return config
 
     if model_name == "TFT":
@@ -133,7 +168,7 @@ def _config_for_model(model_name: str, best: dict) -> object:
         config.tft_ff_dim = int(best["ff_dim"])
         config.closeness_lags = _window(seq_len, 1)
         config.period_lags = _window(seq_len, 24)
-        config.trend_lags = _window(seq_len, 24 * 7)
+        config.trend_lags = _window(seq_len, _trend_anchor(config))
         return config
 
     if model_name == "Hybrid":
@@ -148,7 +183,7 @@ def _config_for_model(model_name: str, best: dict) -> object:
         config.dense_hidden_dim = int(best["dense_hidden_dim"])
         config.closeness_lags = _window(int(best["closeness_len"]), 1)
         config.period_lags = _window(int(best["period_len"]), 24)
-        config.trend_lags = _window(int(best["trend_len"]), 24 * 7)
+        config.trend_lags = _window(int(best["trend_len"]), _trend_anchor(config))
         return config
 
     raise ValueError(f"Unsupported model: {model_name}")
@@ -190,13 +225,25 @@ def _build_model(model_name: str, input_dim: int, config) -> torch.nn.Module:
 def _collect_real_outputs(raw_df: pd.DataFrame, prediction_model: str) -> dict[str, dict]:
     artifacts = _load_model_artifacts()
     results: dict[str, dict] = {}
+    finalized_metric_rows = _load_finalized_metric_rows()
     hybrid_metrics_path = Path(CONFIG.output_dir) / "tft_gru_residual_hybrid_lag_stabilized_metrics.json"
     if not hybrid_metrics_path.exists():
         hybrid_metrics_path = Path(CONFIG.output_dir) / "tft_gru_residual_hybrid_metrics.json"
 
     for model_name in COMPARISON_MODELS:
-        artifact = artifacts[model_name]
         print(f"Loading real outputs for {model_name}...", flush=True)
+        # SARIMA is a classical model with no torch checkpoint; use its fair
+        # metrics from metrics.csv for the comparison bar charts (no overlay).
+        if model_name == "SARIMA":
+            if model_name in finalized_metric_rows:
+                results[model_name] = {"metrics": finalized_metric_rows[model_name]}
+                m = finalized_metric_rows[model_name]
+                print(
+                    f"{model_name} metrics: RMSE={m['RMSE']:.2f}, MAE={m['MAE']:.2f}, MAPE={m['MAPE']:.2f}%",
+                    flush=True,
+                )
+            continue
+        artifact = artifacts[model_name]
         if model_name == "Hybrid" and hybrid_metrics_path.exists():
             metrics_doc = _load_json(hybrid_metrics_path)
             entry = {
@@ -204,6 +251,7 @@ def _collect_real_outputs(raw_df: pd.DataFrame, prediction_model: str) -> dict[s
                     "RMSE": float(metrics_doc["metrics"]["RMSE"]),
                     "MAE": float(metrics_doc["metrics"]["MAE"]),
                     "MAPE": float(metrics_doc["metrics"]["MAPE"]),
+                    "NRMSE": float(metrics_doc["metrics"]["NRMSE"]),
                     "UPS": float(metrics_doc["metrics"]["UPS"]),
                 }
             }
@@ -215,6 +263,9 @@ def _collect_real_outputs(raw_df: pd.DataFrame, prediction_model: str) -> dict[s
                 entry["y_true"] = prediction_df[actual_columns].to_numpy(dtype=float)
                 entry["y_pred"] = prediction_df[predicted_columns].to_numpy(dtype=float)
                 entry["timestamps"] = pd.to_datetime(prediction_df["timestamp"]).reset_index(drop=True)
+            if model_name in finalized_metric_rows:
+                entry["metrics"] = finalized_metric_rows[model_name]
+                print(f"Using finalized {model_name} metrics from {Path(CONFIG.output_dir) / 'metrics.csv'}.", flush=True)
             results[model_name] = entry
             print(
                 f"{model_name} metrics: "
@@ -248,12 +299,16 @@ def _collect_real_outputs(raw_df: pd.DataFrame, prediction_model: str) -> dict[s
                 "RMSE": rmse(y_true, y_pred),
                 "MAE": mae(y_true, y_pred),
                 "MAPE": mape(y_true, y_pred),
+                "NRMSE": nrmse(y_true, y_pred),
                 "UPS": compute_urban_prediction_score(y_true, y_pred, config.target_columns),
             },
             "y_true": y_true,
             "y_pred": y_pred,
             "timestamps": pd.to_datetime(test_groups["timestamp"]).reset_index(drop=True),
         }
+        if model_name in finalized_metric_rows:
+            entry["metrics"] = finalized_metric_rows[model_name]
+            print(f"Using finalized {model_name} metrics from {Path(CONFIG.output_dir) / 'metrics.csv'}.", flush=True)
         results[model_name] = entry
         print(
             f"{model_name} metrics: "
@@ -327,7 +382,15 @@ def _save_bar_chart(
     ax.set_xlabel("Model")
     ax.set_ylabel(ylabel)
     if y_limits is not None:
-        ax.set_ylim(*y_limits)
+        lower, upper = y_limits
+        value_min = min(values)
+        value_max = max(values)
+        if value_min <= lower:
+            padding = max((value_max - value_min) * 0.12, 1.0)
+            lower = max(0.0, value_min - padding)
+        if value_max >= upper:
+            upper = value_max + max((value_max - lower) * 0.12, 1.0)
+        ax.set_ylim(lower, upper)
     else:
         ax.margins(y=0.12)
     ax.grid(True, axis="y", alpha=0.3)
@@ -410,16 +473,19 @@ def _print_real_metrics(model_outputs: dict[str, dict]) -> None:
             f"RMSE={metrics['RMSE']:.2f}, "
             f"MAE={metrics['MAE']:.2f}, "
             f"MAPE={metrics['MAPE']:.2f}%, "
+            f"NRMSE={metrics['NRMSE']:.4f}, "
             f"UPS={metrics['UPS']:.2f}"
         )
 
 
 def main() -> None:
+    global CONFIG
     args = parse_args()
+    CONFIG = apply_city_config(copy.deepcopy(CONFIG), args.city)
     _set_publication_style()
     set_seed(CONFIG.random_seed)
 
-    output_dir = Path(args.output_dir)
+    output_dir = _resolve_output_dir(args)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     raw_df = load_input_dataframe(CONFIG)
@@ -440,6 +506,16 @@ def main() -> None:
     print("Saved mae.png", flush=True)
     _save_bar_chart(
         models=COMPARISON_MODELS,
+        values=_metrics_for_models(model_outputs, COMPARISON_MODELS, "MAPE"),
+        ylabel="MAPE (%)",
+        title="MAPE Comparison",
+        filename="mape.png",
+        output_dir=output_dir,
+        keep_open=keep_open,
+    )
+    print("Saved mape.png", flush=True)
+    _save_bar_chart(
+        models=COMPARISON_MODELS,
         values=_metrics_for_models(model_outputs, COMPARISON_MODELS, "RMSE"),
         ylabel="RMSE",
         title="RMSE Comparison",
@@ -448,6 +524,16 @@ def main() -> None:
         keep_open=keep_open,
     )
     print("Saved rmse.png", flush=True)
+    _save_bar_chart(
+        models=COMPARISON_MODELS,
+        values=_metrics_for_models(model_outputs, COMPARISON_MODELS, "NRMSE"),
+        ylabel="NRMSE",
+        title="NRMSE Comparison",
+        filename="nrmse.png",
+        output_dir=output_dir,
+        keep_open=keep_open,
+    )
+    print("Saved nrmse.png", flush=True)
     _save_bar_chart(
         models=COMPARISON_MODELS,
         values=_metrics_for_models(model_outputs, COMPARISON_MODELS, "UPS"),
@@ -466,7 +552,7 @@ def main() -> None:
     _print_real_metrics(model_outputs)
 
     print(f"\nSaved figures to {output_dir.resolve()}")
-    print("Files: prediction.png, rmse.png, mae.png, ups.png, heatmap.png, time_series_trends.png")
+    print("Files: prediction.png, rmse.png, mae.png, mape.png, nrmse.png, ups.png, heatmap.png, time_series_trends.png")
 
     if args.show:
         plt.show()
