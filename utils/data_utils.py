@@ -495,7 +495,7 @@ def build_bangalore_multidomain_dataset(config) -> pd.DataFrame:
     dataset_dir = Path(config.dataset_dir)
     traffic_path = dataset_dir / "Banglore_traffic_Dataset.csv"
     weather_path = dataset_dir / "export.csv"
-    power_dir = dataset_dir / "BESCOM_2024_LoadCurves"
+    power_dir = dataset_dir / "BESCOM_2025_LoadCurves"
 
     required = [traffic_path, weather_path, power_dir]
     missing = [str(path) for path in required if not path.exists()]
@@ -516,7 +516,7 @@ def build_bangalore_multidomain_dataset(config) -> pd.DataFrame:
     )
     traffic_daily["timestamp"] = pd.to_datetime(traffic_daily["timestamp"], errors="coerce")
     traffic_daily = traffic_daily.dropna(subset=["timestamp"]).sort_values("timestamp").reset_index(drop=True)
-    traffic_daily = traffic_daily[traffic_daily["timestamp"].dt.year == 2024].reset_index(drop=True)
+    traffic_daily = traffic_daily[traffic_daily["timestamp"].dt.year == 2025].reset_index(drop=True)
 
     weather_daily = pd.read_csv(weather_path)
     weather_daily["timestamp"] = pd.to_datetime(weather_daily["date"], errors="coerce")
@@ -572,7 +572,7 @@ def build_bangalore_multidomain_dataset(config) -> pd.DataFrame:
 def build_delhi_multidomain_dataset(config) -> pd.DataFrame:
     dataset_dir = Path(config.dataset_dir)
     traffic_probe_dir = dataset_dir / "new_delhi_traffic_dataset" / "probe_counts" / "geojson"
-    weather_path = dataset_dir / "kaggel_weather_2013_to_2024.csv"
+    weather_path = dataset_dir / "kaggel_weather_2013_to_2025.csv"
     electricity_path = dataset_dir / "electricity" / "df_final.csv"
 
     required = [traffic_probe_dir, weather_path, electricity_path]
@@ -914,7 +914,7 @@ def load_input_dataframe(config) -> pd.DataFrame:
     if getattr(config, "city", "default") == "delhi":
         source_files = [
             *sorted((Path(config.dataset_dir) / "new_delhi_traffic_dataset" / "probe_counts" / "geojson").glob("*.geojson")),
-            Path(config.dataset_dir) / "kaggel_weather_2013_to_2024.csv",
+            Path(config.dataset_dir) / "kaggel_weather_2013_to_2025.csv",
             Path(config.dataset_dir) / "electricity" / "df_final.csv",
         ]
         if _needs_rebuild(data_path, source_files):
@@ -939,7 +939,7 @@ def load_input_dataframe(config) -> pd.DataFrame:
             Path(config.dataset_dir) / "Banglore_traffic_Dataset.csv",
             Path(config.dataset_dir) / "export.csv",
             *aqi_workbooks,
-            *sorted((Path(config.dataset_dir) / "BESCOM_2024_LoadCurves").glob("*.xlsx")),
+            *sorted((Path(config.dataset_dir) / "BESCOM_2025_LoadCurves").glob("*.xlsx")),
         ]
         if source_files and _needs_rebuild(data_path, source_files):
             df = build_bangalore_multidomain_dataset(config)

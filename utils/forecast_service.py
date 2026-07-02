@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import pickle
+import re
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -32,6 +33,125 @@ def _load_literature_models(config=CONFIG) -> List[Dict[str, Any]]:
             return json.load(handle)
     except (OSError, json.JSONDecodeError):
         return []
+
+
+def _safe_iso_date(value: Any) -> str | None:
+    timestamp = pd.to_datetime(value, errors="coerce")
+    if pd.isna(timestamp):
+        return None
+    return pd.Timestamp(timestamp).date().isoformat()
+
+
+def _latest_bangalore_aqi_date(dataset_dir: Path) -> str | None:
+    try:
+        from utils.data_utils import _load_bangalore_aqi_daily
+
+        aqi_df = _load_bangalore_aqi_daily(dataset_dir)
+    except Exception:
+        return None
+    if aqi_df.empty:
+        return None
+    return _safe_iso_date(aqi_df["timestamp"].max())
+
+
+def _latest_bangalore_aqi_filename_date(dataset_dir: Path) -> str | None:
+    latest = None
+    month_pattern = (
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)"
+        r"[-\s]+(\d{4})"
+    )
+    for path in [*dataset_dir.glob("*AQI*.xls"), *dataset_dir.glob("*data for Bengaluru*.xls")]:
+        match = re.search(month_pattern, path.name, flags=re.IGNORECASE)
+        if not match:
+            continue
+        parsed = pd.to_datetime(f"{match.group(1)} {match.group(2)}", errors="coerce")
+        if pd.isna(parsed):
+            continue
+        month_end = pd.Timestamp(parsed) + pd.offsets.MonthEnd(0)
+        latest = month_end if latest is None else max(latest, month_end)
+    return _safe_iso_date(latest)
+
+
+def _latest_bangalore_electricity_date(power_dir: Path) -> str | None:
+    latest = None
+    for path in power_dir.glob("ALLOCATIONVSACTUAL*.xlsx"):
+        match = re.search(r"(\d{2}-\d{2}-\d{4})", path.name)
+        if not match:
+            continue
+        parsed = pd.to_datetime(match.group(1), dayfirst=True, errors="coerce")
+        if pd.isna(parsed):
+            continue
+        latest = parsed if latest is None else max(latest, parsed)
+    return _safe_iso_date(latest)
+
+
+def _find_latest_power_dir(dataset_dir: Path) -> Path | None:
+    latest_year = -1
+    latest_dir = None
+    for path in dataset_dir.glob("BESCOM_*_LoadCurves"):
+        match = re.search(r"BESCOM_(\d{4})_LoadCurves", path.name)
+        if match:
+            year = int(match.group(1))
+            if year > latest_year:
+                latest_year = year
+                latest_dir = path
+    return latest_dir
+
+
+def _build_data_freshness(config=CONFIG, prepared_df: pd.DataFrame | None = None) -> Dict[str, Any]:
+    latest_prepared = None
+    if prepared_df is not None and not prepared_df.empty:
+        latest_prepared = _safe_iso_date(prepared_df["timestamp"].max())
+
+    if getattr(config, "city", "default") != "bangalore":
+        return {
+            "latest_prepared": latest_prepared,
+            "sources": [],
+            "limiting_source": None,
+            "note": None,
+        }
+
+    dataset_dir = Path(config.dataset_dir)
+    traffic_path = dataset_dir / "Banglore_traffic_Dataset.csv"
+    weather_path = dataset_dir / "export.csv"
+    power_dir = _find_latest_power_dir(dataset_dir)
+    sources: list[dict[str, str | None]] = []
+
+    traffic_latest = None
+    if traffic_path.exists():
+        try:
+            traffic_latest = _safe_iso_date(pd.read_csv(traffic_path, usecols=["Date"])["Date"].max())
+        except Exception:
+            traffic_latest = None
+    sources.append({"name": "Traffic", "latest": traffic_latest})
+
+    weather_latest = None
+    if weather_path.exists():
+        try:
+            weather_latest = _safe_iso_date(pd.read_csv(weather_path, usecols=["date"])["date"].max())
+        except Exception:
+            weather_latest = None
+    sources.append({"name": "Weather", "latest": weather_latest})
+    sources.append({"name": "AQI", "latest": _latest_bangalore_aqi_date(dataset_dir) or _latest_bangalore_aqi_filename_date(dataset_dir)})
+    sources.append({"name": "Electricity", "latest": _latest_bangalore_electricity_date(power_dir) if power_dir else None})
+
+    dated_sources = [source for source in sources if source["latest"]]
+    limiting_source = min(dated_sources, key=lambda source: source["latest"]) if dated_sources else None
+    note = None
+    if latest_prepared:
+        note = (
+            f"Bangalore forecast data is historical and currently stops at {latest_prepared}. "
+            "The next-hour forecast is generated one step after this loaded data point."
+        )
+        if limiting_source:
+            note += f" The merged dataset is limited by the {limiting_source['name']} source."
+
+    return {
+        "latest_prepared": latest_prepared,
+        "sources": sources,
+        "limiting_source": limiting_source["name"] if limiting_source else None,
+        "note": note,
+    }
 
 
 def _ordered_model_names(metrics_df: pd.DataFrame, literature_rows: List[Dict[str, Any]]) -> List[str]:
@@ -473,6 +593,7 @@ def build_forecast_payload(config=CONFIG) -> Dict[str, Any]:
     return {
         "forecast_for": next_timestamp.isoformat(),
         "last_updated": prepared_df["timestamp"].iloc[-1].isoformat(),
+        "data_freshness": _build_data_freshness(config, prepared_df),
         "point_forecast_model": tuned_model_source or "ExplainableTimeSeriesForecaster",
         "summary": summary_lines,
         "metrics": metrics,

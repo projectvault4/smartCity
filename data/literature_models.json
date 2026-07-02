@@ -155,7 +155,7 @@
   {
     "model": "TimeMixer",
     "family": "all-MLP forecasting",
-    "year": 2024,
+    "year": 2025,
     "efficiency": "Medium compute, multiscale mixing design intended to improve forecasting efficiency.",
     "comparison_scope": "Literature reference only",
     "source_name": "TimeMixer paper",
@@ -164,7 +164,7 @@
   {
     "model": "MOMENT",
     "family": "time-series foundation model",
-    "year": 2024,
+    "year": 2025,
     "efficiency": "High pretraining cost, strong transfer-oriented time-series foundation model reference.",
     "comparison_scope": "Literature reference only",
     "source_name": "MOMENT OpenReview",

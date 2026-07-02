@@ -94,7 +94,7 @@ def _source_manifest(config, prepared_df: pd.DataFrame) -> dict:
         dataset_dir / "export.csv",
         *sorted(dataset_dir.glob("*AQI*.xls")),
         *sorted(dataset_dir.glob("*data for Bengaluru*.xls")),
-        *sorted((dataset_dir / "BESCOM_2024_LoadCurves").glob("ALLOCATIONVSACTUAL*.xlsx")),
+        *sorted((dataset_dir / "BESCOM_2025_LoadCurves").glob("ALLOCATIONVSACTUAL*.xlsx")),
     ]
     unique_used = list(dict.fromkeys(path for path in used if path.exists()))
     files = []
@@ -120,10 +120,10 @@ def _source_manifest(config, prepared_df: pd.DataFrame) -> dict:
             "prepared_start/prepared_end window affect the training table; files or rows outside that window do not."
         ),
         "not_used_patterns": [
-            "BESCOM_2024_LoadCurves/LOADCURVE-*.xlsx",
-            "BESCOM_2024_LoadCurves/KERC.xlsx",
-            "BESCOM_2024_LoadCurves/PIO*.xlsx",
-            "BESCOM_2024_LoadCurves/Power Interruptions*.xlsx",
+            "BESCOM_2025_LoadCurves/LOADCURVE-*.xlsx",
+            "BESCOM_2025_LoadCurves/KERC.xlsx",
+            "BESCOM_2025_LoadCurves/PIO*.xlsx",
+            "BESCOM_2025_LoadCurves/Power Interruptions*.xlsx",
         ],
     }
 
