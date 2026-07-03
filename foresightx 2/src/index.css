@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Syne", sans-serif;
+
+  /* Home (Green) */
+  --color-home-bg1: #1b4332;
+  --color-home-bg2: #0d2e0d;
+  --color-home-acc: #7df9a0;
+  --color-home-acc2: #27ae60;
+  --color-home-mid: #2d6a4f;
+
+  /* Traffic (Amber) */
+  --color-traf-bg1: #1a1200;
+  --color-traf-bg2: #0d0900;
+  --color-traf-acc: #f39c12;
+  --color-traf-acc2: #e67e22;
+  --color-traf-mid: #3d2b00;
+
+  /* Air (Blue) */
+  --color-air-bg1: #0a2a3a;
+  --color-air-bg2: #050e18;
+  --color-air-acc: #3498db;
+  --color-air-acc2: #2980b9;
+  --color-air-mid: #1a4a6a;
+
+  /* Energy (Purple) */
+  --color-eng-bg1: #1a0a3a;
+  --color-eng-bg2: #070412;
+  --color-eng-acc: #9b59b6;
+  --color-eng-acc2: #8e44ad;
+  --color-eng-mid: #2a1560;
+
+  /* Weather (Slate) */
+  --color-wth-bg1: #1a2a3a;
+  --color-wth-bg2: #080e14;
+  --color-wth-acc: #85c1e9;
+  --color-wth-acc2: #5dade2;
+  --color-wth-mid: #243a50;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0d1a10] text-white overflow-x-hidden transition-colors duration-500;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-blink {
+  animation: blink 1.2s infinite;
+}
