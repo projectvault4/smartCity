@@ -3,15 +3,23 @@ const summaryRoot = document.getElementById("summaryList");
 const reasonsRoot = document.getElementById("reasons");
 const forecastFor = document.getElementById("forecastFor");
 const lastUpdated = document.getElementById("lastUpdated");
+const sourceFreshness = document.getElementById("sourceFreshness");
+const freshnessNote = document.getElementById("freshnessNote");
+const limitingSource = document.getElementById("limitingSource");
 const errorBox = document.getElementById("errorBox");
 const refreshButton = document.getElementById("refreshButton");
 const explainableMetricsBody = document.getElementById("explainableMetricsBody");
 const pearsonPairs = document.getElementById("pearsonPairs");
 const spearmanPairs = document.getElementById("spearmanPairs");
 const grangerLinks = document.getElementById("grangerLinks");
+const anomalyUpdated = document.getElementById("anomalyUpdated");
+const severitySummary = document.getElementById("severitySummary");
+const eventList = document.getElementById("eventList");
+const anomalyTimeline = document.getElementById("anomalyTimeline");
 
 const cardTemplate = document.getElementById("cardTemplate");
 const reasonTemplate = document.getElementById("reasonTemplate");
+const eventTemplate = document.getElementById("eventTemplate");
 
 function formatDateTime(value) {
   return new Date(value).toLocaleString([], {
@@ -69,6 +77,43 @@ function renderSummary(lines) {
     item.textContent = line;
     summaryRoot.appendChild(item);
   });
+}
+
+function formatDateOnly(value) {
+  if (!value) {
+    return "Unavailable";
+  }
+  return new Date(`${value}T00:00:00`).toLocaleDateString([], {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function renderDataFreshness(freshness) {
+  sourceFreshness.innerHTML = "";
+  const sources = freshness?.sources || [];
+  const limiting = freshness?.limiting_source;
+  limitingSource.textContent = limiting ? `Limited by ${limiting}` : "Current source status";
+
+  if (!sources.length) {
+    const item = document.createElement("div");
+    item.className = "source-item";
+    item.innerHTML = `<strong>${formatDateOnly(freshness?.latest_prepared)}</strong><span>Prepared Dataset</span>`;
+    sourceFreshness.appendChild(item);
+  } else {
+    sources.forEach((source) => {
+      const item = document.createElement("div");
+      item.className = "source-item";
+      if (source.name === limiting) {
+        item.classList.add("source-limiting");
+      }
+      item.innerHTML = `<strong>${formatDateOnly(source.latest)}</strong><span>${source.name}</span>`;
+      sourceFreshness.appendChild(item);
+    });
+  }
+
+  freshnessNote.textContent = freshness?.note || "";
 }
 
 function renderReasons(metrics) {
@@ -142,6 +187,65 @@ function renderGranger(rows) {
   });
 }
 
+function severityClass(severity) {
+  return `severity-${String(severity || "low").toLowerCase()}`;
+}
+
+function renderSeveritySummary(counts) {
+  severitySummary.innerHTML = "";
+  ["Critical", "High", "Medium", "Low"].forEach((severity) => {
+    const item = document.createElement("div");
+    item.className = `severity-card ${severityClass(severity)}`;
+    item.innerHTML = `<strong>${counts?.[severity] || 0}</strong><span>${severity}</span>`;
+    severitySummary.appendChild(item);
+  });
+}
+
+function renderEvents(events) {
+  eventList.innerHTML = "";
+  if (!events || !events.length) {
+    const empty = document.createElement("p");
+    empty.className = "helper-text";
+    empty.textContent = "No urban anomalies crossed the current event threshold.";
+    eventList.appendChild(empty);
+    return;
+  }
+  events.forEach((event) => {
+    const fragment = eventTemplate.content.cloneNode(true);
+    const card = fragment.querySelector(".event-card");
+    const severity = fragment.querySelector(".event-severity");
+    severity.textContent = `${event.severity} · ${event.anomaly_score.toFixed(2)}`;
+    severity.classList.add(severityClass(event.severity));
+    card.classList.add(severityClass(event.severity));
+    fragment.querySelector("h3").textContent = event.event_type;
+    fragment.querySelector(".event-time").textContent = `${formatDateTime(event.timestamp)} · ${event.latitude.toFixed(4)}, ${event.longitude.toFixed(4)}`;
+    fragment.querySelector(".event-description").textContent = event.description;
+    const driverList = fragment.querySelector(".driver-list");
+    event.drivers.forEach((driver) => {
+      const chip = document.createElement("span");
+      chip.textContent = `${driver.feature}: ${driver.contribution}`;
+      driverList.appendChild(chip);
+    });
+    eventList.appendChild(fragment);
+  });
+}
+
+function renderAnomalyTimeline(events) {
+  anomalyTimeline.innerHTML = "";
+  const sorted = [...(events || [])].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  if (!sorted.length) {
+    anomalyTimeline.textContent = "Timeline appears after events are detected.";
+    return;
+  }
+  sorted.forEach((event) => {
+    const bar = document.createElement("span");
+    bar.className = `timeline-bar ${severityClass(event.severity)}`;
+    bar.style.height = `${Math.max(18, event.anomaly_score * 72)}px`;
+    bar.title = `${event.event_type} · ${formatDateTime(event.timestamp)}`;
+    anomalyTimeline.appendChild(bar);
+  });
+}
+
 function setError(message) {
   errorBox.textContent = message;
   errorBox.classList.remove("hidden");
@@ -168,6 +272,7 @@ async function loadForecast() {
     lastUpdated.textContent = formatDateTime(payload.last_updated);
     renderCards(payload.metrics);
     renderSummary(payload.summary);
+    renderDataFreshness(payload.data_freshness);
     renderReasons(payload.metrics);
     renderExplainableMetrics(payload.explainable_metrics);
     renderPairs(pearsonPairs, payload.analytics.pearson_top_pairs, "Pearson");
@@ -181,5 +286,27 @@ async function loadForecast() {
   }
 }
 
-refreshButton.addEventListener("click", loadForecast);
+async function loadAnomalies() {
+  try {
+    const response = await fetch("/api/anomalies", { cache: "no-store" });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error || "Unable to load anomalies");
+    }
+    anomalyUpdated.textContent = formatDateTime(payload.last_updated);
+    renderSeveritySummary(payload.severity_counts);
+    renderEvents(payload.events);
+    renderAnomalyTimeline(payload.events);
+  } catch (error) {
+    anomalyUpdated.textContent = "Unavailable";
+    renderSeveritySummary({});
+    eventList.innerHTML = `<p class="helper-text">${error.message}</p>`;
+  }
+}
+
+refreshButton.addEventListener("click", () => {
+  loadForecast();
+  loadAnomalies();
+});
 loadForecast();
+loadAnomalies();

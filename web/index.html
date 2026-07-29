@@ -23,6 +23,7 @@
           </p>
         </div>
         <div class="hero-actions">
+          <a class="ghost-link" href="/anomalies">Open AI Anomalies</a>
           <a class="ghost-link" href="/comparison">Open Model Comparison</a>
           <button id="refreshButton" class="refresh-button" type="button">Refresh Forecast</button>
         </div>
@@ -34,9 +35,21 @@
           <p id="forecastFor" class="meta-value">Loading...</p>
         </div>
         <div>
-          <p class="meta-label">Latest Data Point</p>
+          <p class="meta-label">Latest Historical Data Point</p>
           <p id="lastUpdated" class="meta-value">Loading...</p>
         </div>
+      </section>
+
+      <section class="panel data-freshness-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Source Freshness</p>
+            <h2>Bangalore Data Status</h2>
+          </div>
+          <span id="limitingSource" class="status-pill">Loading...</span>
+        </div>
+        <div id="sourceFreshness" class="source-grid"></div>
+        <p id="freshnessNote" class="helper-text"></p>
       </section>
 
       <section>
@@ -91,6 +104,31 @@
       </section>
 
       <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Urban Event Discovery</p>
+            <h2>Intelligent Anomaly Detection</h2>
+          </div>
+          <span id="anomalyUpdated" class="status-pill">Loading...</span>
+        </div>
+        <div id="severitySummary" class="severity-grid"></div>
+        <div id="eventList" class="event-list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Anomaly Visualization Blueprint</h2>
+        <div class="visual-grid">
+          <div class="map-preview" aria-label="Map preview with anomaly markers">
+            <span class="map-marker marker-critical"></span>
+            <span class="map-marker marker-high"></span>
+            <span class="map-marker marker-medium"></span>
+            <span class="map-marker marker-low"></span>
+          </div>
+          <div id="anomalyTimeline" class="timeline-strip"></div>
+        </div>
+      </section>
+
+      <section class="panel">
         <h2>Why The Model Thinks This</h2>
         <div id="reasons" class="reason-grid"></div>
       </section>
@@ -114,6 +152,18 @@
       <article class="reason-card">
         <h3></h3>
         <ul></ul>
+      </article>
+    </template>
+
+    <template id="eventTemplate">
+      <article class="event-card">
+        <div>
+          <span class="status-pill event-severity"></span>
+          <h3></h3>
+        </div>
+        <p class="event-time"></p>
+        <p class="event-description"></p>
+        <div class="driver-list"></div>
       </article>
     </template>
 

@@ -14,15 +14,19 @@ import StressHeatmap from './components/StressHeatmap';
 import DriftMonitor from './components/DriftMonitor';
 import EventImpact from './components/EventImpact';
 import ReportGenerator from './components/ReportGenerator';
-import { getInitialData, updateMetric, CityData } from './services/dataService';
+import CitizenAdvisoryConsole from './components/CitizenAdvisoryConsole';
+import AnomalyDetectionEmbed from './components/AnomalyDetectionEmbed';
+import VoiceBriefing from './components/VoiceBriefing';
+import { backendApi, getInitialData, updateMetric, CityData } from './services/dataService';
 
-type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'model';
+type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'model';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [heroMode, setHeroMode] = useState<'home' | 'traffic' | 'air' | 'energy' | 'weather'>('home');
   const [dashboardView, setDashboardView] = useState<DashboardView>('overview');
   const [cityData, setCityData] = useState<CityData>(getInitialData());
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
   // Real-time update interval
   useEffect(() => {
@@ -40,6 +44,22 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+
+    backendApi.health()
+      .then(() => {
+        if (mounted) setBackendStatus('online');
+      })
+      .catch(() => {
+        if (mounted) setBackendStatus('offline');
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Unified state management
   useEffect(() => {
     if (['traffic', 'air', 'energy', 'weather', 'home'].includes(activeTab)) {
@@ -53,6 +73,10 @@ export default function App() {
       setDashboardView('xai');
     } else if (activeTab === 'analytics') {
       setDashboardView('analytics');
+    } else if (activeTab === 'anomaly') {
+      setDashboardView('anomaly');
+    } else if (activeTab === 'voice') {
+      setDashboardView('voice');
     } else if (activeTab === 'model') {
       setDashboardView('model');
     }
@@ -63,6 +87,11 @@ export default function App() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <main className="flex-1 lg:ml-[240px]">
+        <div className="fixed right-4 top-4 z-50 rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-white/70 backdrop-blur-md">
+          API: <span className={backendStatus === 'online' ? 'text-home-acc' : backendStatus === 'offline' ? 'text-red-400' : 'text-white/40'}>
+            {backendStatus}
+          </span>
+        </div>
         <Hero mode={heroMode} setMode={(m) => { setHeroMode(m); setActiveTab(m); }} data={cityData} />
 
         <div className="p-8 md:p-12">
@@ -78,6 +107,7 @@ export default function App() {
                 {/* PRIMARY ACTIONS: SEARCH & EVENT IMPACT - STACKED */}
                 <div className="space-y-8">
                    <QueryInterface />
+                   <CitizenAdvisoryConsole />
                    <EventImpact />
                 </div>
 
@@ -145,6 +175,14 @@ export default function App() {
               <div className="space-y-8">
                  <MultivariatePanel data={cityData} />
               </div>
+            )}
+
+            {dashboardView === 'anomaly' && (
+              <AnomalyDetectionEmbed />
+            )}
+
+            {dashboardView === 'voice' && (
+              <VoiceBriefing />
             )}
 
             {dashboardView === 'model' && (

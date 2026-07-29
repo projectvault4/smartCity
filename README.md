@@ -7,6 +7,7 @@ Research-grade multivariate forecasting pipeline with:
 - adaptive BiLSTM+TFT hybrid model with target-wise internal gating
 - adaptive per-target model switcher based on recent normalized RMSE
 - concept drift detection and online fine-tuning simulation
+- intelligent anomaly detection for urban event discovery with Isolation Forest and autoencoder scoring
 - explainable next-hour forecaster for smaller datasets with plain-language output and prediction ranges
 - four-domain scoring across traffic, AQI, weather, and energy
 - Pearson/Spearman correlation analysis and Granger causality tables
@@ -17,6 +18,7 @@ Research-grade multivariate forecasting pipeline with:
 - `models/`
 - `engine/`
 - `utils/`
+- `docs/intelligent_anomaly_detection.md`
 - `train.py`
 - `evaluate.py`
 - `main.py`
@@ -52,3 +54,12 @@ Then open `http://127.0.0.1:8000`.
 Dashboard pages:
 - `http://127.0.0.1:8000/` for the live forecast, analytics, and explainable model metrics
 - `http://127.0.0.1:8000/comparison` for model comparison across `BiLSTM`, `TFT`, `Hybrid`, and `AdaptiveSwitcher`
+- `http://127.0.0.1:8000/anomalies` for the dark AI anomaly dashboard
+
+Urban event discovery:
+- `http://127.0.0.1:8000/api/anomalies` returns normalized Hybrid Anomaly Scores, event severity, SHAP-style drivers, heatmap data, chart series, insights, and recommendations
+- `http://127.0.0.1:8000/api/anomalies/export.csv` exports detected anomaly events
+- `http://127.0.0.1:8000/api/anomalies/export.pdf` exports a compact anomaly report with charts
+- detected event artifacts are saved as `urban_anomaly_timeline.csv` and `urban_events.json` under the active output directory
+- the anomaly module uses uploaded historical CSV data only; it does not require live sensors or real-time streaming data
+- the full objective, formulas, architecture, pseudocode, evaluation plan, streaming deployment, and future scope are documented in `docs/intelligent_anomaly_detection.md`

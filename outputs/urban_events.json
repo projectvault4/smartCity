@@ -1,0 +1,2242 @@
+[
+  {
+    "timestamp": "2022-01-01T08:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Critical",
+    "anomaly_score": 0.9129,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 3.571
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.841
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.839
+      },
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.818
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 6, Aqi, Traffic Flow. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.00344380195294,
+    "longitude": 77.61665962678231
+  },
+  {
+    "timestamp": "2022-01-01T06:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "High",
+    "anomaly_score": 0.8592,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Diff 1",
+        "contribution": 3.039
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Diff 1, Electricity Demand Roll Mean 24, Temperature Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.998059137780135,
+    "longitude": 77.62210605412719
+  },
+  {
+    "timestamp": "2022-01-01T07:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "High",
+    "anomaly_score": 0.8419,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.993
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.818
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 6, Aqi, Electricity Demand Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.001051484468277,
+    "longitude": 77.61953661185885
+  },
+  {
+    "timestamp": "2022-01-01T09:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.8177,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.841
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.839
+      },
+      {
+        "feature": "Aqi Lag 2",
+        "contribution": 2.818
+      },
+      {
+        "feature": "Traffic Flow Roll Std 12",
+        "contribution": 2.692
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Lag 1, Traffic Flow Lag 1, Aqi Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.005187350403835,
+    "longitude": 77.61351058070538
+  },
+  {
+    "timestamp": "2022-01-01T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "High",
+    "anomaly_score": 0.805,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.376
+      },
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.347
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.157
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.144
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Aqi Roll Mean 12, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.986104748781639,
+    "longitude": 77.57659579142042
+  },
+  {
+    "timestamp": "2025-03-15T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "High",
+    "anomaly_score": 0.7731,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.315
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.966
+      },
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Roll Std 24, Aqi Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.949581750072037,
+    "longitude": 77.61694733713091
+  },
+  {
+    "timestamp": "2022-01-01T05:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "High",
+    "anomaly_score": 0.7501,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 6, Temperature Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.994527726401248,
+    "longitude": 77.62433626469974
+  },
+  {
+    "timestamp": "2022-01-01T20:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.7431,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.261
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.258
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.238
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.211
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Traffic Flow Roll Mean 24, Traffic Flow Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.981422028983003,
+    "longitude": 77.57337876771692
+  },
+  {
+    "timestamp": "2022-01-01T10:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.733,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Lag 2",
+        "contribution": 2.841
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.839
+      },
+      {
+        "feature": "Aqi Lag 3",
+        "contribution": 2.818
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Lag 2, Traffic Flow Lag 2, Aqi Lag 3. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006246607673026,
+    "longitude": 77.61012831075958
+  },
+  {
+    "timestamp": "2023-02-13T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "High",
+    "anomaly_score": 0.7262,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.052
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.025
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.124
+      },
+      {
+        "feature": "Aqi Lag 24",
+        "contribution": 2.113
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Aqi Roll Mean 24, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.94534190059819,
+    "longitude": 77.61324647721489
+  },
+  {
+    "timestamp": "2022-01-01T11:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.7181,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Lag 3",
+        "contribution": 2.841
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.839
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.633
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Lag 3, Traffic Flow Lag 3, Electricity Demand Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006599993004668,
+    "longitude": 77.60655453042236
+  },
+  {
+    "timestamp": "2025-03-18T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "High",
+    "anomaly_score": 0.7127,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.207
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.591
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 2.57
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.318
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Temperature Lag 12, Humidity Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.939333400016404,
+    "longitude": 77.62558060449915
+  },
+  {
+    "timestamp": "2025-05-08T19:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.709,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.205
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.188
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Mean 12, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.987428430985931,
+    "longitude": 77.62729442370151
+  },
+  {
+    "timestamp": "2022-01-01T18:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.7071,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.344
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.314
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.999
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.904
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Traffic Flow Roll Mean 12, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.990491956384023,
+    "longitude": 77.58003486072084
+  },
+  {
+    "timestamp": "2025-05-27T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6956,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.201
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.444
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.327
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.132
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Temperature Lag 12, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.973908134602457,
+    "longitude": 77.6024381312179
+  },
+  {
+    "timestamp": "2022-01-01T12:00:00",
+    "event_type": "Possible public gathering pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6915,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.521
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.483
+      }
+    ],
+    "description": "Possible public gathering pattern inferred from unusual historical movement in Temperature Lag 12, Temperature Lag 24, Electricity Demand Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006240306710094,
+    "longitude": 77.60283331506561
+  },
+  {
+    "timestamp": "2025-03-15T20:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6881,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.179
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 3.029
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.898
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Roll Mean 6, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.945932599860482,
+    "longitude": 77.61382269831171
+  },
+  {
+    "timestamp": "2025-04-01T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6722,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.366
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.142
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.001
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 1.933
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Aqi Roll Mean 24, Temperature Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.981837948534091,
+    "longitude": 77.62935587132485
+  },
+  {
+    "timestamp": "2022-01-01T17:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6703,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.231
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.115
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.841
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Traffic Flow Roll Mean 12, Traffic Flow. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.994494269107731,
+    "longitude": 77.58365356163527
+  },
+  {
+    "timestamp": "2023-05-27T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6672,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.751
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.631
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.89
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.692
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Aqi Roll Mean 24, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.941985097023972,
+    "longitude": 77.6193698432637
+  },
+  {
+    "timestamp": "2025-05-29T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6658,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.348
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.919
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Aqi Roll Std 24, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.964213380825752,
+    "longitude": 77.6290112682372
+  },
+  {
+    "timestamp": "2022-01-01T13:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.642,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.818
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.485
+      },
+      {
+        "feature": "Humidity Roll Std 12",
+        "contribution": 2.412
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Lag 6, Temperature Lag 24, Traffic Flow Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.00517487685051,
+    "longitude": 77.59901055837474
+  },
+  {
+    "timestamp": "2022-01-01T04:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6408,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 6, Temperature Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.99052919746756,
+    "longitude": 77.62619973842756
+  },
+  {
+    "timestamp": "2025-03-15T18:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6386,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.245
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.841
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Lag 1, Traffic Flow. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.953679488638453,
+    "longitude": 77.61979636662292
+  },
+  {
+    "timestamp": "2025-07-15T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6382,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.062
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 3.059
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.911
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Roll Std 6, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.93660148517542,
+    "longitude": 77.56416449941793
+  },
+  {
+    "timestamp": "2022-01-01T03:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6373,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 3",
+        "contribution": 2.541
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 3, Temperature Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.986145014924757,
+    "longitude": 77.62767349312101
+  },
+  {
+    "timestamp": "2022-07-21T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6349,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.053
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.993
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Aqi Roll Std 24, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.994328039329691,
+    "longitude": 77.57280987269549
+  },
+  {
+    "timestamp": "2022-01-01T01:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6335,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 3",
+        "contribution": 2.541
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 3, Temperature Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.97658301054273,
+    "longitude": 77.62938417279886
+  },
+  {
+    "timestamp": "2022-01-01T02:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6328,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 3",
+        "contribution": 2.541
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 3, Temperature Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.981464499824277,
+    "longitude": 77.62873935298863
+  },
+  {
+    "timestamp": "2022-01-01T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6313,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.643
+      },
+      {
+        "feature": "Temperature Lag 3",
+        "contribution": 2.541
+      },
+      {
+        "feature": "Temperature Lag 6",
+        "contribution": 2.539
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Mean 24, Temperature Lag 3, Temperature Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.9716,
+    "longitude": 77.6296
+  },
+  {
+    "timestamp": "2023-05-24T14:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6303,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.858
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.306
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.951
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.932
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Std 24, Aqi Roll Mean 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.967050208487061,
+    "longitude": 77.61507818310902
+  },
+  {
+    "timestamp": "2023-06-03T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.623,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.564
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 3.089
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.018
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Roll Std 6, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.942145665630125,
+    "longitude": 77.61445949426312
+  },
+  {
+    "timestamp": "2025-05-29T20:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.62,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.211
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 3.047
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Roll Mean 6, Traffic Flow Lag 3. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.959417852809441,
+    "longitude": 77.62950789352284
+  },
+  {
+    "timestamp": "2023-05-24T15:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6197,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.816
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.182
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.144
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.964
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Std 24, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.962155827451927,
+    "longitude": 77.61809918256417
+  },
+  {
+    "timestamp": "2025-03-15T09:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6172,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.777
+      },
+      {
+        "feature": "Traffic Flow Roll Std 12",
+        "contribution": 2.697
+      },
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.676
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.561
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Lag 1, Traffic Flow Roll Std 12, Aqi Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.995410856539236,
+    "longitude": 77.62865539288808
+  },
+  {
+    "timestamp": "2023-05-24T16:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6155,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.763
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.393
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.932
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.821
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Mean 24, Aqi Roll Mean 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.957453857068884,
+    "longitude": 77.62083036700206
+  },
+  {
+    "timestamp": "2025-05-08T20:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6139,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.112
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.055
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 2.951
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Mean 12, Traffic Flow Roll Mean 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.99171151723401,
+    "longitude": 77.62570755887047
+  },
+  {
+    "timestamp": "2022-07-21T09:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6135,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.546
+      },
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.531
+      },
+      {
+        "feature": "Traffic Flow Roll Std 12",
+        "contribution": 2.423
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.337
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Lag 1, Aqi Lag 1, Traffic Flow Roll Std 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.948473885386244,
+    "longitude": 77.56038611231578
+  },
+  {
+    "timestamp": "2023-05-24T13:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6091,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.891
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.322
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.963
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.897
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Std 24, Traffic Flow Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.972037284604522,
+    "longitude": 77.61180462657131
+  },
+  {
+    "timestamp": "2023-05-27T08:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6087,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.565
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.476
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.304
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 1.894
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Std 24, Traffic Flow Roll Std 6, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.97628140323866,
+    "longitude": 77.62940963895257
+  },
+  {
+    "timestamp": "2022-05-07T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6079,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.881
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.868
+      },
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Lag 6, Traffic Flow Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.93661682714585,
+    "longitude": 77.55999518025088
+  },
+  {
+    "timestamp": "2023-06-02T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6059,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.457
+      },
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.269
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 2.939
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.899
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Aqi Roll Mean 12, Traffic Flow Roll Mean 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.961730438882002,
+    "longitude": 77.59627259109956
+  },
+  {
+    "timestamp": "2022-09-11T19:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6054,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.145
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.885
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Lag 2, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.974337976279916,
+    "longitude": 77.58643555119957
+  },
+  {
+    "timestamp": "2023-05-20T19:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6024,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.956
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.926
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Mean 12, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.982052370207311,
+    "longitude": 77.5967455871952
+  },
+  {
+    "timestamp": "2023-05-25T08:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6023,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.658
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.203
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.296
+      },
+      {
+        "feature": "Aqi Lag 24",
+        "contribution": 2.167
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 24, Traffic Flow Roll Mean 24, Aqi Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.95669841712287,
+    "longitude": 77.61188744788026
+  },
+  {
+    "timestamp": "2022-01-01T21:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.6004,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.243
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.199
+      },
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.149
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.111
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 24, Aqi Roll Mean 24, Aqi Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.976539200282096,
+    "longitude": 77.57042346510876
+  },
+  {
+    "timestamp": "2022-11-21T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.6003,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.048
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.119
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.092
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.038
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Roll Mean 24, Electricity Demand Lag 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.938206328223846,
+    "longitude": 77.55966729240323
+  },
+  {
+    "timestamp": "2023-05-27T03:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6001,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.302
+      },
+      {
+        "feature": "Electricity Demand Roll Std 12",
+        "contribution": 3.259
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 3.112
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.693
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 24, Electricity Demand Roll Std 12, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.952415377706416,
+    "longitude": 77.62609717942159
+  },
+  {
+    "timestamp": "2022-09-11T09:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5964,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.399
+      },
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.373
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.196
+      },
+      {
+        "feature": "Electricity Demand Lag 6",
+        "contribution": 2.169
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Lag 1, Aqi Lag 1, Traffic Flow Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006528530143587,
+    "longitude": 77.56047632930196
+  },
+  {
+    "timestamp": "2023-11-20T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5951,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.041
+      },
+      {
+        "feature": "Humidity Roll Std 12",
+        "contribution": 2.288
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.234
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.184
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Humidity Roll Std 12, Electricity Demand Lag 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.987729354210376,
+    "longitude": 77.62959038286667
+  },
+  {
+    "timestamp": "2023-05-24T17:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5916,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.707
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.686
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.051
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.86
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Mean 24, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.953040092833287,
+    "longitude": 77.62323805277167
+  },
+  {
+    "timestamp": "2022-01-01T14:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5896,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.84
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.414
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Lag 6, Traffic Flow Lag 6, Temperature Lag 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.003425409938899,
+    "longitude": 77.59513340634278
+  },
+  {
+    "timestamp": "2025-03-25T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5895,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.161
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.359
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 2.096
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 1.872
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Temperature Lag 12, Humidity Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.945633779290725,
+    "longitude": 77.62802570088868
+  },
+  {
+    "timestamp": "2023-05-24T11:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5888,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.933
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.194
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.026
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.817
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Std 24, Traffic Flow Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.981883287229612,
+    "longitude": 77.60466394998188
+  },
+  {
+    "timestamp": "2023-01-02T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.587,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.116
+      },
+      {
+        "feature": "Humidity Roll Std 12",
+        "contribution": 2.266
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 2.097
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 1.855
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Humidity Roll Std 12, Humidity Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.937362527037745,
+    "longitude": 77.57674108124527
+  },
+  {
+    "timestamp": "2022-01-01T16:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5858,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 2.957
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.714
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.658
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.645
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Traffic Flow Roll Mean 12, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.998030145918108,
+    "longitude": 77.58740726478712
+  },
+  {
+    "timestamp": "2023-03-20T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5842,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.155
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 2.425
+      },
+      {
+        "feature": "Humidity Roll Mean 24",
+        "contribution": 2.089
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 1.88
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Humidity Lag 12, Humidity Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936785152260628,
+    "longitude": 77.62944385147681
+  },
+  {
+    "timestamp": "2023-05-27T09:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.584,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.605
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.079
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 1.894
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 1.812
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Std 24, Aqi Roll Mean 24, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.981171950772726,
+    "longitude": 77.62879077263496
+  },
+  {
+    "timestamp": "2023-05-24T12:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5838,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.916
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.277
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.998
+      },
+      {
+        "feature": "Aqi Roll Mean 6",
+        "contribution": 2.845
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Aqi Roll Std 24, Traffic Flow Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.977015451713237,
+    "longitude": 77.60831888566793
+  },
+  {
+    "timestamp": "2022-09-11T20:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5826,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.02
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi Lag 2",
+        "contribution": 2.841
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Lag 3, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.969342345108016,
+    "longitude": 77.59025972320337
+  },
+  {
+    "timestamp": "2023-03-06T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5818,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.012
+      },
+      {
+        "feature": "Traffic Flow Diff 1",
+        "contribution": 1.832
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 1.831
+      },
+      {
+        "feature": "Humidity Lag 12",
+        "contribution": 1.798
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Diff 1, Traffic Flow Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.991124400913952,
+    "longitude": 77.62595757732309
+  },
+  {
+    "timestamp": "2023-05-11T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5809,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.264
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.869
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Lag 2, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.962753893035076,
+    "longitude": 77.56387448172258
+  },
+  {
+    "timestamp": "2023-05-20T20:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5803,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi Lag 2",
+        "contribution": 2.841
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.832
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Lag 3, Traffic Flow Lag 2, Aqi Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.977190278280744,
+    "longitude": 77.59285876350336
+  },
+  {
+    "timestamp": "2022-12-19T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5794,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 3.915
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.883
+      },
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.491
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Lag 6, Aqi Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.987934749712103,
+    "longitude": 77.56715617627177
+  },
+  {
+    "timestamp": "2023-04-17T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5784,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.239
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      },
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.729
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Lag 6, Aqi Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.974345338953045,
+    "longitude": 77.62273465162632
+  },
+  {
+    "timestamp": "2023-01-23T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5759,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.033
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 1.842
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 1.824
+      },
+      {
+        "feature": "Humidity Roll Std 12",
+        "contribution": 1.683
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Temperature Lag 24, Electricity Demand Lag 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.00287192327276,
+    "longitude": 77.59506152127278
+  },
+  {
+    "timestamp": "2023-11-13T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5723,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.038
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.26
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 2.164
+      },
+      {
+        "feature": "Electricity Demand Lag 3",
+        "contribution": 2.007
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Electricity Demand Lag 24, Electricity Demand Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.950312715391352,
+    "longitude": 77.6291560375447
+  },
+  {
+    "timestamp": "2022-09-11T08:00:00",
+    "event_type": "Possible traffic disruption",
+    "severity": "Medium",
+    "anomaly_score": 0.5716,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 3.061
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.399
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.373
+      },
+      {
+        "feature": "Electricity Demand Lag 6",
+        "contribution": 2.179
+      }
+    ],
+    "description": "Possible traffic disruption inferred from unusual historical movement in Traffic Flow Roll Std 6, Traffic Flow, Aqi. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006491004551696,
+    "longitude": 77.55982375306348
+  },
+  {
+    "timestamp": "2022-07-21T20:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5695,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.923
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 2.864
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Lag 3, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.997885946926653,
+    "longitude": 77.57598127250303
+  },
+  {
+    "timestamp": "2025-05-08T18:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5673,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.117
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.926
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Aqi Roll Std 24, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.982822864529867,
+    "longitude": 77.6284780687634
+  },
+  {
+    "timestamp": "2022-01-10T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5665,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 3.949
+      },
+      {
+        "feature": "Humidity Roll Std 12",
+        "contribution": 2.216
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.108
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 24",
+        "contribution": 1.942
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Humidity Roll Std 12, Electricity Demand Lag 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.953044565520065,
+    "longitude": 77.60944626525679
+  },
+  {
+    "timestamp": "2022-04-07T19:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.56,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.191
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi Lag 1",
+        "contribution": 2.841
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Lag 2, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.939629310580372,
+    "longitude": 77.6253067688602
+  },
+  {
+    "timestamp": "2023-05-27T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5597,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.41
+      },
+      {
+        "feature": "Electricity Demand Roll Std 12",
+        "contribution": 3.16
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.948
+      },
+      {
+        "feature": "Electricity Demand Roll Std 6",
+        "contribution": 2.882
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 24, Electricity Demand Roll Std 12, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.948443057312918,
+    "longitude": 77.62421066512837
+  },
+  {
+    "timestamp": "2022-09-12T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5592,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 3.988
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      },
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.547
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Lag 6, Aqi Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.950811244598519,
+    "longitude": 77.60561369954705
+  },
+  {
+    "timestamp": "2023-04-24T00:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5553,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 4.208
+      },
+      {
+        "feature": "Traffic Flow Lag 6",
+        "contribution": 2.897
+      },
+      {
+        "feature": "Aqi Lag 6",
+        "contribution": 2.842
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.628
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Diff 1, Traffic Flow Lag 6, Aqi Lag 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.941166926359456,
+    "longitude": 77.61847900405387
+  },
+  {
+    "timestamp": "2022-01-01T15:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5546,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 2.608
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.532
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 2.481
+      },
+      {
+        "feature": "Temperature Lag 12",
+        "contribution": 2.393
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Mean 12, Temperature Lag 24, Aqi Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.001027548702835,
+    "longitude": 77.5912496758195
+  },
+  {
+    "timestamp": "2025-03-15T21:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5545,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 3.053
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 6",
+        "contribution": 2.926
+      },
+      {
+        "feature": "Traffic Flow Lag 3",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.896
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Roll Mean 6, Traffic Flow Lag 3. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.942806383889398,
+    "longitude": 77.61046098628252
+  },
+  {
+    "timestamp": "2022-07-21T18:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5525,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.983
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.896
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.841
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 12, Traffic Flow Lag 1, Traffic Flow. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.990307082498305,
+    "longitude": 77.56990721015586
+  },
+  {
+    "timestamp": "2022-01-01T22:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5523,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.127
+      },
+      {
+        "feature": "Aqi Roll Mean 24",
+        "contribution": 3.119
+      },
+      {
+        "feature": "Aqi Roll Mean 12",
+        "contribution": 3.015
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.951
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Mean 24, Aqi Roll Mean 24, Aqi Roll Mean 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.971555742887437,
+    "longitude": 77.56776633129253
+  },
+  {
+    "timestamp": "2023-05-20T08:00:00",
+    "event_type": "Possible energy demand surge",
+    "severity": "Medium",
+    "anomaly_score": 0.5507,
+    "threshold": 0.4011,
+    "drivers": [
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.646
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 3.102
+      },
+      {
+        "feature": "Traffic Flow",
+        "contribution": 2.435
+      },
+      {
+        "feature": "Aqi",
+        "contribution": 2.185
+      }
+    ],
+    "description": "Possible energy demand surge inferred from unusual historical movement in Electricity Demand Roll Std 24, Traffic Flow Roll Std 6, Traffic Flow. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.004996198479134,
+    "longitude": 77.62816609874888
+  }
+]

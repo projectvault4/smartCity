@@ -13,6 +13,8 @@ const navItems = [
   { id: 'prediction', label: 'Forecasting', color: 'bg-air-acc' },
   { id: 'xai', label: 'Explainable AI', color: 'bg-home-acc' },
   { id: 'analytics', label: 'Multi-Domain Analytics', color: 'bg-eng-acc' },
+  { id: 'anomaly', label: 'Anomaly Detection', color: 'bg-red-400' },
+  { id: 'voice', label: 'Voice Briefing', color: 'bg-traf-acc' },
   { id: 'model', label: 'Model Quality', color: 'bg-white' },
 ];
 

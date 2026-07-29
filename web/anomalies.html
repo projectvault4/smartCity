@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ForeSightX Anomaly Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/anomalies.css" />
+  </head>
+  <body>
+    <main class="ai-shell">
+      <nav class="topbar">
+        <a href="/" class="nav-link">Forecast</a>
+        <a href="/comparison" class="nav-link">Models</a>
+        <a href="/anomalies" class="nav-link active">AI Anomalies</a>
+      </nav>
+
+      <section class="hero-grid">
+        <div>
+          <p class="eyebrow">Historical Urban Monitor</p>
+          <h1>Anomaly Dashboard</h1>
+          <p class="subtitle">
+            Review unusual traffic, air quality, energy, and weather patterns from the uploaded city data.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <a class="glass-button" href="/api/anomalies/export.csv">Export CSV</a>
+        </div>
+      </section>
+
+      <section id="summaryCards" class="summary-grid"></section>
+
+      <section class="filter-panel glass-card">
+        <label>
+          Start Date
+          <input id="startDate" type="date" />
+        </label>
+        <label>
+          End Date
+          <input id="endDate" type="date" />
+        </label>
+        <label>
+          Domain
+          <select id="domainFilter">
+            <option value="All">All Domains</option>
+            <option value="Traffic">Traffic</option>
+            <option value="AQI">AQI</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Temperature">Temperature</option>
+            <option value="Humidity">Humidity</option>
+            <option value="Urban">Urban</option>
+          </select>
+        </label>
+        <label>
+          Severity
+          <select id="severityFilter">
+            <option value="All">All Severities</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+            <option value="Normal">Normal</option>
+          </select>
+        </label>
+        <button id="resetFilters" class="glass-button" type="button">Reset</button>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="glass-card span-8">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Ranked Days</p>
+              <h2>Top Anomalous Days</h2>
+            </div>
+            <span id="dataMode" class="badge">Historical only</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Score</th>
+                  <th>Severity</th>
+                  <th>Category</th>
+                </tr>
+              </thead>
+              <tbody id="topDaysBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="glass-card span-4">
+          <p class="eyebrow">Events</p>
+          <h2>Detected Events</h2>
+          <div id="eventPanel" class="event-stack"></div>
+        </article>
+
+        <article class="glass-card span-8">
+          <p class="eyebrow">Calendar</p>
+          <h2>Anomaly Heatmap</h2>
+          <div id="heatmap" class="calendar-grid"></div>
+        </article>
+
+        <article class="glass-card span-4">
+          <p class="eyebrow">Monthly Statistics</p>
+          <h2>Monthly Anomaly Load</h2>
+          <div id="monthlyStats" class="month-list"></div>
+        </article>
+
+        <article class="glass-card span-6">
+          <p class="eyebrow">Insights</p>
+          <h2>AI Insights</h2>
+          <ul id="insightsList" class="insight-list"></ul>
+        </article>
+
+        <article class="glass-card span-6">
+          <p class="eyebrow">Actions</p>
+          <h2>Recommendations</h2>
+          <div id="recommendations" class="recommendation-list"></div>
+        </article>
+      </section>
+
+      <section id="errorBox" class="error-box hidden"></section>
+    </main>
+    <script src="/anomalies.js"></script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "name": "foresightx-backend",
+  "version": "1.0.0",
+  "description": "ForeSightX Node.js Express backend",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "node src/scripts/runMigrations.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "foresightx",
+    "express",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "axios": "^1.18.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.11.1",
+    "morgan": "^1.10.0",
+    "node-cron": "^4.6.0",
+    "pg": "^8.13.1",
+    "twilio": "^6.0.2",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.2.2"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "clearMocks": true,
+    "restoreMocks": true,
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
+  }
+}

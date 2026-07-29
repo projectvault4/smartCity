@@ -26,6 +26,111 @@ export interface DriftData {
   improved: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+
+export interface BackendHealth {
+  status: string;
+  service: string;
+  uptimeSeconds?: number;
+  startedAt?: string;
+}
+
+export interface UserPayload {
+  user_id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  age?: number;
+  city?: string;
+  ward?: string;
+  latitude?: number;
+  longitude?: number;
+  preferences?: Record<string, unknown>;
+  status?: 'active' | 'inactive' | 'suspended';
+}
+
+export interface RiskAssessmentPayload {
+  user: Record<string, unknown>;
+  riskGroups?: string[];
+  aqi?: number | { aqi: number };
+  weather?: Record<string, unknown>;
+  traffic?: string | Record<string, unknown>;
+  temperature?: number;
+}
+
+export interface DeliveryPayload {
+  user: Record<string, unknown>;
+  advisory: Record<string, unknown>;
+  channels?: string[];
+}
+
+export interface AdvisoryBatchPayload {
+  startedBy?: string;
+  channels?: string[];
+  sharedConditions?: {
+    aqi?: number | { aqi: number };
+    weather?: Record<string, unknown>;
+    traffic?: string | Record<string, unknown>;
+  };
+}
+
+const apiRequest = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || payload?.message || 'Backend request failed');
+  }
+
+  return payload;
+};
+
+export const backendApi = {
+  health: () => apiRequest<BackendHealth>('/health'),
+  metrics: () => apiRequest('/health/metrics'),
+  readiness: () => apiRequest('/health/ready'),
+  modelConditions: (city = 'bangalore') => apiRequest(`/model/conditions?city=${encodeURIComponent(city)}`),
+  listUsers: () => apiRequest('/users'),
+  createUser: (user: UserPayload) => apiRequest('/users', {
+    method: 'POST',
+    body: JSON.stringify(user)
+  }),
+  updateUser: (id: string, user: Partial<UserPayload>) => apiRequest(`/users/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(user)
+  }),
+  deleteUser: (id: string) => apiRequest(`/users/${id}`, {
+    method: 'DELETE'
+  }),
+  assessRisk: (payload: RiskAssessmentPayload) => apiRequest('/risk/assess', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  generateAdvisory: (payload: RiskAssessmentPayload) => apiRequest('/advisories/generate', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  deliverNotification: (payload: DeliveryPayload) => apiRequest('/notifications/deliver', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  listNotifications: (userId: string) => apiRequest(`/notifications/users/${userId}`),
+  markNotificationRead: (userId: string, notificationId: string) => apiRequest(`/notifications/users/${userId}/${notificationId}/read`, {
+    method: 'PATCH'
+  }),
+  runAdvisoryBatch: (payload?: AdvisoryBatchPayload) => apiRequest('/jobs/advisories/run', {
+    method: 'POST',
+    body: JSON.stringify(payload || {})
+  })
+};
+
 export const getDriftData = (): DriftData[] => [
   { week: 1, accuracy: 94.2, drift: false, retrained: false, improved: false },
   { week: 2, accuracy: 91.7, drift: true, retrained: false, improved: false },

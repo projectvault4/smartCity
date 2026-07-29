@@ -8,7 +8,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from utils.config import CONFIG, apply_city_config
-from utils.forecast_service import build_comparison_payload, build_forecast_payload
+from utils.anomaly_detection import build_anomaly_csv_export, build_anomaly_pdf_export
+from utils.forecast_service import build_comparison_payload, build_forecast_payload, build_urban_event_payload
 
 
 ROOT_DIR = Path(__file__).resolve().parent
@@ -34,10 +35,24 @@ class ForecastRequestHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/comparison":
             self._serve_comparison()
             return
+        if parsed.path == "/api/anomalies":
+            self._serve_anomalies()
+            return
+        if parsed.path == "/api/anomalies/export.csv":
+            self._serve_anomaly_csv()
+            return
+        if parsed.path == "/api/anomalies/export.pdf":
+            self._serve_anomaly_pdf()
+            return
         if parsed.path == "/":
             self.path = "/index.html"
+            return super().do_GET()
         if parsed.path == "/comparison":
             self.path = "/comparison.html"
+            return super().do_GET()
+        if parsed.path == "/anomalies":
+            self.path = "/anomalies.html"
+            return super().do_GET()
         return super().do_GET()
 
     def _serve_forecast(self):
@@ -54,9 +69,53 @@ class ForecastRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _serve_anomaly_csv(self):
+        try:
+            data = build_anomaly_csv_export(APP_CONFIG)
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/csv; charset=utf-8")
+            self.send_header("Content-Disposition", 'attachment; filename="foresightx_anomalies.csv"')
+        except Exception as exc:
+            data = json.dumps({"error": str(exc)}).encode("utf-8")
+            self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def _serve_anomaly_pdf(self):
+        try:
+            data = build_anomaly_pdf_export(APP_CONFIG)
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "application/pdf")
+            self.send_header("Content-Disposition", 'attachment; filename="foresightx_anomaly_report.pdf"')
+        except Exception as exc:
+            data = json.dumps({"error": str(exc)}).encode("utf-8")
+            self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
     def _serve_comparison(self):
         try:
             payload = build_comparison_payload(APP_CONFIG)
+            data = json.dumps(payload).encode("utf-8")
+            self.send_response(HTTPStatus.OK)
+        except Exception as exc:
+            data = json.dumps({"error": str(exc)}).encode("utf-8")
+            self.send_response(HTTPStatus.INTERNAL_SERVER_ERROR)
+
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def _serve_anomalies(self):
+        try:
+            payload = build_urban_event_payload(APP_CONFIG)
             data = json.dumps(payload).encode("utf-8")
             self.send_response(HTTPStatus.OK)
         except Exception as exc:

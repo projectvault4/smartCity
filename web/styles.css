@@ -155,10 +155,16 @@ h2 {
 }
 
 .card-grid,
-.reason-grid {
+.reason-grid,
+.source-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+}
+
+.source-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 16px;
 }
 
 .four-up {
@@ -170,6 +176,38 @@ h2 {
 .panel {
   border-radius: 24px;
   padding: 22px;
+}
+
+.data-freshness-panel {
+  margin-top: 20px;
+}
+
+.source-item {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.source-item strong,
+.source-item span {
+  display: block;
+}
+
+.source-item strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+}
+
+.source-item span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.source-limiting {
+  border-color: rgba(166, 60, 50, 0.42);
+  background: rgba(166, 60, 50, 0.08);
 }
 
 .card-top {
@@ -258,6 +296,178 @@ h2 {
   font-family: "Space Grotesk", sans-serif;
 }
 
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.section-heading h2 {
+  margin-top: 0;
+}
+
+.severity-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.severity-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.severity-card strong {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.7rem;
+}
+
+.severity-card span,
+.event-time,
+.event-description,
+.driver-list span {
+  color: var(--muted);
+}
+
+.event-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.event-card {
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--accent);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.event-card h3 {
+  margin-top: 10px;
+  font-size: 1.08rem;
+}
+
+.event-time,
+.event-description {
+  margin: 8px 0 0;
+}
+
+.driver-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.driver-list span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: rgba(255, 255, 255, 0.58);
+  font-size: 0.88rem;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(260px, 1.1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.map-preview {
+  position: relative;
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(31, 42, 46, 0.07) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(31, 42, 46, 0.07) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(45, 106, 79, 0.18), rgba(219, 90, 66, 0.16));
+  background-size: 38px 38px, 38px 38px, cover;
+}
+
+.map-marker {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 3px solid white;
+  box-shadow: 0 10px 24px rgba(31, 42, 46, 0.28);
+}
+
+.marker-critical {
+  left: 24%;
+  top: 28%;
+  background: #a63c32;
+}
+
+.marker-high {
+  left: 62%;
+  top: 40%;
+  background: #db5a42;
+}
+
+.marker-medium {
+  left: 45%;
+  top: 68%;
+  background: #c17c00;
+}
+
+.marker-low {
+  left: 78%;
+  top: 22%;
+  background: #2d6a4f;
+}
+
+.timeline-strip {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  min-height: 220px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.timeline-bar {
+  flex: 1;
+  min-width: 10px;
+  border-radius: 999px 999px 4px 4px;
+  background: var(--good);
+}
+
+.severity-critical {
+  color: #7e241d;
+  border-color: rgba(166, 60, 50, 0.42);
+  background-color: rgba(166, 60, 50, 0.16);
+}
+
+.severity-high {
+  color: #8a2d1f;
+  border-color: rgba(219, 90, 66, 0.42);
+  background-color: rgba(219, 90, 66, 0.14);
+}
+
+.severity-medium {
+  color: #8a5c00;
+  border-color: rgba(193, 124, 0, 0.42);
+  background-color: rgba(193, 124, 0, 0.14);
+}
+
+.severity-low {
+  color: #24563f;
+  border-color: rgba(45, 106, 79, 0.34);
+  background-color: rgba(45, 106, 79, 0.12);
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -311,7 +521,11 @@ h2 {
   .reason-grid,
   .meta-panel,
   .two-column,
-  .analytics-grid {
+  .analytics-grid,
+  .severity-grid,
+  .source-grid,
+  .event-list,
+  .visual-grid {
     grid-template-columns: 1fr;
   }
 

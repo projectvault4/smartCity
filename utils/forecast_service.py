@@ -13,6 +13,7 @@ import torch
 from evaluate import evaluate_models
 from train import build_models, checkpoint_name_for_model
 from utils.analytics import compute_correlation_matrices, granger_causality_table
+from utils.anomaly_detection import build_anomaly_payload
 from utils.config import CONFIG
 from utils.data_utils import create_datasets, load_input_dataframe, set_seed
 from utils.explainable_forecasting import (
@@ -610,3 +611,7 @@ def build_forecast_payload(config=CONFIG) -> Dict[str, Any]:
 def build_comparison_payload(config=CONFIG) -> Dict[str, Any]:
     datasets, _, _ = _base_context(config)
     return _build_comparison_payload(datasets, config)
+
+
+def build_urban_event_payload(config=CONFIG) -> Dict[str, Any]:
+    return build_anomaly_payload(config)
