@@ -17,20 +17,25 @@ import ReportGenerator from './components/ReportGenerator';
 import CitizenAdvisoryConsole from './components/CitizenAdvisoryConsole';
 import AnomalyDetectionEmbed from './components/AnomalyDetectionEmbed';
 import VoiceBriefing from './components/VoiceBriefing';
-import { backendApi, getInitialData, updateMetric, CityData } from './services/dataService';
+import { backendApi, cityDataFromModelConditions, getInitialData, updateMetric, CityData, ModelConditions } from './services/dataService';
 
 type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'model';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('anomaly');
   const [heroMode, setHeroMode] = useState<'home' | 'traffic' | 'air' | 'energy' | 'weather'>('home');
-  const [dashboardView, setDashboardView] = useState<DashboardView>('overview');
+  const [dashboardView, setDashboardView] = useState<DashboardView>('anomaly');
   const [cityData, setCityData] = useState<CityData>(getInitialData());
+  const [modelConditions, setModelConditions] = useState<ModelConditions | null>(null);
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
 
   // Real-time update interval
   useEffect(() => {
     const interval = setInterval(() => {
+      if (modelConditions) {
+        return;
+      }
+
       setCityData(prev => ({
         ...prev,
         traffic: updateMetric(prev.traffic),
@@ -42,7 +47,7 @@ export default function App() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [modelConditions]);
 
   useEffect(() => {
     let mounted = true;
@@ -50,6 +55,12 @@ export default function App() {
     backendApi.health()
       .then(() => {
         if (mounted) setBackendStatus('online');
+        return backendApi.modelConditions('bangalore');
+      })
+      .then((response: any) => {
+        if (!mounted || !response?.data) return;
+        setModelConditions(response.data);
+        setCityData((prev) => cityDataFromModelConditions(response.data, prev));
       })
       .catch(() => {
         if (mounted) setBackendStatus('offline');
@@ -92,7 +103,9 @@ export default function App() {
             {backendStatus}
           </span>
         </div>
-        <Hero mode={heroMode} setMode={(m) => { setHeroMode(m); setActiveTab(m); }} data={cityData} />
+        {dashboardView === 'overview' && (
+          <Hero mode={heroMode} setMode={(m) => { setHeroMode(m); setActiveTab(m); }} data={cityData} />
+        )}
 
         <div className="p-8 md:p-12">
           
@@ -107,7 +120,7 @@ export default function App() {
                 {/* PRIMARY ACTIONS: SEARCH & EVENT IMPACT - STACKED */}
                 <div className="space-y-8">
                    <QueryInterface />
-                   <CitizenAdvisoryConsole />
+                   <CitizenAdvisoryConsole initialModelConditions={modelConditions} />
                    <EventImpact />
                 </div>
 
@@ -161,7 +174,7 @@ export default function App() {
 
             {dashboardView === 'prediction' && (
               <div className="space-y-8">
-                 <PredictionPanel data={cityData} />
+                 <PredictionPanel data={cityData} city={modelConditions?.city || 'bangalore'} />
               </div>
             )}
 
@@ -178,11 +191,11 @@ export default function App() {
             )}
 
             {dashboardView === 'anomaly' && (
-              <AnomalyDetectionEmbed />
+              <AnomalyDetectionEmbed modelConditions={modelConditions} />
             )}
 
             {dashboardView === 'voice' && (
-              <VoiceBriefing />
+              <VoiceBriefing data={cityData} modelConditions={modelConditions} />
             )}
 
             {dashboardView === 'model' && (

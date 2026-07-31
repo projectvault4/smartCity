@@ -13,7 +13,7 @@ import {
   Users
 } from 'lucide-react';
 import Card from './Card';
-import { backendApi, UserPayload } from '../services/dataService';
+import { backendApi, ModelConditions, UserPayload } from '../services/dataService';
 
 const makeDefaultUser = (): UserPayload => ({
   user_id: `user_${Date.now().toString().slice(-6)}`,
@@ -105,7 +105,28 @@ const Pill = ({
   </button>
 );
 
-const CitizenAdvisoryConsole = () => {
+const conditionsFromModel = (data: ModelConditions) => ({
+  aqi: Math.round(Number(data.aqi?.aqi || 0)),
+  temperature: Math.round(Number(data.weather?.temperature?.value || 0)),
+  weather: data.weather?.weather?.main || 'Clear',
+  rainLastHourMm: data.weather?.rainLastHourMm || 0,
+  traffic: data.traffic?.congestionLevel || 'moderate'
+});
+
+const sharedConditionsFrom = (conditions: ReturnType<typeof conditionsFromModel>) => ({
+  aqi: { aqi: conditions.aqi },
+  weather: {
+    weather: {
+      main: conditions.weather,
+      description: conditions.rainLastHourMm > 0 ? 'heavy rain' : conditions.weather
+    },
+    temperature: { value: conditions.temperature },
+    rainLastHourMm: conditions.rainLastHourMm
+  },
+  traffic: { congestionLevel: conditions.traffic }
+});
+
+const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialModelConditions?: ModelConditions | null }) => {
   const [form, setForm] = useState<UserPayload>(makeDefaultUser());
   const [riskGroups, setRiskGroups] = useState(['elder', 'commuter']);
   const [channels, setChannels] = useState(['in_app']);
@@ -117,7 +138,7 @@ const CitizenAdvisoryConsole = () => {
   const [health, setHealth] = useState<any>(null);
   const [readiness, setReadiness] = useState<any>(null);
   const [batchResult, setBatchResult] = useState<any>(null);
-  const [modelConditions, setModelConditions] = useState<any>(null);
+  const [modelConditions, setModelConditions] = useState<ModelConditions | null>(initialModelConditions);
   const [loading, setLoading] = useState('');
   const [message, setMessage] = useState('');
   const [conditions, setConditions] = useState({
@@ -213,7 +234,21 @@ const CitizenAdvisoryConsole = () => {
   useEffect(() => {
     loadHealth().catch(showError);
     loadUsers().catch(showError);
+    backendApi.modelConditions('bangalore')
+      .then((response: any) => {
+        if (!response?.data) return;
+        setModelConditions(response.data);
+        setConditions(conditionsFromModel(response.data));
+      })
+      .catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!initialModelConditions) return;
+
+    setModelConditions(initialModelConditions);
+    setConditions(conditionsFromModel(initialModelConditions));
+  }, [initialModelConditions]);
 
   useEffect(() => {
     loadNotifications().catch(() => setNotifications([]));
@@ -338,13 +373,7 @@ const CitizenAdvisoryConsole = () => {
       const response: any = await backendApi.modelConditions(city);
       const data = response.data;
       setModelConditions(data);
-      setConditions({
-        aqi: Math.round(data.aqi?.aqi || 0),
-        temperature: Math.round(data.weather?.temperature?.value || 0),
-        weather: data.weather?.weather?.main || 'Clear',
-        rainLastHourMm: data.weather?.rainLastHourMm || 0,
-        traffic: data.traffic?.congestionLevel || 'moderate'
-      });
+      setConditions(conditionsFromModel(data));
       setMessage(`Loaded trained-model forecast for ${data.city}: ${data.forecastFor}`);
     } catch (error) {
       showError(error);
@@ -406,7 +435,10 @@ const CitizenAdvisoryConsole = () => {
     setMessage('');
 
     try {
-      const response: any = await backendApi.runAdvisoryBatch();
+      const response: any = await backendApi.runAdvisoryBatch({
+        startedBy: modelConditions ? 'manual_model_forecast_console' : 'manual_console',
+        sharedConditions: sharedConditionsFrom(conditions)
+      });
       setBatchResult(response.data);
       setMessage(`Batch finished: ${response.data.status}`);
       await loadUsers();
@@ -426,18 +458,7 @@ const CitizenAdvisoryConsole = () => {
       const response: any = await backendApi.runAdvisoryBatch({
         startedBy: 'manual_sms_console',
         channels: ['sms'],
-        sharedConditions: {
-          aqi: { aqi: conditions.aqi },
-          weather: {
-            weather: {
-              main: conditions.weather,
-              description: conditions.rainLastHourMm > 0 ? 'heavy rain' : conditions.weather
-            },
-            temperature: { value: conditions.temperature },
-            rainLastHourMm: conditions.rainLastHourMm
-          },
-          traffic: { congestionLevel: conditions.traffic }
-        }
+        sharedConditions: sharedConditionsFrom(conditions)
       });
 
       setBatchResult(response.data);

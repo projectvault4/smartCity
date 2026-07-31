@@ -30,8 +30,8 @@ button,input{font-family:inherit;}
 ::-webkit-scrollbar-thumb{background:#1c3c2b;border-radius:8px;}
 ::-webkit-scrollbar-track{background:transparent;}
 
-.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;}
-.sidebar{background:linear-gradient(180deg,#081a12,#061309 90%);border-right:1px solid var(--panel-border);padding:22px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.app{display:grid;grid-template-columns:1fr;min-height:100vh;}
+.sidebar{display:none;}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
 .brand .bar{width:4px;height:26px;background:var(--mint-strong);border-radius:3px;}
 .brand .name{font-family:var(--mono);font-weight:700;font-size:17px;}
@@ -170,13 +170,6 @@ button,input{font-family:inherit;}
 .switch.on i{transform:translateX(15px);background:var(--mint-strong);}
 
 .footnote{font-size:10.5px;color:var(--text-low);margin-top:18px;text-align:center;line-height:1.7;}
-
-/* Embedded in the React app shell, so the standalone page navigation is hidden. */
-.sidebar{display:none;}
-.app{display:block;min-height:auto;}
-.main{width:100%;min-height:auto;}
-.viewport{max-width:none;padding:22px 30px 42px;}
-@media(max-width:1080px){.app{display:block;}.sidebar{display:none;}}
 </style>
 </head>
 <body>
@@ -210,7 +203,7 @@ button,input{font-family:inherit;}
       <li><a href="#"><span class="left"><span class="dot"></span>Agent Negotiation</span></a></li>
       <li><a href="#"><span class="left"><span class="dot"></span>Voice Briefing</span></a></li>
     </ul>
-    <div class="sidebar-foot">Isolation Forest run over 365 days of daily multi-domain sensor data, with a PCA-style 3D landscape for spatial inspection.</div>
+    <div class="sidebar-foot">Isolation Forest and reconstruction scoring over the project anomaly artifacts, with a PCA-style 3D landscape for spatial inspection.</div>
   </aside>
 
   <div class="main">
@@ -254,7 +247,7 @@ button,input{font-family:inherit;}
           </div>
           <div class="chart-wrap" id="chartWrap"></div>
           <div class="timeline-explain">
-            <b>How to read this:</b> each bar is that month's single highest daily anomaly score across all five sensors — not an average, so one bad day can carry a whole month. <span style="color:var(--red)">Red</span> bars crossed the 0.85 critical threshold, <span style="color:var(--amber)">amber</span> sat in the 0.6–0.85 elevated range, and green months stayed within normal variation. Click any bar to inspect that month's peak day below.
+            <b>How to read this:</b> each bar is that month's single highest daily anomaly score across traffic, AQI, electricity, temperature, and humidity — not an average, so one bad day can carry a whole month. <span style="color:var(--red)">Red</span> bars crossed the 0.85 critical threshold, <span style="color:var(--amber)">amber</span> sat in the 0.6–0.85 elevated range, and green months stayed within normal variation. Click any bar to inspect that month's peak day below.
           </div>
           <div class="timeline-explain-dynamic" id="timelineDynamic"></div>
         </div>
@@ -324,7 +317,7 @@ button,input{font-family:inherit;}
         </div>
       </div>
 
-      <div class="footnote">Synthetic 365-day dataset with 7 injected multi-domain anomaly events stands in for live sensor feeds (traffic, AQI, temperature, electricity, humidity). Selecting a day anywhere on this page — the list, the heatmap, or the 3D landscape — updates every other panel.</div>
+      <div class="footnote">Dataset-backed anomaly view for the five project features: traffic flow, AQI, electricity demand, temperature, and humidity. Selecting a day anywhere on this page — the list, the heatmap, or the 3D landscape — updates every other panel.</div>
     </div>
   </div>
 </div>
@@ -511,7 +504,7 @@ function renderShapAndAI(key){
     shapPill.textContent = d ? `${d.key} — normal day` : '—';
     aiPill.textContent = d ? `Score ${d.score.toFixed(2)}` : '—';
     shapBody.innerHTML = `<div style="color:var(--text-low);font-size:12px;padding:10px 0;">No significant feature contributions — this day falls within normal range across all five signals.</div>`;
-    aiBody.innerHTML = d ? `On <b>${d.date.toDateString()}</b>, the model recorded a low anomaly score of <b>${d.score.toFixed(2)}</b>. No unusual pattern was detected across traffic, air quality, weather, or grid signals.` : "Select a day to see the model's interpretation.";
+    aiBody.innerHTML = d ? `On <b>${d.date.toDateString()}</b>, the model recorded a low anomaly score of <b>${d.score.toFixed(2)}</b>. No unusual pattern was detected across traffic, AQI, electricity, temperature, or humidity signals.` : "Select a day to see the model's interpretation.";
     return;
   }
   shapPill.textContent = `${a.label.split(',')[0]} — selected anomaly`;

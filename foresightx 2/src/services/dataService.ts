@@ -16,6 +16,44 @@ export interface CityData {
   energy: CityMetric;
   timestamp: string;
   lastUpdate: string;
+  modelSource?: string;
+  forecastFor?: string;
+}
+
+export interface ModelConditions {
+  city: string;
+  source: string;
+  forecastFor: string;
+  stepAhead: number;
+  aqi: {
+    provider: string;
+    aqi: number | null;
+    observedAt: string;
+  };
+  weather: {
+    provider: string;
+    weather: {
+      main: string;
+      description: string;
+    };
+    temperature: {
+      value: number | null;
+      units: string;
+    };
+    humidity: number | null;
+    rainLastHourMm: number;
+    observedAt: string;
+  };
+  traffic: {
+    provider: string;
+    congestionLevel: string;
+    flow: number | null;
+    observedAt: string;
+  };
+  raw: {
+    electricity_demand?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 export interface DriftData {
@@ -96,7 +134,11 @@ export const backendApi = {
   health: () => apiRequest<BackendHealth>('/health'),
   metrics: () => apiRequest('/health/metrics'),
   readiness: () => apiRequest('/health/ready'),
-  modelConditions: (city = 'bangalore') => apiRequest(`/model/conditions?city=${encodeURIComponent(city)}`),
+  modelConditions: (city = 'bangalore', stepAhead = 1) => (
+    apiRequest<{ data: ModelConditions }>(
+      `/model/conditions?city=${encodeURIComponent(city)}&stepAhead=${encodeURIComponent(stepAhead)}`
+    )
+  ),
   listUsers: () => apiRequest('/users'),
   createUser: (user: UserPayload) => apiRequest('/users', {
     method: 'POST',
@@ -129,6 +171,78 @@ export const backendApi = {
     method: 'POST',
     body: JSON.stringify(payload || {})
   })
+};
+
+const getAqiLabel = (value: number) => {
+  if (value <= 50) return 'Good';
+  if (value <= 100) return 'Moderate';
+  if (value <= 200) return 'Poor';
+  if (value <= 300) return 'Very Poor';
+  return 'Severe';
+};
+
+const getTrafficLabel = (level?: string) => {
+  if (!level) return 'Unknown';
+  return level.charAt(0).toUpperCase() + level.slice(1);
+};
+
+const getWeatherLabel = (value: number) => {
+  if (value >= 38) return 'Heatwave';
+  if (value >= 32) return 'Hot';
+  if (value >= 24) return 'Warm';
+  if (value >= 15) return 'Cool';
+  return 'Cold';
+};
+
+const getEnergyLabel = (value: number) => {
+  if (value >= 900) return 'High';
+  if (value >= 550) return 'Moderate';
+  return 'Low';
+};
+
+const withModelMetric = (
+  existing: CityMetric,
+  value: number,
+  label: string,
+  rangePadding: number
+): CityMetric => {
+  const previous = existing.history[existing.history.length - 1] || value;
+  const deltaValue = Math.round(value - previous);
+  const trend = deltaValue > 0 ? 'up' : deltaValue < 0 ? 'down' : 'neutral';
+  const delta = trend === 'up'
+    ? `Up by ${Math.abs(deltaValue)}`
+    : trend === 'down'
+      ? `Down by ${Math.abs(deltaValue)}`
+      : 'Stable';
+
+  return {
+    ...existing,
+    value,
+    label,
+    range: [Math.max(0, Math.round(value - rangePadding)), Math.round(value + rangePadding)],
+    delta,
+    trend,
+    history: [...existing.history.slice(1), value]
+  };
+};
+
+export const cityDataFromModelConditions = (conditions: ModelConditions, previous: CityData): CityData => {
+  const trafficFlow = Math.round(Number(conditions.traffic?.flow ?? previous.traffic.value));
+  const aqi = Math.round(Number(conditions.aqi?.aqi ?? previous.air.value));
+  const temperature = Math.round(Number(conditions.weather?.temperature?.value ?? previous.weather.value));
+  const electricity = Math.round(Number(conditions.raw?.electricity_demand ?? previous.energy.value));
+  const forecastDate = conditions.forecastFor ? new Date(conditions.forecastFor) : new Date();
+
+  return {
+    traffic: withModelMetric(previous.traffic, trafficFlow, getTrafficLabel(conditions.traffic?.congestionLevel), 700),
+    air: withModelMetric(previous.air, aqi, getAqiLabel(aqi), 20),
+    weather: withModelMetric(previous.weather, temperature, getWeatherLabel(temperature), 3),
+    energy: withModelMetric(previous.energy, electricity, getEnergyLabel(electricity), 80),
+    timestamp: forecastDate.toLocaleString(),
+    lastUpdate: `Trained model forecast T+${conditions.stepAhead}H`,
+    modelSource: conditions.source,
+    forecastFor: conditions.forecastFor
+  };
 };
 
 export const getDriftData = (): DriftData[] => [
