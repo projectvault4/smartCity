@@ -18,7 +18,7 @@ import StressHeatmap from './components/StressHeatmap';
 import DriftMonitor from './components/DriftMonitor';
 import EventImpact from './components/EventImpact';
 import ReportGenerator from './components/ReportGenerator';
-import CitizenAdvisoryConsole from './components/CitizenAdvisoryConsole';
+import RiskAdvisoryConsole from './components/RiskAdvisoryConsole';
 import AnomalyDetectionEmbed from './components/AnomalyDetectionEmbed';
 import VoiceBriefing from './components/VoiceBriefing';
 import { backendApi, cityDataFromModelConditions, getInitialData, updateMetric, CityData, ModelConditions, ForecastPoint } from './services/dataService';
@@ -45,7 +45,7 @@ function RootRedirect() {
 }
 
 // ── Admin dashboard ───────────────────────────────────────────────────────────
-type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'model';
+type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'advisories' | 'model';
 
 function AdminDashboard() {
   const { logout } = useAuth();
@@ -104,6 +104,7 @@ function AdminDashboard() {
     else if (activeTab === 'analytics') setDashboardView('analytics');
     else if (activeTab === 'anomaly') setDashboardView('anomaly');
     else if (activeTab === 'voice') setDashboardView('voice');
+    else if (activeTab === 'advisories') setDashboardView('advisories');
     else if (activeTab === 'model') setDashboardView('model');
   }, [activeTab]);
 
@@ -136,7 +137,6 @@ function AdminDashboard() {
               <div className="space-y-12">
                 <div className="space-y-8">
                   <QueryInterface />
-                  <CitizenAdvisoryConsole initialModelConditions={modelConditions} initialModelForecast={modelForecast} />
                   <EventImpact />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -199,6 +199,10 @@ function AdminDashboard() {
 
             {dashboardView === 'voice' && (
               <VoiceBriefing data={cityData} modelConditions={modelConditions} />
+            )}
+
+            {dashboardView === 'advisories' && (
+              <RiskAdvisoryConsole initialModelConditions={modelConditions} />
             )}
 
             {dashboardView === 'model' && (

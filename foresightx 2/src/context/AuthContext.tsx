@@ -7,12 +7,15 @@ export interface User {
   name: string;
   ward?: string;     // citizen only
   age?: number;      // citizen only
+  phone?: string;    // citizen only
+  tags?: string[];   // citizen only — derived risk factors
   email: string;
 }
 
 interface AuthContextValue {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => boolean;
+  register: (user: User) => void;
   logout: () => void;
 }
 
@@ -24,14 +27,15 @@ const DEMO_CREDENTIALS: Record<UserRole, { email: string; password: string; user
     user: { role: 'admin', name: 'City Admin', email: 'admin@foresightx.city' },
   },
   citizen: {
-    email: 'yashwanth@ward.in',
-    password: 'citizen123',
+    email: 'citizen@foresightx.city',
+    password: 'member123',
     user: {
       role: 'citizen',
-      name: 'Yashwanth M',
+      name: 'ForeSightX Member',
       ward: 'Channasandra',
-      age: 25,
-      email: 'yashwanth@ward.in',
+      age: 30,
+      phone: '+91 90000 00000',
+      email: 'citizen@foresightx.city',
     },
   },
 };
@@ -58,12 +62,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return false;
   }, []);
 
+  const register = useCallback((newUser: User) => {
+    setUser(newUser);
+    sessionStorage.setItem('fsx_user', JSON.stringify(newUser));
+  }, []);
+
   const logout = useCallback(() => {
     setUser(null);
     sessionStorage.removeItem('fsx_user');
   }, []);
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {

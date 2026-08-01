@@ -1,7 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pause, Play, Volume2 } from 'lucide-react';
+import { Mic, Pause, Play, Volume2 } from 'lucide-react';
 import Card from './Card';
 import { CityData, ModelConditions } from '../services/dataService';
+
+const pickVoices = (): SpeechSynthesisVoice[] => {
+  const all = window.speechSynthesis?.getVoices?.() || [];
+  const english = all.filter((v) => v.lang.toLowerCase().startsWith('en'));
+  const pool = english.length ? english : all;
+
+  const seen = new Set<string>();
+  const distinct = pool.filter((v) => {
+    const key = v.name.toLowerCase().replace(/[^a-z]/g, '');
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return distinct.slice(0, 3);
+};
 
 const fallbackBriefings = {
   today: {
@@ -53,8 +69,26 @@ const VoiceBriefing = ({ data, modelConditions }: { data: CityData; modelConditi
   const [speaking, setSpeaking] = useState(false);
   const [activeWord, setActiveWord] = useState(-1);
   const [barHeights, setBarHeights] = useState([4, 4, 4, 4, 4, 4, 4]);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const eqInterval = useRef<number | null>(null);
   const wordInterval = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!window.speechSynthesis) return;
+
+    const refresh = () => {
+      const options = pickVoices();
+      setVoices(options);
+      if (!selectedVoice && options.length) {
+        setSelectedVoice(options[0]);
+      }
+    };
+
+    refresh();
+    window.speechSynthesis.addEventListener('voiceschanged', refresh);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', refresh);
+  }, []);
 
   const briefings = useMemo(() => buildModelBriefing(data, modelConditions), [data, modelConditions]);
   const words = useMemo(() => briefings[currentBriefing].text.split(' '), [briefings, currentBriefing]);
@@ -105,6 +139,9 @@ const VoiceBriefing = ({ data, modelConditions }: { data: CityData; modelConditi
 
     if (window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(briefings[currentBriefing].text);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
       utterance.rate = 0.98;
       utterance.onend = stopBriefing;
       utterance.onerror = stopBriefing;
@@ -116,7 +153,7 @@ const VoiceBriefing = ({ data, modelConditions }: { data: CityData; modelConditi
 
   useEffect(() => {
     stopBriefing();
-  }, [currentBriefing]);
+  }, [currentBriefing, selectedVoice]);
 
   useEffect(() => stopBriefing, []);
 
@@ -146,6 +183,32 @@ const VoiceBriefing = ({ data, modelConditions }: { data: CityData; modelConditi
                 {briefing.label}
               </button>
             ))}
+          </div>
+
+          <div className="mt-4 border-t border-white/10 pt-3">
+            <div className="mb-2.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/35">
+              <Mic size={13} className="text-traf-acc" />
+              Choose a voice
+            </div>
+            {voices.length === 0 ? (
+              <div className="text-[11px] text-white/35">No extra voices available — using your browser default.</div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {voices.map((voice) => (
+                  <button
+                    key={voice.name}
+                    onClick={() => setSelectedVoice(voice)}
+                    className={`rounded-full border px-4 py-2 text-[10px] font-bold tracking-widest transition ${
+                      selectedVoice?.name === voice.name
+                        ? 'border-traf-acc bg-traf-acc/15 text-traf-acc'
+                        : 'border-white/10 bg-white/5 text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    {voice.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

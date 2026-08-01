@@ -5,6 +5,10 @@ const inAppNotificationService = require('./inAppNotification.service');
 
 const getErrorMessage = (error) => error.details?.response || error.message || 'Delivery failed';
 
+const listSmsHistory = async ({ limit, offset } = {}) => (
+  advisorySentRepository.findSmsHistory({ limit, offset })
+);
+
 const recordAdvisorySent = async ({ advisory, channel, deliveryStatus, errorMessage, providerResult }) => (
   advisorySentRepository.create({
     userId: advisory.userId,
@@ -137,5 +141,6 @@ const deliverAdvisories = async ({ user, advisories = [], channels }) => {
 
 module.exports = {
   deliverAdvisory,
-  deliverAdvisories
+  deliverAdvisories,
+  listSmsHistory
 };

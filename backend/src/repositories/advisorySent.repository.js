@@ -78,6 +78,37 @@ const create = async ({
   return result.rows[0];
 };
 
+const findSmsHistory = async ({ limit = 50, offset = 0 } = {}) => {
+  const result = await db.query(
+    `
+      SELECT
+        a.id,
+        a.user_id,
+        u.name AS member_name,
+        u.phone AS member_phone,
+        a.title,
+        a.message,
+        a.severity,
+        a.risk_score,
+        a.channel,
+        a.delivery_status,
+        a.sms_sent,
+        a.error_message,
+        a.sent_at
+      FROM advisories_sent a
+      LEFT JOIN users u ON u.id = a.user_id
+      WHERE a.channel = 'sms'
+      ORDER BY a.created_at DESC
+      LIMIT $1
+      OFFSET $2
+    `,
+    [limit, offset]
+  );
+
+  return result.rows;
+};
+
 module.exports = {
-  create
+  create,
+  findSmsHistory
 };

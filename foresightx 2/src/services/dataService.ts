@@ -220,6 +220,7 @@ export const backendApi = {
     body: JSON.stringify(payload)
   }),
   listNotifications: (userId: string) => apiRequest(`/notifications/users/${userId}`),
+  listSmsHistory: (limit = 50) => apiRequest(`/notifications/sms-history?limit=${limit}`),
   markNotificationRead: (userId: string, notificationId: string) => apiRequest(`/notifications/users/${userId}/${notificationId}/read`, {
     method: 'PATCH'
   }),

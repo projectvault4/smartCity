@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Member Health Profile → Predicted Alert</title>
+<style>
+  :root{
+    --bg:#0a1710; --panel:#0f1f16; --panel-2:#12261b; --border:#1c3326; --border-soft:#16281d;
+    --text:#e8f0ea; --text-dim:#7b9686; --text-faint:#4d6357;
+    --green:#4ade80; --green-bright:#7ef7ba; --green-dim:#1f4a30;
+    --amber:#f0b849; --red:#f0665f;
+    --mono:'SF Mono','JetBrains Mono',ui-monospace,Menlo,monospace; --sans:-apple-system,'Inter','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:radial-gradient(circle at 15% 0%, #0d2016 0%, var(--bg) 45%); color:var(--text); font-family:var(--sans); padding:36px 28px 70px;}
+  .wrap{max-width:1280px; margin:0 auto;}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+  h1{font-size:24px; font-weight:700; color:var(--green-bright); letter-spacing:-.01em;}
+  .sub{color:var(--text-dim); font-size:13.5px; margin-top:6px; max-width:660px; line-height:1.5;}
+
+  .layout{display:grid; grid-template-columns:340px 1fr; gap:18px; margin-top:24px; align-items:start;}
+  @media (max-width:960px){ .layout{grid-template-columns:1fr;} }
+
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px;}
+  .card-title{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:16px; display:flex; align-items:center; gap:7px;}
+
+  .field-label{font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin:14px 0 6px;}
+  .field-label:first-child{margin-top:0;}
+  input[type=text], input[type=number], input[type=tel]{
+    width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    padding:9px 10px; border-radius:8px; font-size:13px; font-family:var(--sans);
+  }
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+  .health-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;}
+  .health-opt{
+    display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:9px; border:1px solid var(--border);
+    background:var(--panel-2); cursor:pointer; font-size:12px; color:var(--text-dim); user-select:none;
+    transition:all .15s ease;
+  }
+  .health-opt input{accent-color:var(--green); width:14px; height:14px; flex-shrink:0;}
+  .health-opt.checked{border-color:#2f6b45; background:var(--green-dim); color:var(--green-bright);}
+
+  .join-btn{
+    width:100%; margin-top:18px; background:var(--green-bright); color:#06150c; border:none;
+    padding:13px; border-radius:10px; font-weight:700; font-size:13.5px; cursor:pointer;
+    box-shadow:0 0 20px rgba(126,247,186,.15);
+  }
+  .join-note{font-size:11px; color:var(--text-faint); margin-top:10px; line-height:1.5;}
+
+  /* env bar */
+  .env-bar{display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:flex-end;}
+  .env-item{flex:1; min-width:100px;}
+  .env-item label{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); display:block; margin-bottom:6px;}
+  .env-item input, .env-item select{
+    width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    padding:8px 10px; border-radius:8px; font-size:13px; font-family:var(--mono);
+  }
+  .predict-btn{
+    background:var(--green-bright); color:#06150c; border:none; padding:11px 18px; border-radius:9px;
+    font-weight:700; font-size:12.5px; cursor:pointer; white-space:nowrap;
+  }
+
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--text-faint); padding:11px 12px; border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:12px; border-bottom:1px solid var(--border-soft); font-size:13px; vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  .name-cell{display:flex; align-items:center; gap:10px;}
+  .avatar{width:30px; height:30px; border-radius:50%; background:var(--panel-2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--green); flex-shrink:0;}
+  .name-sub{font-size:11px; color:var(--text-faint); margin-top:2px;}
+  .tag{font-size:10px; font-family:var(--mono); padding:2px 7px; border-radius:5px; background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim); margin-right:4px; display:inline-block; margin-bottom:2px;}
+  .score-wrap{display:flex; align-items:center; gap:8px;}
+  .score-bar{width:64px; height:5px; border-radius:3px; background:var(--border-soft); overflow:hidden;}
+  .score-fill{height:100%; border-radius:3px; transition:width .4s ease, background .4s ease;}
+  .score-num{font-family:var(--mono); font-size:12.5px; font-weight:700; min-width:26px;}
+  .status-pill{font-size:10.5px; font-family:var(--mono); padding:4px 9px; border-radius:20px; font-weight:600; white-space:nowrap;}
+  .status-alert{background:rgba(240,102,95,.12); color:var(--red); border:1px solid rgba(240,102,95,.3);}
+  .status-watch{background:rgba(240,184,73,.12); color:var(--amber); border:1px solid rgba(240,184,73,.3);}
+  .status-safe{background:rgba(74,222,128,.08); color:var(--text-dim); border:1px solid var(--border);}
+  .why{font-size:10.5px; color:var(--text-faint); font-family:var(--mono); margin-top:4px;}
+  .why b{color:var(--amber);}
+
+  .bottom-bar{
+    display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding-top:16px;
+    border-top:1px solid var(--border-soft); gap:16px; flex-wrap:wrap;
+  }
+  .flagged-info{font-size:13px; color:var(--text-dim);}
+  .flagged-info b{color:var(--green-bright); font-family:var(--mono); font-size:16px;}
+  .send-btn{
+    background:var(--green-bright); color:#06150c; border:none; padding:12px 20px; border-radius:10px;
+    font-weight:700; font-size:13px; cursor:pointer;
+  }
+  .send-btn:disabled{background:var(--border); color:var(--text-faint); cursor:not-allowed;}
+
+  .msg-preview{margin-top:16px; border:1px dashed var(--border); border-radius:12px; padding:14px 16px; display:none;}
+  .msg-preview.show{display:block;}
+  .msg-line{font-size:12px; padding:8px 0; border-bottom:1px solid var(--border-soft); color:var(--text-dim); display:flex; gap:10px;}
+  .msg-line:last-child{border-bottom:none;}
+  .msg-line b{color:var(--text); min-width:100px; display:inline-block;}
+
+  .toast{margin-top:12px; padding:11px 14px; border-radius:10px; background:rgba(74,222,128,.08); border:1px solid #2f6b45; color:var(--green-bright); font-size:12px; display:none; align-items:center; gap:8px;}
+  .toast.show{display:flex;}
+
+  .footnote{margin-top:24px; font-size:11.5px; color:var(--text-faint); line-height:1.7; max-width:800px;}
+  .footnote b{color:var(--text-dim);}
+
+  .del-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-faint);
+    width:26px; height:26px; border-radius:7px; cursor:pointer; font-size:13px; line-height:1;
+    display:flex; align-items:center; justify-content:center; transition:all .15s ease;
+  }
+  .del-btn:hover{border-color:rgba(240,102,95,.5); color:var(--red); background:rgba(240,102,95,.08);}
+
+  .empty-state{
+    text-align:center; padding:36px 20px; color:var(--text-faint); font-size:12.5px; line-height:1.6;
+  }
+  .empty-state .big{font-size:28px; margin-bottom:8px; opacity:.6;}
+
+  .member-added-flash{
+    animation: flashIn .6s ease;
+  }
+  @keyframes flashIn{
+    0%{background:rgba(74,222,128,.15);} 100%{background:transparent;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>CONCEPT — SELF-REPORTED HEALTH PROFILE, LIVE PREDICTED RISK</div>
+  <h1>People tell you their risk factors once. The prediction does the rest.</h1>
+  <div class="sub">No more admin-assigned risk groups. Someone joins, answers a few health questions, and from then on every alert decision is computed straight from their profile against live conditions — not typed or guessed.</div>
+
+  <div class="layout">
+    <!-- MEMBER SIGNUP -->
+    <div class="card">
+      <div class="card-title">① Become a member</div>
+
+      <div class="field-label">Name</div>
+      <input type="text" id="mName" placeholder="Full name">
+
+      <div class="two-col">
+        <div>
+          <div class="field-label">Age</div>
+          <input type="number" id="mAge" placeholder="Age">
+        </div>
+        <div>
+          <div class="field-label">Phone</div>
+          <input type="tel" id="mPhone" placeholder="+91...">
+        </div>
+      </div>
+
+      <div class="field-label">Ward / area</div>
+      <input type="text" id="mWard" placeholder="e.g. Koramangala">
+
+      <div class="field-label">Health conditions (select all that apply)</div>
+      <div class="health-grid" id="healthGrid">
+        <label class="health-opt" data-k="asthma"><input type="checkbox" checked> Asthma / COPD</label>
+        <label class="health-opt" data-k="heart"><input type="checkbox"> Heart condition</label>
+        <label class="health-opt" data-k="diabetes"><input type="checkbox"> Diabetes</label>
+        <label class="health-opt" data-k="pregnant"><input type="checkbox"> Pregnant</label>
+        <label class="health-opt" data-k="mobility"><input type="checkbox"> Limited mobility</label>
+        <label class="health-opt" data-k="outdoor"><input type="checkbox"> Works outdoors</label>
+        <label class="health-opt" data-k="none"><input type="checkbox"> None of these</label>
+      </div>
+
+      <button class="join-btn" id="joinBtn">+ Add as member</button>
+      <div class="join-note">Age under 12 or over 60 is auto-detected as an added risk factor — no need to select it. This profile is what future predictions use, not a group you assign to them.</div>
+    </div>
+
+    <!-- LIVE CONDITIONS + PREDICTIONS -->
+    <div class="card">
+      <div class="card-title">② Live conditions → predicted risk per member</div>
+
+      <div class="env-bar">
+        <div class="env-item"><label>AQI</label><input type="number" id="aqi" value="182"></div>
+        <div class="env-item"><label>Temp °C</label><input type="number" id="temp" value="35"></div>
+        <div class="env-item"><label>Rain mm</label><input type="number" id="rain" value="0"></div>
+        <div class="env-item"><label>Traffic</label>
+          <select id="traffic"><option>Low</option><option>Moderate</option><option selected>Severe</option></select>
+        </div>
+        <button class="predict-btn" id="predictBtn">▶ Predict now</button>
+      </div>
+
+      <table>
+        <thead><tr><th>Member</th><th>Health factors</th><th>Predicted risk</th><th>Status</th><th></th></tr></thead>
+        <tbody id="memberRows"></tbody>
+      </table>
+
+      <div class="bottom-bar">
+        <div class="flagged-info"><b id="flagCount">0</b> flagged for an advisory right now</div>
+        <button class="send-btn" id="sendBtn" disabled>Send alert to flagged members</button>
+      </div>
+
+      <div class="msg-preview" id="msgPreview">
+        <div class="card-title" style="margin-bottom:8px;">Auto-drafted, per-person</div>
+        <div id="msgLines"></div>
+      </div>
+
+      <div class="toast" id="toast">✓ Alerts sent — delivery in progress</div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <b>Why this is different from admin-assigned groups:</b> "Elder" or "Respiratory" tags were guesses made on someone's behalf. Here the person declares asthma, a heart condition, pregnancy, mobility limits, or outdoor work themselves at sign-up — that's their consent and their data. The prediction engine reads directly from that profile plus live sensor values, so the risk score isn't manually recalculated by staff — it's generated the moment conditions change, and only crosses into an alert when it's actually warranted for that specific person.
+  </div>
+</div>
+
+<script>
+let members = [];
+let nextId = 1;
+
+const sensitivity = {
+  asthma:   { aqi:0.55, temp:0.08, rain:0.03, traffic:0.02 },
+  heart:    { aqi:0.30, temp:0.30, rain:0.05, traffic:0.05 },
+  diabetes: { aqi:0.10, temp:0.30, rain:0.05, traffic:0.05 },
+  pregnant: { aqi:0.35, temp:0.25, rain:0.10, traffic:0.10 },
+  mobility: { aqi:0.15, temp:0.20, rain:0.30, traffic:0.30 },
+  outdoor:  { aqi:0.20, temp:0.40, rain:0.20, traffic:0.25 },
+  none:     { aqi:0.08, temp:0.08, rain:0.05, traffic:0.05 },
+};
+const trafficVal = { Low:20, Moderate:55, Severe:90 };
+
+function initials(name){ return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function healthLabel(k){
+  return {asthma:"Asthma/COPD", heart:"Heart condition", diabetes:"Diabetes", pregnant:"Pregnant",
+          mobility:"Limited mobility", outdoor:"Outdoor worker", none:"No conditions",
+          elderly_auto:"Age 60+", child_auto:"Age <12"}[k];
+}
+
+function computeScore(m, cond){
+  let score = 0, drivers = [];
+  let factors = [...m.health];
+  if(m.age >= 60) factors.push("elderly_auto");
+  if(m.age <= 12) factors.push("child_auto");
+
+  const effectiveKeys = factors.filter(f => f !== "elderly_auto" && f !== "child_auto");
+  const keys = effectiveKeys.length ? effectiveKeys : ["none"];
+
+  keys.forEach(k => {
+    const s = sensitivity[k] || sensitivity.none;
+    const aqiC = Math.max(0, cond.aqi - 50) / 250 * 100 * s.aqi;
+    const tempC = Math.max(0, cond.temp - 25) / 20 * 100 * s.temp;
+    const rainC = Math.min(cond.rain, 50) / 50 * 100 * s.rain;
+    const trafC = trafficVal[cond.traffic] * s.traffic / 100 * 30;
+    score += aqiC + tempC + rainC + trafC;
+    if(aqiC > 8) drivers.push(`AQI ${cond.aqi}`);
+    if(tempC > 8) drivers.push(`${cond.temp}°C heat`);
+    if(rainC > 8) drivers.push(`${cond.rain}mm rain`);
+    if(trafC > 8) drivers.push(`${cond.traffic.toLowerCase()} traffic`);
+  });
+
+  if(m.age >= 60) score += 8;
+  if(m.age <= 12) score += 5;
+
+  score = Math.min(100, Math.round(score));
+  drivers = [...new Set(drivers)].slice(0,2);
+  return { score, drivers, factors };
+}
+
+function statusFor(score){
+  if(score >= 55) return {label:"ALERT", cls:"status-alert"};
+  if(score >= 30) return {label:"WATCH", cls:"status-watch"};
+  return {label:"SAFE", cls:"status-safe"};
+}
+function barColor(score){
+  if(score >= 55) return "var(--red)";
+  if(score >= 30) return "var(--amber)";
+  return "var(--green)";
+}
+
+function draftMessage(m, drivers){
+  const trigger = drivers.length ? drivers.join(" + ") : "current conditions";
+  const first = m.name.split(' ')[0];
+  if(m.health.includes("asthma") || m.health.includes("heart") || m.health.includes("pregnant")){
+    return `Hi ${first}, conditions in ${m.ward} may affect your health today (${trigger}). Please limit outdoor exposure and keep any prescribed medication on hand.`;
+  }
+  if(m.health.includes("outdoor") || m.health.includes("mobility")){
+    return `Hi ${first}, conditions in ${m.ward} are difficult today (${trigger}). Take extra breaks/care if you're outdoors or travelling.`;
+  }
+  return `Hi ${first}, conditions in ${m.ward} have shifted (${trigger}). Take normal precautions today.`;
+}
+
+function render(){
+  const cond = {
+    aqi: parseInt(document.getElementById('aqi').value) || 0,
+    temp: parseInt(document.getElementById('temp').value) || 0,
+    rain: parseInt(document.getElementById('rain').value) || 0,
+    traffic: document.getElementById('traffic').value,
+  };
+
+  const rows = document.getElementById('memberRows');
+  rows.innerHTML = '';
+  let flagged = [];
+
+  if(members.length === 0){
+    rows.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="big">◌</div>No members yet — add someone on the left to see their predicted risk here.</div></td></tr>`;
+  }
+
+  members.forEach(m => {
+    const { score, drivers, factors } = computeScore(m, cond);
+    const status = statusFor(score);
+    if(status.label === "ALERT") flagged.push({m, drivers});
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="name-cell">
+          <div class="avatar">${m.init}</div>
+          <div><div>${m.name}</div><div class="name-sub">${m.ward} · age ${m.age}</div></div>
+        </div>
+      </td>
+      <td>${factors.map(f => `<span class="tag">${healthLabel(f)}</span>`).join('')}</td>
+      <td>
+        <div class="score-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${score}%; background:${barColor(score)};"></div></div>
+          <div class="score-num" style="color:${barColor(score)}">${score}</div>
+        </div>
+        ${drivers.length ? `<div class="why">Driven by <b>${drivers.join(', ')}</b></div>` : ''}
+      </td>
+      <td><span class="status-pill ${status.cls}">${status.label}</span></td>
+      <td><button class="del-btn" data-id="${m.id}" title="Remove member">✕</button></td>
+    `;
+    rows.appendChild(tr);
+  });
+
+  rows.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      members = members.filter(m => m.id !== id);
+      render();
+    });
+  });
+
+  document.getElementById('flagCount').textContent = flagged.length;
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = flagged.length === 0;
+  sendBtn.textContent = flagged.length ? `Send alert to ${flagged.length} flagged ${flagged.length===1?'member':'members'}` : 'Send alert to flagged members';
+
+  const preview = document.getElementById('msgPreview');
+  const msgLines = document.getElementById('msgLines');
+  if(flagged.length){
+    preview.classList.add('show');
+    msgLines.innerHTML = flagged.map(f => `<div class="msg-line"><b>${f.m.name}</b>${draftMessage(f.m, f.drivers)}</div>`).join('');
+  } else {
+    preview.classList.remove('show');
+  }
+  document.getElementById('toast').classList.remove('show');
+}
+
+// health checkbox styling
+document.querySelectorAll('.health-opt').forEach(opt => {
+  const cb = opt.querySelector('input');
+  const sync = () => opt.classList.toggle('checked', cb.checked);
+  sync();
+  opt.addEventListener('click', (e) => {
+    if(e.target.tagName !== 'INPUT') cb.checked = !cb.checked;
+    // "None" is exclusive
+    if(opt.dataset.k === 'none' && cb.checked){
+      document.querySelectorAll('.health-opt').forEach(o => { if(o.dataset.k!=='none'){ o.querySelector('input').checked=false; o.classList.remove('checked'); } });
+    } else if(cb.checked){
+      const noneOpt = document.querySelector('.health-opt[data-k="none"]');
+      noneOpt.querySelector('input').checked = false; noneOpt.classList.remove('checked');
+    }
+    sync();
+  });
+});
+
+document.getElementById('joinBtn').addEventListener('click', () => {
+  const name = document.getElementById('mName').value.trim();
+  if(!name){ document.getElementById('mName').focus(); return; }
+  const age = parseInt(document.getElementById('mAge').value) || 30;
+  const ward = document.getElementById('mWard').value.trim() || 'Unknown ward';
+  const health = [...document.querySelectorAll('.health-opt input:checked')].map(cb => cb.closest('.health-opt').dataset.k);
+
+  members.push({ id: nextId++, name, init: initials(name), age, ward, health: health.length ? health : ['none'] });
+  render();
+
+  // flash newest row
+  const rows = document.getElementById('memberRows');
+  if(rows.lastElementChild) rows.lastElementChild.classList.add('member-added-flash');
+
+  document.getElementById('mName').value = '';
+  document.getElementById('mPhone').value = '';
+});
+
+document.getElementById('predictBtn').addEventListener('click', render);
+document.getElementById('sendBtn').addEventListener('click', () => document.getElementById('toast').classList.add('show'));
+
+render();
+</script>
+</body>
+</html>

@@ -39,9 +39,19 @@ const markNotificationRead = asyncHandler(async (req, res) => {
   res.status(200).json({ data: notification });
 });
 
+const listSmsHistory = asyncHandler(async (req, res) => {
+  const sms = await notificationService.listSmsHistory({
+    limit: Number(req.query.limit || 50),
+    offset: Number(req.query.offset || 0)
+  });
+
+  res.status(200).json({ data: sms });
+});
+
 module.exports = {
   deliverAdvisory,
   deliverAdvisories,
   listUserNotifications,
-  markNotificationRead
+  markNotificationRead,
+  listSmsHistory
 };

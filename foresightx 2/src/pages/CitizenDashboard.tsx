@@ -7,7 +7,6 @@ import { CityData, ModelConditions } from '../services/dataService';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type WardKey = 'channasandra' | 'indiranagar';
-type UserKey = 'yashwanth' | 'meera' | 'farooq';
 type Severity = 'good' | 'warn' | 'bad';
 
 interface WardData {
@@ -24,7 +23,7 @@ interface UserData {
   tags: string[];
 }
 
-const ALL_TAGS = ['Elder', 'Child', 'Respiratory', 'Commuter', 'Worker'];
+const ALL_TAGS = ['Elder', 'Child', 'Respiratory', 'Commuter', 'Worker', 'Heart', 'Diabetes', 'Pregnant', 'Limited Mobility'];
 
 interface Alert {
   severity: Severity;
@@ -48,12 +47,6 @@ const wards: Record<WardKey, WardData> = {
     aqi: { value: 62, level: 'moderate' },
     temp: { value: 29, level: 'comfortable' },
   },
-};
-
-const users: Record<UserKey, UserData> = {
-  yashwanth: { name: 'Yashwanth M', ward: 'channasandra', age: 25, tags: ['Elder', 'Commuter'] },
-  meera:     { name: 'Meera R',     ward: 'indiranagar',  age: 34, tags: ['Respiratory', 'Child'] },
-  farooq:    { name: 'Farooq K',    ward: 'channasandra', age: 29, tags: ['Worker', 'Commuter'] },
 };
 
 // ── Rule engine ───────────────────────────────────────────────────────────────
@@ -161,17 +154,28 @@ export default function CitizenDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Determine starting ward/user keys from logged-in user
-  const defaultUserKey: UserKey =
-    user?.name?.toLowerCase().includes('meera') ? 'meera'
-    : user?.name?.toLowerCase().includes('farooq') ? 'farooq'
-    : 'yashwanth';
+  // Build the member profile from the signed-in user (no mock fallback)
+  const memberTags = user?.tags?.length ? user.tags : ['Commuter'];
 
-  const [userKey, setUserKey] = useState<UserKey>(defaultUserKey);
-  const [wardKey, setWardKey] = useState<WardKey>(users[defaultUserKey].ward);
-  const [profile, setProfile] = useState<UserData>(users[defaultUserKey]);
+  const [wardKey, setWardKey] = useState<WardKey>(() => {
+    const wardMatch = Object.keys(wards).find((w) =>
+      user?.ward?.toLowerCase().includes(w.toLowerCase())
+    ) as WardKey | undefined;
+    return wardMatch || 'channasandra';
+  });
+  const [profile, setProfile] = useState<UserData>(() => ({
+    name: user?.name || 'Member',
+    ward: wardKey,
+    age: user?.age || 30,
+    tags: memberTags,
+  }));
+  const [draft, setDraft] = useState<UserData>(() => ({
+    name: user?.name || 'Member',
+    ward: wardKey,
+    age: user?.age || 30,
+    tags: memberTags,
+  }));
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<UserData>(users[defaultUserKey]);
   const [saved, setSaved] = useState(false);
   const [openWhy, setOpenWhy] = useState<number | null>(null);
   const [lastUpdated, setLastUpdated] = useState(9);
@@ -185,16 +189,6 @@ export default function CitizenDashboard() {
   const ward = wards[wardKey];
   const currentUser = profile;
   const alerts = buildAlerts(ward, currentUser);
-
-  const handleUserChange = (uk: UserKey) => {
-    setUserKey(uk);
-    setWardKey(users[uk].ward);
-    setProfile(users[uk]);
-    setDraft(users[uk]);
-    setEditing(false);
-    setSaved(false);
-    setOpenWhy(null);
-  };
 
   const startEdit = () => {
     setDraft({ ...profile });
@@ -265,18 +259,10 @@ export default function CitizenDashboard() {
               <span className="absolute right-3 top-1/2 -translate-y-[55%] text-[#8fa69b] pointer-events-none text-[0.8rem]">⌄</span>
             </div>
 
-            {/* User selector */}
-            <div className="relative">
-              <select
-                value={userKey}
-                onChange={(e) => handleUserChange(e.target.value as UserKey)}
-                className="appearance-none bg-[#10201a] border border-[#1f3831] text-[#e9f3ee] font-mono text-[0.75rem] tracking-[0.03em] py-[9px] pl-3 pr-8 rounded-[20px] cursor-pointer focus:outline-none"
-              >
-                <option value="yashwanth">Yashwanth M</option>
-                <option value="meera">Meera R</option>
-                <option value="farooq">Farooq K</option>
-              </select>
-              <span className="absolute right-3 top-1/2 -translate-y-[55%] text-[#8fa69b] pointer-events-none text-[0.8rem]">⌄</span>
+            {/* Signed-in member chip */}
+            <div className="bg-[#10201a] border border-[#1f3831] rounded-[20px] px-4 py-[9px] font-mono text-[0.75rem] text-[#8fa69b] tracking-[0.03em]">
+              <span className="text-[#6fe7b7]">{profile.name}</span>
+              {user?.phone && <span className="text-[#5c7269]"> · {user.phone}</span>}
             </div>
 
             {/* Logout */}
@@ -291,7 +277,7 @@ export default function CitizenDashboard() {
 
         {/* ── Hero ────────────────────────────────────────────────── */}
         <motion.div
-          key={wardKey + userKey}
+          key={wardKey + profile.name}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
@@ -469,6 +455,9 @@ export default function CitizenDashboard() {
                 <div>
                   <div className="font-['Fraunces',serif] text-[1.3rem]">{currentUser.name}</div>
                   <div className="text-[#5c7269] text-[0.8rem] font-mono mt-1">{ward.name} · Age {currentUser.age}</div>
+                  {user?.phone && (
+                    <div className="text-[#5c7269] text-[0.8rem] font-mono mt-1">{user.phone}</div>
+                  )}
                 </div>
               </div>
 

@@ -1,24 +1,29 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { useAuth, UserRole } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
+import BecomeAMember from '../components/BecomeAMember';
+import MemberSignIn from '../components/MemberSignIn';
+
+type LoginTab = 'admin' | 'member';
+type MemberTab = 'signup' | 'signin';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [role, setRole] = useState<UserRole>('admin');
+  const [tab, setTab] = useState<LoginTab>('admin');
+  const [memberTab, setMemberTab] = useState<MemberTab>('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Auto-fill demo credentials when role tab switches
-  const handleRoleSwitch = (r: UserRole) => {
-    setRole(r);
+  const handleTabSwitch = (t: LoginTab) => {
+    setTab(t);
     setError('');
-    setEmail(r === 'admin' ? 'admin@foresightx.city' : 'yashwanth@ward.in');
-    setPassword(r === 'admin' ? 'admin123' : 'citizen123');
+    setEmail('admin@foresightx.city');
+    setPassword('admin123');
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -26,10 +31,10 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600)); // brief splash delay
-    const ok = login(email, password, role);
+    const ok = login(email, password, 'admin');
     setLoading(false);
     if (ok) {
-      navigate(role === 'admin' ? '/dashboard' : '/citizen', { replace: true });
+      navigate('/dashboard', { replace: true });
     } else {
       setError('Invalid credentials. Check email & password.');
     }
@@ -37,7 +42,6 @@ export default function LoginPage() {
 
   const HINTS = {
     admin:   { email: 'admin@foresightx.city',  pass: 'admin123',   label: 'City Admin Portal' },
-    citizen: { email: 'yashwanth@ward.in',       pass: 'citizen123', label: 'Citizen Portal' },
   };
 
   return (
@@ -68,16 +72,16 @@ export default function LoginPage() {
 
           {/* Role tabs */}
           <div className="flex gap-2 mb-8 bg-[#0d1a10] rounded-xl p-1">
-            {(['admin', 'citizen'] as UserRole[]).map((r) => (
+            {(['admin', 'member'] as LoginTab[]).map((r) => (
               <button
                 key={r}
-                onClick={() => handleRoleSwitch(r)}
+                onClick={() => handleTabSwitch(r)}
                 className={`flex-1 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all duration-200
-                  ${role === r
+                  ${tab === r
                     ? 'bg-[#6fe7b7] text-[#0a1210] shadow-[0_0_20px_rgba(111,231,183,0.25)]'
                     : 'text-white/30 hover:text-white/60'}`}
               >
-                {r === 'admin' ? '⚙ Admin' : '👤 Citizen'}
+                {r === 'admin' ? '⚙ Admin' : '＋ Member'}
               </button>
             ))}
           </div>
@@ -85,29 +89,50 @@ export default function LoginPage() {
           {/* Role label */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={role}
+              key={tab}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
               className="mb-6"
             >
-              <div className="text-[#6fe7b7] text-xs font-mono uppercase tracking-[2px] mb-1">
-                {HINTS[role].label}
-              </div>
-              <h1 className="text-white text-xl font-bold">
-                {role === 'admin' ? 'Admin sign in' : 'Sign in to your ward'}
-              </h1>
-              <p className="text-white/40 text-sm mt-1">
-                {role === 'admin'
-                  ? 'Access city-wide forecasting, anomaly detection and controls.'
-                  : 'View personalised alerts and forecasts for your ward.'}
-              </p>
+              {tab === 'member' ? (
+                <>
+                  <div className="flex gap-2 mb-5 bg-[#0d1a10] rounded-xl p-1">
+                    {(['signup', 'signin'] as MemberTab[]).map((mt) => (
+                      <button
+                        key={mt}
+                        onClick={() => setMemberTab(mt)}
+                        className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200
+                          ${memberTab === mt
+                            ? 'bg-[#6fe7b7]/15 text-[#6fe7b7]'
+                            : 'text-white/30 hover:text-white/60'}`}
+                      >
+                        {mt === 'signup' ? '＋ Sign up' : '→ Sign in'}
+                      </button>
+                    ))}
+                  </div>
+                  {memberTab === 'signup' ? <BecomeAMember /> : <MemberSignIn />}
+                </>
+              ) : (
+                <>
+                  <div className="text-[#6fe7b7] text-xs font-mono uppercase tracking-[2px] mb-1">
+                    {HINTS.admin.label}
+                  </div>
+                  <h1 className="text-white text-xl font-bold">
+                    Admin sign in
+                  </h1>
+                  <p className="text-white/40 text-sm mt-1">
+                    Access city-wide forecasting, anomaly detection and controls.
+                  </p>
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {tab !== 'member' && (
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-[10px] font-mono text-white/30 uppercase tracking-widest mb-2">
                 Email
@@ -117,7 +142,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={HINTS[role].email}
+                placeholder={HINTS.admin.email}
                 className="w-full bg-[#0d1a10] border border-[#1f3831] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20
                   focus:outline-none focus:border-[#6fe7b7]/50 focus:ring-1 focus:ring-[#6fe7b7]/20 transition-all"
               />
@@ -168,17 +193,20 @@ export default function LoginPage() {
                     </svg>
                     Signing in…
                   </span>
-                : `Sign in as ${role === 'admin' ? 'Admin' : 'Citizen'} →`}
+                : 'Sign in as Admin →'}
             </button>
           </form>
+          )}
 
           {/* Demo hint */}
-          <div className="mt-6 p-3 bg-[#0d1a10] rounded-xl border border-dashed border-[#1f3831]">
-            <div className="text-[9px] font-mono text-white/25 uppercase tracking-[2px] mb-1.5">Demo credentials</div>
-            <div className="text-[11px] font-mono text-white/40">
-              {HINTS[role].email} / <span className="text-[#6fe7b7]/50">{HINTS[role].pass}</span>
+          {tab !== 'member' && (
+            <div className="mt-6 p-3 bg-[#0d1a10] rounded-xl border border-dashed border-[#1f3831]">
+              <div className="text-[9px] font-mono text-white/25 uppercase tracking-[2px] mb-1.5">Demo credentials</div>
+              <div className="text-[11px] font-mono text-white/40">
+                {HINTS.admin.email} / <span className="text-[#6fe7b7]/50">{HINTS.admin.pass}</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <p className="text-center text-[10px] text-white/20 mt-6 font-mono">
