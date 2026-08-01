@@ -64,6 +64,52 @@ export interface DriftData {
   improved: boolean;
 }
 
+export interface ForecastPoint {
+  timestamp: string;
+  stepAhead: number;
+  trafficFlow: number | null;
+  aqi: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  electricityDemand: number | null;
+  weather: {
+    main: string;
+    description: string;
+  };
+  traffic: {
+    congestionLevel: string;
+  };
+}
+
+export interface MultivariatePoint {
+  time: string;
+  traffic: number;
+  aqi: number;
+  energy: number;
+  trafficRaw: number;
+  aqiRaw: number;
+  energyRaw: number;
+}
+
+export interface MultivariateAnalysis {
+  source: string;
+  window: {
+    hours: number;
+    from: string;
+    to: string;
+  };
+  series: MultivariatePoint[];
+  stats: {
+    phaseLagHours: number;
+    phaseLagDirection: string;
+    phaseLagCorr: number;
+    syncFactor: number;
+    coherence: number;
+    tempEnergyCorr: number;
+    aqiEnergyCorr: number;
+  };
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 export interface BackendHealth {
@@ -137,6 +183,16 @@ export const backendApi = {
   modelConditions: (city = 'bangalore', stepAhead = 1) => (
     apiRequest<{ data: ModelConditions }>(
       `/model/conditions?city=${encodeURIComponent(city)}&stepAhead=${encodeURIComponent(stepAhead)}`
+    )
+  ),
+  modelForecast: (city = 'bangalore', steps = 24) => (
+    apiRequest<{ data: ForecastPoint[] }>(
+      `/model/forecast?city=${encodeURIComponent(city)}&steps=${encodeURIComponent(steps)}`
+    )
+  ),
+  modelMultivariate: (windowHours = 720) => (
+    apiRequest<{ data: MultivariateAnalysis }>(
+      `/model/multivariate?window=${encodeURIComponent(windowHours)}`
     )
   ),
   listUsers: () => apiRequest('/users'),

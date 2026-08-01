@@ -5,7 +5,7 @@ aqi,temperature,3,0.0,True
 electricity_demand,aqi,5,0.0,True
 electricity_demand,temperature,1,0.0,True
 electricity_demand,traffic_flow,5,0.0,True
-humidity,aqi,4,0.0,True
+humidity,aqi,5,0.0,True
 humidity,electricity_demand,2,0.0,True
 humidity,temperature,3,0.0,True
 humidity,traffic_flow,4,0.0,True
@@ -17,5 +17,5 @@ traffic_flow,aqi,2,0.0,True
 traffic_flow,electricity_demand,5,0.0,True
 traffic_flow,humidity,2,0.0,True
 traffic_flow,temperature,3,0.0,True
-electricity_demand,humidity,1,1.1609016360760152e-180,True
-aqi,traffic_flow,3,2.39250979750141e-34,True
+electricity_demand,humidity,1,2.8292839349023597e-180,True
+aqi,traffic_flow,3,1.2877153327281235e-34,True

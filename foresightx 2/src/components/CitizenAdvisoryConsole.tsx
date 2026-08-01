@@ -13,7 +13,7 @@ import {
   Users
 } from 'lucide-react';
 import Card from './Card';
-import { backendApi, ModelConditions, UserPayload } from '../services/dataService';
+import { backendApi, ForecastPoint, ModelConditions, UserPayload } from '../services/dataService';
 
 const makeDefaultUser = (): UserPayload => ({
   user_id: `user_${Date.now().toString().slice(-6)}`,
@@ -113,6 +113,14 @@ const conditionsFromModel = (data: ModelConditions) => ({
   traffic: data.traffic?.congestionLevel || 'moderate'
 });
 
+const conditionsFromForecast = (point: ForecastPoint) => ({
+  aqi: Math.round(Number(point.aqi ?? 0)),
+  temperature: Math.round(Number(point.temperature ?? 0)),
+  weather: point.weather?.main || 'Clear',
+  rainLastHourMm: point.weather?.main === 'Rain' ? 8 : 0,
+  traffic: point.traffic?.congestionLevel || 'moderate'
+});
+
 const sharedConditionsFrom = (conditions: ReturnType<typeof conditionsFromModel>) => ({
   aqi: { aqi: conditions.aqi },
   weather: {
@@ -126,7 +134,7 @@ const sharedConditionsFrom = (conditions: ReturnType<typeof conditionsFromModel>
   traffic: { congestionLevel: conditions.traffic }
 });
 
-const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialModelConditions?: ModelConditions | null }) => {
+const CitizenAdvisoryConsole = ({ initialModelConditions = null, initialModelForecast = null }: { initialModelConditions?: ModelConditions | null; initialModelForecast?: ForecastPoint[] | null }) => {
   const [form, setForm] = useState<UserPayload>(makeDefaultUser());
   const [riskGroups, setRiskGroups] = useState(['elder', 'commuter']);
   const [channels, setChannels] = useState(['in_app']);
@@ -141,13 +149,7 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
   const [modelConditions, setModelConditions] = useState<ModelConditions | null>(initialModelConditions);
   const [loading, setLoading] = useState('');
   const [message, setMessage] = useState('');
-  const [conditions, setConditions] = useState({
-    aqi: 240,
-    temperature: 40,
-    weather: 'Rain',
-    rainLastHourMm: 8,
-    traffic: 'severe'
-  });
+  const [conditions, setConditions] = useState<ReturnType<typeof conditionsFromModel> | null>(null);
 
   const activeUser = useMemo(
     () => users.find((user) => user.id === selectedUserId) || null,
@@ -178,20 +180,26 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
     };
   }, [activeUser, form]);
 
-  const riskPayload = useMemo(() => ({
-    user: deliveryUser || form,
-    riskGroups,
-    aqi: { aqi: conditions.aqi },
-    weather: {
+  const riskPayload = useMemo(() => {
+    if (!conditions) {
+      return null;
+    }
+
+    return {
+      user: deliveryUser || form,
+      riskGroups,
+      aqi: { aqi: conditions.aqi },
       weather: {
-        main: conditions.weather,
-        description: conditions.rainLastHourMm > 0 ? 'heavy rain' : conditions.weather
+        weather: {
+          main: conditions.weather,
+          description: conditions.rainLastHourMm > 0 ? 'heavy rain' : conditions.weather
+        },
+        temperature: { value: conditions.temperature },
+        rainLastHourMm: conditions.rainLastHourMm
       },
-      temperature: { value: conditions.temperature },
-      rainLastHourMm: conditions.rainLastHourMm
-    },
-    traffic: { congestionLevel: conditions.traffic }
-  }), [deliveryUser, form, riskGroups, conditions]);
+      traffic: { congestionLevel: conditions.traffic }
+    };
+  }, [deliveryUser, form, riskGroups, conditions]);
 
   const showError = (error: any) => {
     setMessage(error?.message || 'Request failed');
@@ -242,6 +250,13 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
       })
       .catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!initialModelForecast || initialModelForecast.length === 0) return;
+
+    const first = initialModelForecast[0];
+    setConditions(conditionsFromForecast(first));
+  }, [initialModelForecast]);
 
   useEffect(() => {
     if (!initialModelConditions) return;
@@ -333,6 +348,11 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
   };
 
   const assessRisk = async () => {
+    if (!riskPayload) {
+      setMessage('Load trained-model conditions first (Load From Trained Model).');
+      return;
+    }
+
     setLoading('risk');
     setMessage('');
 
@@ -348,6 +368,11 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
   };
 
   const generateAdvisory = async () => {
+    if (!riskPayload) {
+      setMessage('Load trained-model conditions first (Load From Trained Model).');
+      return;
+    }
+
     setLoading('advisory');
     setMessage('');
 
@@ -431,6 +456,11 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
   };
 
   const runBatch = async () => {
+    if (!conditions) {
+      setMessage('Load trained-model conditions before running the batch.');
+      return;
+    }
+
     setLoading('batch');
     setMessage('');
 
@@ -451,6 +481,11 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
   };
 
   const sendPersonalizedSmsBatch = async () => {
+    if (!conditions) {
+      setMessage('Load trained-model conditions before sending SMS.');
+      return;
+    }
+
     setLoading('bulkSms');
     setMessage('');
 
@@ -511,7 +546,7 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
           </button>
           <button
             onClick={runBatch}
-            disabled={loading === 'batch'}
+            disabled={loading === 'batch' || !conditions}
             className="flex items-center justify-center gap-2 rounded-xl border border-traf-acc/30 bg-traf-acc/15 p-4 text-xs font-black uppercase tracking-widest text-traf-acc disabled:opacity-50"
           >
             {loading === 'batch' ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
@@ -519,7 +554,7 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
           </button>
           <button
             onClick={sendPersonalizedSmsBatch}
-            disabled={loading === 'bulkSms'}
+            disabled={loading === 'bulkSms' || !conditions}
             className="flex items-center justify-center gap-2 rounded-xl border border-home-acc/40 bg-home-acc/15 p-4 text-xs font-black uppercase tracking-widest text-home-acc disabled:opacity-50"
           >
             {loading === 'bulkSms' ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
@@ -626,17 +661,23 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
                 </Pill>
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Field label="AQI" type="number" value={conditions.aqi} onChange={(value) => setConditions({ ...conditions, aqi: Number(value) })} />
-              <Field label="Temp C" type="number" value={conditions.temperature} onChange={(value) => setConditions({ ...conditions, temperature: Number(value) })} />
-              <Field label="Rain mm" type="number" value={conditions.rainLastHourMm} onChange={(value) => setConditions({ ...conditions, rainLastHourMm: Number(value) })} />
-              <label className="block">
-                <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/30">Traffic</span>
-                <select value={conditions.traffic} onChange={(event) => setConditions({ ...conditions, traffic: event.target.value })} className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none">
-                  {['light', 'moderate', 'heavy', 'severe'].map((item) => <option key={item}>{item}</option>)}
-                </select>
-              </label>
-            </div>
+            {conditions ? (
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="AQI" type="number" value={conditions.aqi} onChange={(value) => setConditions({ ...conditions, aqi: Number(value) })} />
+                <Field label="Temp C" type="number" value={conditions.temperature} onChange={(value) => setConditions({ ...conditions, temperature: Number(value) })} />
+                <Field label="Rain mm" type="number" value={conditions.rainLastHourMm} onChange={(value) => setConditions({ ...conditions, rainLastHourMm: Number(value) })} />
+                <label className="block">
+                  <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/30">Traffic</span>
+                  <select value={conditions.traffic} onChange={(event) => setConditions({ ...conditions, traffic: event.target.value })} className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none">
+                    {['light', 'moderate', 'heavy', 'severe'].map((item) => <option key={item}>{item}</option>)}
+                  </select>
+                </label>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-home-acc/20 bg-home-acc/5 p-3 text-[10px] leading-relaxed text-white/50">
+                No model conditions yet. Use &quot;Load From Trained Model&quot; before running risk, advisory, or batch actions — these never run on placeholder data.
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -648,10 +689,10 @@ const CitizenAdvisoryConsole = ({ initialModelConditions = null }: { initialMode
               <button onClick={loadModelConditions} disabled={loading === 'model'} className="col-span-2 rounded-lg border border-home-acc/40 bg-home-acc/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-home-acc disabled:opacity-50">
                 {loading === 'model' ? 'Loading Model' : 'Load From Trained Model'}
               </button>
-              <button onClick={assessRisk} disabled={loading === 'risk'} className="rounded-lg border border-traf-acc/40 bg-traf-acc/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-traf-acc disabled:opacity-50">
+              <button onClick={assessRisk} disabled={loading === 'risk' || !riskPayload} className="rounded-lg border border-traf-acc/40 bg-traf-acc/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-traf-acc disabled:opacity-50">
                 Risk
               </button>
-              <button onClick={generateAdvisory} disabled={loading === 'advisory'} className="rounded-lg border border-wth-acc/40 bg-wth-acc/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-wth-acc disabled:opacity-50">
+              <button onClick={generateAdvisory} disabled={loading === 'advisory' || !riskPayload} className="rounded-lg border border-wth-acc/40 bg-wth-acc/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-wth-acc disabled:opacity-50">
                 Advisory
               </button>
             </div>

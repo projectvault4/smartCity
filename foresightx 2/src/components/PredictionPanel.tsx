@@ -1,112 +1,280 @@
 import { useEffect, useMemo, useState } from 'react';
-import Card from './Card';
+import { motion } from 'motion/react';
 import { backendApi, CityData, ModelConditions } from '../services/dataService';
-import { AlertTriangle, Info, ShieldCheck, Zap } from 'lucide-react';
 
-const metricSpecs = [
-  { key: 'traffic' as const, title: 'Traffic', unit: 'veh/hr', theme: 'traf' as const },
-  { key: 'air' as const, title: 'AQI', unit: 'AQI', theme: 'air' as const },
-  { key: 'energy' as const, title: 'Energy', unit: 'MW', theme: 'eng' as const },
-  { key: 'weather' as const, title: 'Weather', unit: 'C', theme: 'wth' as const },
+// ─── Types ────────────────────────────────────────────────────────────────────
+type MetricKey = 'traffic' | 'air' | 'energy' | 'weather';
+
+interface MetricSpec {
+  key: MetricKey;
+  label: string;
+  unit: string;
+  color: string;           // accent hex
+  colorClass: string;      // tailwind bg class for dot
+}
+
+const METRICS: MetricSpec[] = [
+  { key: 'traffic', label: 'Traffic',      unit: 'veh/hr', color: '#f39c12', colorClass: 'bg-traf-acc'  },
+  { key: 'air',     label: 'Air quality',  unit: 'AQI',    color: '#3498db', colorClass: 'bg-air-acc'   },
+  { key: 'energy',  label: 'Grid load',    unit: 'MW',     color: '#2ecc71', colorClass: 'bg-eng-acc'   },
+  { key: 'weather', label: 'Weather',      unit: '°C',     color: '#9b59b6', colorClass: 'bg-wth-acc'   },
 ];
 
-const valueFromCondition = (condition: ModelConditions, key: typeof metricSpecs[number]['key'], fallback: CityData) => {
-  if (key === 'traffic') return Math.round(Number(condition.traffic?.flow ?? fallback.traffic.value));
-  if (key === 'air') return Math.round(Number(condition.aqi?.aqi ?? fallback.air.value));
-  if (key === 'energy') return Math.round(Number(condition.raw?.electricity_demand ?? fallback.energy.value));
-  return Math.round(Number(condition.weather?.temperature?.value ?? fallback.weather.value));
-};
+const HOURS = [1, 2, 3, 4, 5, 6];
 
-const PredictionPanel = ({ data, city = 'bangalore' }: { data: CityData; city?: string }) => {
-  const hours = [1, 2, 3, 4, 5, 6];
+// opacity steps: full → very faint, mirroring the HTML "fade & dash" confidence cue
+const ROW_OPACITY = [1, 0.88, 0.72, 0.56, 0.4, 0.26];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function valueFromCondition(
+  condition: ModelConditions,
+  key: MetricKey,
+  fallback: CityData,
+): number {
+  if (key === 'traffic') return Math.round(Number(condition.traffic?.flow ?? fallback.traffic.value));
+  if (key === 'air')     return Math.round(Number(condition.aqi?.aqi    ?? fallback.air.value));
+  if (key === 'energy')  return Math.round(Number(condition.raw?.electricity_demand ?? fallback.energy.value));
+  return Math.round(Number(condition.weather?.temperature?.value ?? fallback.weather.value));
+}
+
+function formatVal(val: number, key: MetricKey): string {
+  if (key === 'traffic') return val.toLocaleString();
+  return String(val);
+}
+
+// Format current time as "2:00 PM"
+function fmtTime(d: Date): string {
+  let h = d.getHours() % 12;
+  if (h === 0) h = 12;
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+  return `${h}:${m} ${ampm}`;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+export default function PredictionPanel({
+  data,
+  city = 'bangalore',
+}: {
+  data: CityData;
+  city?: string;
+}) {
   const [forecasts, setForecasts] = useState<Record<number, ModelConditions>>({});
   const [status, setStatus] = useState<'loading' | 'model' | 'fallback'>('loading');
+  const [now, setNow] = useState(new Date());
+
+  // tick clock every minute
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
-
-    Promise.all(hours.map((hour) => backendApi.modelConditions(city, hour)))
+    Promise.all(HOURS.map((h) => backendApi.modelConditions(city, h)))
       .then((responses) => {
         if (!mounted) return;
-        setForecasts(
-          responses.reduce<Record<number, ModelConditions>>((next, response, index) => {
-            next[hours[index]] = response.data;
-            return next;
-          }, {})
-        );
+        const map: Record<number, ModelConditions> = {};
+        responses.forEach((r, i) => { map[HOURS[i]] = r.data; });
+        setForecasts(map);
         setStatus('model');
       })
-      .catch(() => {
-        if (mounted) setStatus('fallback');
-      });
-
-    return () => {
-      mounted = false;
-    };
+      .catch(() => { if (mounted) setStatus('fallback'); });
+    return () => { mounted = false; };
   }, [city]);
 
-  const fallbackValues = useMemo(() => ({
+  const fallback = useMemo(() => ({
     traffic: data.traffic.value,
-    air: data.air.value,
-    energy: data.energy.value,
-    weather: data.weather.value
+    air:     data.air.value,
+    energy:  data.energy.value,
+    weather: data.weather.value,
   }), [data]);
 
-  const getForecast = (key: typeof metricSpecs[number]['key'], hour: number) => {
-    const modelForecast = forecasts[hour];
-    if (modelForecast) {
-      return valueFromCondition(modelForecast, key, data);
-    }
-
-    return fallbackValues[key];
+  const getVal = (key: MetricKey, hour: number): number => {
+    const fc = forecasts[hour];
+    return fc ? valueFromCondition(fc, key, data) : fallback[key];
   };
 
   return (
-    <div className="space-y-6">
-      <Card title="Multi-Hour Forecasting (4-6H Horizon)" theme="home">
-        <div className="space-y-10 p-2">
-          <div className="flex items-center gap-2 rounded-xl border border-home-acc/20 bg-home-acc/5 px-4 py-3 text-xs text-white/55">
-            <ShieldCheck size={16} className="text-home-acc" />
-            {status === 'model'
-              ? `Connected to trained dataset model for ${city}.`
-              : status === 'loading'
-                ? 'Loading trained dataset model forecasts.'
-                : 'Backend unavailable; showing last loaded dashboard values.'}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {metricSpecs.map((metric) => (
-              <div key={metric.title} className="space-y-6">
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full bg-${metric.theme}-acc shadow-[0_0_12px_rgba(255,255,255,0.2)]`} />
-                  <span className="text-[10px] font-black uppercase tracking-[2.5px] text-white/50 text-center">{metric.title}</span>
-                </div>
-                
-                <div className="flex flex-col gap-2">
-                  {hours.map((h) => (
-                    <div key={h} className="bg-white/5 border border-white/5 rounded-xl p-3 flex flex-col items-center gap-1 hover:bg-white/10 transition-colors group">
-                      <div className="text-[8px] font-bold text-white/20 uppercase tracking-tighter group-hover:text-white/40 transition-colors">T + {h}H</div>
-                      <div className="text-lg font-black text-white">{getForecast(metric.key, h)}</div>
-                      <div className="text-[7px] font-bold text-white/10 uppercase tracking-widest">{metric.unit}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-8 border-t border-white/5 flex items-center gap-3">
-             <div className="p-3 bg-red-400/10 rounded-xl">
-                <AlertTriangle size={20} className="text-[#ff7675]" />
-             </div>
-             <div>
-                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest">Model Warning</div>
-                <p className="text-xs text-white/60 font-medium">Forecasts are read from the trained dataset model via the backend model API. Uncertainty increases beyond the 4H window.</p>
-             </div>
-          </div>
+    <div
+      className="min-h-0 text-[#e9f3ee]"
+      style={{ fontFamily: "'Inter', sans-serif" }}
+    >
+      {/* ── Header ──────────────────────────────────────────────────────── */}
+      <div className="mb-8">
+        <div
+          className="text-[0.65rem] font-mono uppercase tracking-[0.18em] mb-2"
+          style={{ color: '#5c7269' }}
+        >
+          Urban operations · predictive layer
         </div>
-      </Card>
+        <h1
+          className="font-['Fraunces',serif] font-light italic text-[clamp(1.5rem,3.5vw,2.1rem)] leading-[1.15] mb-3"
+          style={{ color: '#e9f3ee' }}
+        >
+          City Pulse forecast
+        </h1>
+        <p className="text-[0.875rem] max-w-[60ch] leading-relaxed" style={{ color: '#8fa69b' }}>
+          Six-hour outlook across traffic, air quality, grid load, and weather.
+          Rows fade and dash further from now — that's the model telling you how sure it is.
+        </p>
+      </div>
+
+      {/* ── Current time pill ───────────────────────────────────────────── */}
+      <div className="flex items-center gap-4 mb-8">
+        <div
+          className="inline-flex items-center gap-3 px-4 py-2.5 rounded-[20px] border text-[0.75rem] font-mono"
+          style={{ background: '#0e1a16', borderColor: '#1f3831', color: '#8fa69b' }}
+        >
+          <div
+            className="w-[7px] h-[7px] rounded-full animate-pulse"
+            style={{ background: '#6fe7b7', boxShadow: '0 0 8px #6fe7b7' }}
+          />
+          <span style={{ color: '#5c7269' }}>Current time</span>
+          <span className="font-semibold" style={{ color: '#e9f3ee' }}>{fmtTime(now)}</span>
+        </div>
+
+        {/* backend status */}
+        <div
+          className="text-[0.65rem] font-mono uppercase tracking-widest px-3 py-1.5 rounded-full border"
+          style={{
+            background: status === 'model' ? 'rgba(111,231,183,0.08)' : 'rgba(242,102,122,0.08)',
+            borderColor: status === 'model' ? 'rgba(111,231,183,0.25)' : 'rgba(242,102,122,0.25)',
+            color: status === 'model' ? '#6fe7b7' : status === 'loading' ? '#8fa69b' : '#f2667a',
+          }}
+        >
+          {status === 'model' ? '● Model live' : status === 'loading' ? '◌ Loading…' : '○ Fallback'}
+        </div>
+      </div>
+
+      {/* ── Forecast table ──────────────────────────────────────────────── */}
+      <div
+        className="rounded-[18px] border overflow-hidden"
+        style={{ background: '#10201a', borderColor: '#1f3831' }}
+      >
+        {/* Column headers */}
+        <div
+          className="grid border-b"
+          style={{
+            gridTemplateColumns: '72px repeat(4, 1fr)',
+            borderColor: '#1f3831',
+            background: '#0d1a10',
+          }}
+        >
+          <div className="px-4 py-3" />
+          {METRICS.map((m) => (
+            <div key={m.key} className="px-4 py-3 flex items-center gap-2">
+              <div
+                className="w-[7px] h-[7px] rounded-full shrink-0"
+                style={{ background: m.color, boxShadow: `0 0 8px ${m.color}55` }}
+              />
+              <span
+                className="text-[0.65rem] font-mono uppercase tracking-[0.12em]"
+                style={{ color: '#8fa69b' }}
+              >
+                {m.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Forecast rows */}
+        {HOURS.map((h, idx) => {
+          const opacity = ROW_OPACITY[idx];
+          const isFirst = idx === 0;
+          const isDashed = idx >= 3;           // last 3 rows dashed (lower confidence)
+
+          return (
+            <motion.div
+              key={h}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.06, duration: 0.35 }}
+              className="grid border-b last:border-b-0"
+              style={{
+                gridTemplateColumns: '72px repeat(4, 1fr)',
+                borderColor: isDashed ? 'transparent' : '#1a2e26',
+                // dashed border via box shadow trick
+                boxShadow: isDashed && idx !== 0
+                  ? 'inset 0 1px 0 0 rgba(31,56,49,0.5)'
+                  : undefined,
+                opacity,
+              }}
+            >
+              {/* Hour label */}
+              <div
+                className="px-4 py-4 flex items-center"
+                style={{ borderRight: '1px solid #1f3831' }}
+              >
+                <span
+                  className="text-[0.65rem] font-mono uppercase tracking-[0.1em]"
+                  style={{
+                    color: isFirst ? '#6fe7b7' : '#5c7269',
+                    fontWeight: isFirst ? 600 : 400,
+                  }}
+                >
+                  +{h}H
+                </span>
+              </div>
+
+              {/* Metric cells */}
+              {METRICS.map((m) => {
+                const val = getVal(m.key, h);
+                return (
+                  <div
+                    key={m.key}
+                    className="px-4 py-4 flex flex-col gap-0.5 transition-colors"
+                    style={{ borderRight: '1px solid #1a2e26' }}
+                  >
+                    <span
+                      className="font-['Fraunces',serif] font-medium leading-none"
+                      style={{
+                        fontSize: 'clamp(1.1rem, 2.2vw, 1.45rem)',
+                        color: isFirst ? m.color : '#e9f3ee',
+                      }}
+                    >
+                      {status === 'loading' ? '—' : formatVal(val, m.key)}
+                    </span>
+                    <span
+                      className="text-[0.6rem] font-mono uppercase tracking-widest"
+                      style={{ color: '#5c7269' }}
+                    >
+                      {m.unit}
+                    </span>
+                  </div>
+                );
+              })}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* ── Legend ──────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-6 mt-5 px-1">
+        {[
+          { label: 'near-term, high confidence', opacity: 1, dashed: false },
+          { label: 'farther out, lower confidence', opacity: 0.35, dashed: true },
+        ].map(({ label, opacity, dashed }) => (
+          <div key={label} className="flex items-center gap-2.5">
+            <div
+              className="w-10 h-[2px] rounded-full"
+              style={{
+                background: '#6fe7b7',
+                opacity,
+                borderBottom: dashed ? '1px dashed #6fe7b7' : undefined,
+                backgroundImage: dashed
+                  ? 'repeating-linear-gradient(90deg,#6fe7b7 0,#6fe7b7 4px,transparent 4px,transparent 8px)'
+                  : undefined,
+                backgroundSize: dashed ? '8px 2px' : undefined,
+                height: 2,
+              }}
+            />
+            <span className="text-[0.65rem] font-mono" style={{ color: '#5c7269' }}>
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
-
-export default PredictionPanel;
+}

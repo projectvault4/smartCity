@@ -24,12 +24,22 @@ const parseCsvLine = (line) => {
 };
 
 const readForecastRows = (city = config.modelForecast.defaultCity) => {
-  const forecastPath = path.join(
-    config.modelForecast.projectRoot,
-    'outputs',
-    city,
-    'past_present_future_forecast.csv'
-  );
+  const cityKey = String(city || '').toLowerCase();
+  // The default-city training run writes to the repository root outputs/ dir
+  // (shared with the anomaly + multivariate pipelines). Only cities with a
+  // dedicated subdirectory (e.g. delhi) resolve into outputs/<city>/.
+  const forecastPath = ['delhi'].includes(cityKey)
+    ? path.join(
+        config.modelForecast.projectRoot,
+        'outputs',
+        cityKey,
+        'past_present_future_forecast.csv'
+      )
+    : path.join(
+        config.modelForecast.projectRoot,
+        'outputs',
+        'past_present_future_forecast.csv'
+      );
 
   if (!fs.existsSync(forecastPath)) {
     throw new Error(`Model forecast file not found: ${forecastPath}`);
@@ -133,7 +143,33 @@ const getLatestModelConditions = ({ city = config.modelForecast.defaultCity, ste
   };
 };
 
+const getForecastSeries = ({ city = config.modelForecast.defaultCity, steps = 24 } = {}) => {
+  const rows = readForecastRows(city);
+  const futureRows = rows
+    .filter((row) => row.time_segment === 'future')
+    .sort((a, b) => Number(a.step_ahead) - Number(b.step_ahead))
+    .slice(0, steps);
+
+  return futureRows.map((row) => ({
+    timestamp: row.timestamp,
+    stepAhead: Number(row.step_ahead || 0),
+    trafficFlow: toNumber(row.traffic_flow),
+    aqi: toNumber(row.aqi),
+    temperature: toNumber(row.temperature),
+    humidity: toNumber(row.humidity),
+    electricityDemand: toNumber(row.electricity_demand),
+    weather: classifyWeather({
+      temperature: toNumber(row.temperature),
+      humidity: toNumber(row.humidity)
+    }),
+    traffic: {
+      congestionLevel: classifyTraffic(toNumber(row.traffic_flow))
+    }
+  }));
+};
+
 module.exports = {
   getLatestModelConditions,
+  getForecastSeries,
   readForecastRows
 };

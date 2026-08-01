@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForeSightX — Your Ward, Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a1210;
+    --bg-soft: #0e1a16;
+    --surface: #10201a;
+    --surface-raised: #142720;
+    --line: #1f3831;
+    --mint: #6fe7b7;
+    --mint-dim: #3f8a71;
+    --amber: #f0a857;
+    --rose: #f2667a;
+    --text: #e9f3ee;
+    --text-muted: #8fa69b;
+    --text-faint: #5c7269;
+    --radius: 14px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(120% 100% at 15% -10%, rgba(111,231,183,0.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+    padding-bottom:80px;
+  }
+
+  .wrap{ max-width:880px; margin:0 auto; padding:32px 20px 0; }
+
+  /* ---- Top bar ---- */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px; flex-wrap:wrap; margin-bottom:34px;
+  }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--mint); box-shadow:0 0 10px var(--mint); }
+  .brand span{ font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem; letter-spacing:0.01em; }
+  .brand small{ display:block; font-family:'IBM Plex Mono', monospace; font-size:0.63rem; color:var(--text-faint); letter-spacing:0.14em; text-transform:uppercase; margin-top:1px; }
+
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; }
+  .select-chip{
+    position:relative;
+  }
+  .select-chip select{
+    appearance:none; -webkit-appearance:none;
+    background:var(--surface); border:1px solid var(--line); color:var(--text);
+    font-family:'IBM Plex Mono', monospace; font-size:0.75rem; letter-spacing:0.03em;
+    padding:9px 30px 9px 12px; border-radius:20px; cursor:pointer;
+  }
+  .select-chip::after{
+    content:'⌄'; position:absolute; right:12px; top:50%; transform:translateY(-55%);
+    color:var(--text-muted); pointer-events:none; font-size:0.8rem;
+  }
+
+  /* ---- Hero ---- */
+  .hero{
+    background:linear-gradient(165deg, var(--surface-raised), var(--surface) 70%);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:34px 30px;
+    margin-bottom:28px;
+  }
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--mint); margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .hero .eyebrow::before{ content:''; width:5px; height:5px; border-radius:50%; background:var(--mint); }
+  .hero h1{
+    font-family:'Fraunces', serif; font-weight:400; font-style:italic;
+    font-size:clamp(1.6rem, 4vw, 2.3rem); margin:0 0 10px; line-height:1.15;
+  }
+  .hero .sub{ color:var(--text-muted); font-size:0.95rem; max-width:56ch; margin-bottom:26px; }
+
+  .snapshot-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px; }
+  .metric{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px;
+  }
+  .metric .label{ font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px; }
+  .metric .value{ font-family:'Fraunces', serif; font-size:1.5rem; font-weight:500; }
+  .metric .value span{ font-size:0.85rem; color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:400; margin-left:3px; }
+  .metric .tag{ display:inline-block; margin-top:6px; font-size:0.68rem; padding:2px 8px; border-radius:20px; font-family:'IBM Plex Mono',monospace; }
+  .tag.good{ background:rgba(111,231,183,0.12); color:var(--mint); }
+  .tag.warn{ background:rgba(240,168,87,0.14); color:var(--amber); }
+  .tag.bad{ background:rgba(242,102,122,0.14); color:var(--rose); }
+
+  /* ---- Section headers ---- */
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin:8px 0 16px; }
+  .section-head h2{ font-family:'Fraunces', serif; font-weight:500; font-size:1.15rem; margin:0; }
+  .section-head .count{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--text-faint); }
+
+  /* ---- Alerts ---- */
+  .alerts{ display:flex; flex-direction:column; gap:12px; margin-bottom:36px; }
+  .alert{
+    background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--mint-dim);
+    border-radius:12px; padding:18px 20px; transition:border-color 0.15s ease;
+  }
+  .alert.warn{ border-left-color:var(--amber); }
+  .alert.bad{ border-left-color:var(--rose); }
+
+  .alert-top{ display:flex; justify-content:space-between; gap:14px; align-items:flex-start; }
+  .alert-headline{ font-weight:600; font-size:0.96rem; margin:0 0 6px; }
+  .alert-time{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--text-faint); white-space:nowrap; margin-top:2px; }
+  .alert-body{ color:var(--text-muted); font-size:0.88rem; margin:0 0 12px; }
+
+  .why-toggle{
+    background:none; border:1px solid var(--line); color:var(--text-muted);
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; letter-spacing:0.04em;
+    padding:5px 10px; border-radius:20px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+  }
+  .why-toggle:hover{ border-color:var(--mint-dim); color:var(--mint); }
+  .why-panel{
+    display:none; margin-top:12px; padding:12px 14px; background:var(--bg-soft);
+    border-radius:10px; font-size:0.82rem; color:var(--text-muted); border:1px dashed var(--line);
+  }
+  .why-panel.open{ display:block; }
+  .why-panel b{ color:var(--text); font-weight:500; }
+
+  .empty-state{
+    text-align:center; padding:40px 20px; color:var(--text-faint);
+    border:1px dashed var(--line); border-radius:14px; font-size:0.9rem;
+  }
+
+  /* ---- Profile ---- */
+  .profile-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px 26px 22px;
+    margin-bottom:20px;
+  }
+  .profile-top{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px; margin-bottom:18px; }
+  .profile-name{ font-family:'Fraunces', serif; font-size:1.3rem; }
+  .profile-meta{ color:var(--text-faint); font-size:0.8rem; font-family:'IBM Plex Mono', monospace; margin-top:4px; }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .rchip{
+    font-size:0.74rem; padding:6px 13px; border-radius:20px; border:1px solid var(--line);
+    background:var(--bg-soft); color:var(--text-muted); font-family:'IBM Plex Mono', monospace;
+  }
+  .rchip.active{ background:rgba(111,231,183,0.12); border-color:var(--mint-dim); color:var(--mint); }
+
+  .field-label{ font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; margin:18px 0 8px; }
+
+  .footnote{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-top:36px; }
+  .footnote a{ color:var(--mint-dim); text-decoration:none; }
+
+  @media (max-width:520px){
+    .topbar{ flex-direction:column; }
+    .hero{ padding:26px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <span>ForeSightX</span>
+        <small>Citizen Alerts</small>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="select-chip">
+        <select id="wardSelect">
+          <option value="channasandra">Channasandra</option>
+          <option value="indiranagar">Indiranagar</option>
+        </select>
+      </div>
+      <div class="select-chip">
+        <select id="userSelect">
+          <option value="yashwanth">Yashwanth M</option>
+          <option value="meera">Meera R</option>
+          <option value="farooq">Farooq K</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow" id="wardEyebrow">Channasandra · Updated 9s ago</div>
+    <h1 id="heroLine">Mostly calm, one thing worth knowing.</h1>
+    <div class="sub">A quick read of what's happening around you right now — no dashboards, no jargon.</div>
+    <div class="snapshot-row" id="snapshotRow"></div>
+  </div>
+
+  <div class="section-head">
+    <h2>Your alerts</h2>
+    <span class="count" id="alertCount">0 today</span>
+  </div>
+  <div class="alerts" id="alertsList"></div>
+
+  <div class="section-head">
+    <h2>Your profile</h2>
+  </div>
+  <div class="profile-card">
+    <div class="profile-top">
+      <div>
+        <div class="profile-name" id="profName">Yashwanth M</div>
+        <div class="profile-meta" id="profMeta">Channasandra · Age 25</div>
+      </div>
+    </div>
+    <div class="field-label">You're tagged as</div>
+    <div class="chip-row" id="profChips"></div>
+    <div class="field-label">Alerts apply to</div>
+    <div class="chip-row">
+      <span class="rchip active">Air quality</span>
+      <span class="rchip active">Traffic</span>
+      <span class="rchip active">Temperature</span>
+    </div>
+  </div>
+
+  <div class="footnote">Messages are generated for your profile and ward only — not broadcast city-wide. Manage your tags anytime with your ward office.</div>
+
+</div>
+
+<script>
+  // ---- Mock ward data (today's readings) ----
+  const wards = {
+    channasandra: {
+      name: 'Channasandra',
+      traffic: { value: 18780, unit: 'veh/hr', level: 'heavy', pct: 78 },
+      aqi: { value: 158, level: 'very poor' },
+      temp: { value: 31, level: 'high' }
+    },
+    indiranagar: {
+      name: 'Indiranagar',
+      traffic: { value: 9400, unit: 'veh/hr', level: 'moderate', pct: 22 },
+      aqi: { value: 62, level: 'moderate' },
+      temp: { value: 29, level: 'comfortable' }
+    }
+  };
+
+  // ---- Mock users ----
+  const users = {
+    yashwanth: { name:'Yashwanth M', ward:'channasandra', age:25, tags:['Elder','Commuter'] },
+    meera:     { name:'Meera R',     ward:'indiranagar',  age:34, tags:['Respiratory','Child'] },
+    farooq:    { name:'Farooq K',    ward:'channasandra', age:29, tags:['Worker','Commuter'] }
+  };
+
+  // ---- Rule engine: which tags care about which metric, at what threshold ----
+  const rules = [
+    {
+      metric:'aqi', min:120,
+      tags:['Respiratory','Elder','Child'],
+      severity:'bad',
+      headline: w => `Air quality is very poor in ${w.name}`,
+      body: (w,u) => `AQI is at ${w.aqi.value} right now. Given you're tagged ${matchedTags(u,['Respiratory','Elder','Child'])}, it's worth limiting time outdoors today and keeping windows closed if you can.`,
+      why: (w,u) => `Your profile includes <b>${matchedTags(u,['Respiratory','Elder','Child'])}</b>. AQI above 120 is flagged as high-risk for these groups specifically — a healthy adult with no tags wouldn't see this alert at the same AQI level.`
+    },
+    {
+      metric:'aqi', min:80, max:119,
+      tags:['Respiratory','Elder','Child'],
+      severity:'warn',
+      headline: w => `Air quality is dipping in ${w.name}`,
+      body: (w,u) => `AQI is ${w.aqi.value} (moderate). Not urgent, but if you're heading out for a while, a short break indoors midday isn't a bad idea.`,
+      why: (w,u) => `Shown because you're tagged <b>${matchedTags(u,['Respiratory','Elder','Child'])}</b> — moderate AQI is monitored more closely for these groups.`
+    },
+    {
+      metric:'traffic', min:60,
+      tags:['Commuter','Worker'],
+      severity:'warn',
+      headline: w => `Heavy traffic building in ${w.name}`,
+      body: (w,u) => `Traffic is running ${w.traffic.pct}% above the usual baseline. If you're commuting in the next hour, budget extra time or check an alternate route.`,
+      why: (w,u) => `You're tagged <b>${matchedTags(u,['Commuter','Worker'])}</b>, so traffic surges are surfaced for you directly — this wouldn't appear for someone without a commuter or worker tag.`
+    },
+    {
+      metric:'temp', min:30,
+      tags:['Elder','Child','Worker'],
+      severity:'warn',
+      headline: w => `Temperature is climbing in ${w.name}`,
+      body: (w,u) => `It's ${w.temp.value}°C and rising. Stay hydrated, and if you can, shift outdoor tasks to earlier or later in the day.`,
+      why: (w,u) => `Heat advisories are prioritised for <b>${matchedTags(u,['Elder','Child','Worker'])}</b> tags, since these groups are more affected by sustained heat.`
+    }
+  ];
+
+  function matchedTags(user, ruleTags){
+    return user.tags.filter(t => ruleTags.includes(t)).join(' + ');
+  }
+
+  function metricValue(w, m){
+    if(m === 'aqi') return w.aqi.value;
+    if(m === 'traffic') return w.traffic.pct;
+    if(m === 'temp') return w.temp.value;
+  }
+
+  function buildAlerts(ward, user){
+    const out = [];
+    rules.forEach(r => {
+      const val = metricValue(ward, r.metric);
+      const min = r.min ?? -Infinity;
+      const max = r.max ?? Infinity;
+      const tagMatch = user.tags.some(t => r.tags.includes(t));
+      if(val >= min && val <= max && tagMatch){
+        out.push({
+          severity: r.severity,
+          headline: r.headline(ward),
+          body: r.body(ward, user),
+          why: r.why(ward, user),
+          time: guessTime()
+        });
+      }
+    });
+    return out;
+  }
+
+  function guessTime(){
+    const now = new Date();
+    let h = now.getHours() % 12; if(h===0) h=12;
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+    const m = String(now.getMinutes()).padStart(2,'0');
+    return `${h}:${m} ${ampm}`;
+  }
+
+  function levelTag(level){
+    const map = { heavy:'bad', 'very poor':'bad', high:'warn', moderate:'warn', comfortable:'good' };
+    return map[level] || 'good';
+  }
+
+  function render(){
+    const wardKey = document.getElementById('wardSelect').value;
+    const userKey = document.getElementById('userSelect').value;
+    const ward = wards[wardKey];
+    const user = users[userKey];
+
+    document.getElementById('wardEyebrow').textContent = `${ward.name} · Updated 9s ago`;
+
+    // Snapshot metrics
+    const snap = document.getElementById('snapshotRow');
+    snap.innerHTML = `
+      <div class="metric">
+        <div class="label">Traffic</div>
+        <div class="value">${ward.traffic.value.toLocaleString()}<span>veh/hr</span></div>
+        <div class="tag ${levelTag(ward.traffic.level)}">${ward.traffic.level}</div>
+      </div>
+      <div class="metric">
+        <div class="label">Air quality</div>
+        <div class="value">${ward.aqi.value}<span>AQI</span></div>
+        <div class="tag ${levelTag(ward.aqi.level)}">${ward.aqi.level}</div>
+      </div>
+      <div class="metric">
+        <div class="label">Temperature</div>
+        <div class="value">${ward.temp.value}°<span>C</span></div>
+        <div class="tag ${levelTag(ward.temp.level)}">${ward.temp.level}</div>
+      </div>
+    `;
+
+    // Alerts (personalized)
+    const alerts = buildAlerts(ward, user);
+    const list = document.getElementById('alertsList');
+    document.getElementById('alertCount').textContent = `${alerts.length} today`;
+
+    if(alerts.length === 0){
+      list.innerHTML = `<div class="empty-state">Nothing flagged for your profile in ${ward.name} right now. We'll let you know the moment that changes.</div>`;
+      document.getElementById('heroLine').textContent = `All clear in ${ward.name} for you today.`;
+    } else {
+      document.getElementById('heroLine').textContent = alerts.length === 1
+        ? `One thing worth knowing today.`
+        : `${alerts.length} things worth knowing today.`;
+      list.innerHTML = alerts.map((a,i) => `
+        <div class="alert ${a.severity}">
+          <div class="alert-top">
+            <p class="alert-headline">${a.headline}</p>
+            <span class="alert-time">${a.time}</span>
+          </div>
+          <p class="alert-body">${a.body}</p>
+          <button class="why-toggle" onclick="toggleWhy(${i})">Why am I seeing this? <span id="why-arrow-${i}">⌄</span></button>
+          <div class="why-panel" id="why-panel-${i}">${a.why}</div>
+        </div>
+      `).join('');
+    }
+
+    // Profile card
+    document.getElementById('profName').textContent = user.name;
+    document.getElementById('profMeta').textContent = `${ward.name} · Age ${user.age}`;
+    document.getElementById('profChips').innerHTML = user.tags.map(t => `<span class="rchip active">${t}</span>`).join('');
+  }
+
+  function toggleWhy(i){
+    const panel = document.getElementById(`why-panel-${i}`);
+    const arrow = document.getElementById(`why-arrow-${i}`);
+    panel.classList.toggle('open');
+    arrow.textContent = panel.classList.contains('open') ? '⌃' : '⌄';
+  }
+
+  document.getElementById('wardSelect').addEventListener('change', () => {
+    // keep user's own ward in sync when they pick a user, but allow manual override for demo
+    render();
+  });
+  document.getElementById('userSelect').addEventListener('change', (e) => {
+    const user = users[e.target.value];
+    document.getElementById('wardSelect').value = user.ward;
+    render();
+  });
+
+  render();
+</script>
+
+</body>
+</html>

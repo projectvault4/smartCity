@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>City Pulse — 6-Hour Forecast</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#080f0c;
+    --panel:#0e1712;
+    --panel-2:#121e18;
+    --line:#1e2b24;
+    --ink:#edf3ee;
+    --muted:#6f8079;
+    --faint:#465049;
+    --traffic:#ff8a3d;
+    --aqi:#46c9b0;
+    --energy:#b48eea;
+    --weather:#6fb8e8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:radial-gradient(120% 100% at 50% -10%, #10201a 0%, var(--void) 55%);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding:56px 40px 80px;
+    min-height:100vh;
+  }
+  .wrap{max-width:1320px;margin:0 auto;}
+
+  /* ---- header ---- */
+  header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap;gap:24px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:38px;letter-spacing:-0.01em;}
+  .subtitle{font-size:14px;color:var(--muted);margin-top:8px;max-width:460px;line-height:1.5;}
+  .clock{text-align:right;}
+  .clock .now-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;}
+  .clock .now-time{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:500;margin-top:2px;}
+
+  /* ---- horizon rail ---- */
+  .rail{
+    margin-top:36px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .rail-inner{position:relative;height:44px;}
+  .rail-track{position:absolute;top:20px;left:0;right:0;height:2px;background:var(--line);}
+  .rail-fill{position:absolute;top:20px;left:0;height:2px;background:linear-gradient(90deg,#3a4a41,var(--aqi));width:16.6%;}
+  .rail-tick{position:absolute;top:0;transform:translateX(-50%);text-align:center;width:80px;}
+  .rail-tick .dot{width:8px;height:8px;border-radius:50%;background:var(--faint);margin:12px auto 0;position:relative;z-index:2;}
+  .rail-tick.now .dot{
+    width:14px;height:14px;background:var(--aqi);margin-top:9px;
+    box-shadow:0 0 0 5px rgba(70,201,176,0.18), 0 0 18px rgba(70,201,176,0.55);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  .rail-tick .t{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);position:absolute;top:-20px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+  .rail-tick.now .t{color:var(--ink);font-weight:500;}
+  .rail-tick .conf{font-size:9px;color:var(--faint);position:absolute;top:32px;left:50%;transform:translateX(-50%);letter-spacing:.06em;white-space:nowrap;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+  @media (prefers-reduced-motion: reduce){.rail-tick.now .dot{animation:none;}}
+
+  /* ---- grid ---- */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:28px;}
+  .col{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;}
+  .col-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .swatch{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .col-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;}
+  .col-now{display:flex;align-items:baseline;gap:8px;margin:10px 0 2px;}
+  .col-now .val{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:500;}
+  .col-now .unit{font-size:12px;color:var(--muted);}
+  .delta{font-family:'JetBrains Mono',monospace;font-size:12px;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;width:fit-content;margin-bottom:14px;}
+  .delta.up{color:#8fe6c9;background:rgba(70,201,176,0.12);}
+  .delta.down{color:#ffb08a;background:rgba(255,138,61,0.12);}
+  .delta.flat{color:var(--muted);background:rgba(255,255,255,0.05);}
+
+  .spark{width:100%;height:64px;margin-bottom:16px;}
+  .spark path.area{opacity:.16;}
+  .spark path.line{fill:none;stroke-width:2;}
+  .spark circle{r:3;}
+
+  .rows{display:flex;flex-direction:column;gap:0;}
+  .row{
+    display:grid;grid-template-columns:52px 1fr auto;align-items:center;
+    gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);
+  }
+  .row:last-child{border-bottom:none;}
+  .row .time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+  .row .horizon{font-size:10px;color:var(--faint);}
+  .row .value{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;text-align:right;}
+  .row .bar-wrap{grid-column:1/-1;height:3px;background:var(--line);border-radius:2px;margin-top:8px;overflow:hidden;}
+  .row .bar{height:100%;border-radius:2px;}
+
+  .c-traffic .swatch,.c-traffic .bar{background:var(--traffic);}
+  .c-traffic .line{stroke:var(--traffic);}
+  .c-traffic .area{fill:var(--traffic);}
+  .c-traffic circle{fill:var(--traffic);}
+
+  .c-aqi .swatch,.c-aqi .bar{background:var(--aqi);}
+  .c-aqi .line{stroke:var(--aqi);}
+  .c-aqi .area{fill:var(--aqi);}
+  .c-aqi circle{fill:var(--aqi);}
+
+  .c-energy .swatch,.c-energy .bar{background:var(--energy);}
+  .c-energy .line{stroke:var(--energy);}
+  .c-energy .area{fill:var(--energy);}
+  .c-energy circle{fill:var(--energy);}
+
+  .c-weather .swatch,.c-weather .bar{background:var(--weather);}
+  .c-weather .line{stroke:var(--weather);}
+  .c-weather .area{fill:var(--weather);}
+  .c-weather circle{fill:var(--weather);}
+
+  footer{margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);display:flex;align-items:center;gap:8px;}
+  footer .key{display:flex;align-items:center;gap:6px;}
+  footer .swatchkey{width:14px;height:2px;background:var(--faint);}
+  footer .dash{width:14px;height:0;border-top:1px dashed var(--faint);}
+
+  @media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:620px){.grid{grid-template-columns:1fr;}.rail-tick{width:48px;}.rail-tick .t{font-size:9px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="eyebrow">Urban operations · predictive layer</div>
+      <h1>City Pulse forecast</h1>
+      <div class="subtitle">Six-hour outlook across traffic, air quality, grid load, and weather. Rows fade and dash further from now — that's the model telling you how sure it is.</div>
+    </div>
+    <div class="clock">
+      <div class="now-label">Current time</div>
+      <div class="now-time" id="nowTime">2:00 PM</div>
+    </div>
+  </header>
+
+  <div class="rail">
+    <div class="rail-inner" id="rail"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <span class="key"><span class="swatchkey"></span>near-term, high confidence</span>
+    <span class="key"><span class="dash"></span>farther out, lower confidence</span>
+  </footer>
+
+</div>
+
+<script>
+const hours = ["2:00 PM","3:00 PM","4:00 PM","5:00 PM","6:00 PM","7:00 PM"];
+const horizons = ["Now","T+1H","T+2H","T+3H","T+4H","T+5H"];
+const confPct = [100,92,84,75,66,57];
+
+const data = {
+  traffic: {label:"Traffic", unit:"veh/hr", values:[26573,27918,25642,24292,22860,23980]},
+  aqi:     {label:"AQI",     unit:"AQI",    values:[85,73,70,82,78,74]},
+  energy:  {label:"Energy",  unit:"MW",     values:[8032,8059,8535,8627,8710,8550]},
+  weather: {label:"Weather", unit:"°C",     values:[18,18,18,18,19,19]}
+};
+const keys = ["traffic","aqi","energy","weather"];
+
+function fmt(n){ return n >= 1000 ? n.toLocaleString() : n; }
+
+function buildSpark(values){
+  const w=280,h=64,pad=6;
+  const min=Math.min(...values), max=Math.max(...values);
+  const range = (max-min)||1;
+  const pts = values.map((v,i)=>{
+    const x = pad + (i/(values.length-1))*(w-pad*2);
+    const y = h-pad - ((v-min)/range)*(h-pad*2);
+    return [x,y];
+  });
+  const line = pts.map((p,i)=> (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const area = line + ` L${pts[pts.length-1][0]},${h} L${pts[0][0]},${h} Z`;
+  const dots = pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}"></circle>`).join("");
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path class="area" d="${area}"></path><path class="line" d="${line}"></path>${dots}</svg>`;
+}
+
+function deltaTag(curr, prev){
+  const diff = curr - prev;
+  if (Math.abs(diff) < (prev*0.002)) return `<span class="delta flat">→ steady</span>`;
+  const pct = ((diff/prev)*100).toFixed(1);
+  return diff > 0
+    ? `<span class="delta up">↑ +${pct}%</span>`
+    : `<span class="delta down">↓ ${pct}%</span>`;
+}
+
+const grid = document.getElementById("grid");
+keys.forEach(k=>{
+  const d = data[k];
+  const rowsHtml = d.values.map((v,i)=>{
+    const opacity = (confPct[i]/100).toFixed(2);
+    return `<div class="row" style="opacity:${opacity}">
+      <div class="time">${hours[i]}</div>
+      <div class="horizon">${horizons[i]}</div>
+      <div class="value">${fmt(v)}<span style="color:var(--muted);font-weight:400;font-size:11px;"> ${d.unit}</span></div>
+      <div class="bar-wrap"><div class="bar" style="width:${confPct[i]}%"></div></div>
+    </div>`;
+  }).join("");
+
+  grid.insertAdjacentHTML("beforeend", `
+    <div class="col c-${k}">
+      <div class="col-head"><span class="swatch"></span><span class="col-label">${d.label}</span></div>
+      <div class="col-now"><span class="val">${fmt(d.values[0])}</span><span class="unit">${d.unit}</span></div>
+      ${deltaTag(d.values[1], d.values[0])}
+      ${buildSpark(d.values)}
+      <div class="rows">${rowsHtml}</div>
+    </div>
+  `);
+});
+
+const rail = document.getElementById("rail");
+hours.forEach((h,i)=>{
+  const left = (i/(hours.length-1))*100;
+  const isNow = i===0;
+  rail.insertAdjacentHTML("beforeend", `
+    <div class="rail-tick ${isNow?'now':''}" style="left:${left}%">
+      <div class="t">${isNow?'Now':h}</div>
+      <div class="dot"></div>
+      <div class="conf">${confPct[i]}%</div>
+    </div>
+  `);
+});
+</script>
+</body>
+</html>

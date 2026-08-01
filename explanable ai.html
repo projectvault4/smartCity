@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Why the forecast is changing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c1f13;
+    --panel:#15291b;
+    --line:rgba(255,255,255,0.08);
+    --ink:#f4f8f5;
+    --muted:#8a978f;
+    --mint:#7fe89a;
+    --traffic:#ff8a3d;
+    --aqi:#46c9b0;
+    --energy:#b48eea;
+    --weather:#6fb8e8;
+    --up:#ff8a3d;
+    --down:#46c9b0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;padding:48px 32px 64px;}
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;font-weight:500;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.01em;margin-bottom:14px;color:var(--mint);}
+  .lede{font-size:15px;color:var(--muted);line-height:1.6;max-width:560px;margin-bottom:40px;}
+
+  .item{display:flex;gap:16px;padding:20px 22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;}
+  .item:first-of-type{margin-top:0;}
+  .icon{
+    width:44px;height:44px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon svg{width:20px;height:20px;}
+  .body{flex:1;}
+  .row1{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
+  .name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;}
+  .badge{font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .why{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+  .why b{color:var(--ink);font-weight:600;}
+
+  .meter{height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden;}
+  .meter .fill{position:absolute;top:0;bottom:0;border-radius:3px;}
+  .meter-caption{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;}
+
+  .c-traffic .icon{background:rgba(255,138,61,0.14);color:var(--traffic);}
+  .c-traffic .badge{background:rgba(255,138,61,0.14);color:var(--traffic);}
+  .c-traffic .fill{background:var(--traffic);}
+
+  .c-aqi .icon{background:rgba(70,201,176,0.14);color:var(--aqi);}
+  .c-aqi .badge{background:rgba(70,201,176,0.14);color:var(--aqi);}
+  .c-aqi .fill{background:var(--aqi);}
+
+  .c-weather .icon{background:rgba(111,184,232,0.14);color:var(--weather);}
+  .c-weather .badge{background:rgba(111,184,232,0.14);color:var(--weather);}
+  .c-weather .fill{background:var(--weather);}
+
+  .c-energy .icon{background:rgba(180,142,234,0.14);color:var(--energy);}
+  .c-energy .badge{background:rgba(180,142,234,0.14);color:var(--energy);}
+  .c-energy .fill{background:var(--energy);}
+
+  /* how they connect */
+  .connects{margin-top:38px;}
+  .section-label{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;margin-bottom:4px;}
+  .section-help{font-size:13.5px;color:var(--muted);margin-bottom:20px;}
+
+  .chain{display:flex;align-items:center;gap:0;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;}
+  .chain .pill{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;padding:8px 14px;border-radius:20px;white-space:nowrap;}
+  .chain .arrow{color:var(--muted);font-size:14px;padding:0 12px;}
+  .chain .because{width:100%;font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5;}
+
+  /* summary */
+  .summary{margin-top:36px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px 26px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;}
+  .summary p{flex:1;min-width:260px;font-size:14.5px;line-height:1.65;color:var(--ink);}
+  .confidence{text-align:center;flex-shrink:0;}
+  .confidence .num{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;color:var(--mint);}
+  .confidence .label{font-size:11.5px;color:var(--muted);margin-top:2px;max-width:110px;}
+
+  @media (max-width:600px){
+    .item{flex-direction:column;}
+    .chain{flex-direction:column;align-items:flex-start;}
+    .chain .arrow{padding:6px 0;transform:rotate(90deg);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Explainable AI (XAI)</div>
+  <h1>Reasoning engine</h1>
+  <p class="lede">Why the model thinks this &mdash; in plain language, with the signals connected instead of listed separately.</p>
+
+  <div class="item c-traffic">
+    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-10 4 6 3-4 5 8"/></svg></div>
+    <div class="body">
+      <div class="row1"><span class="name">Traffic</span><span class="badge">Trending down</span></div>
+      <div class="why">Volume may <b>decrease</b>, because recent readings have been cooling down across major junctions.</div>
+      <div class="meter"><div class="fill" style="left:30%;width:20%"></div></div>
+      <div class="meter-caption"><span>Less traffic</span><span>More traffic</span></div>
+    </div>
+  </div>
+
+  <div class="item c-aqi">
+    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4c4 0 4 3 8 3s4-3 8-3M4 11c4 0 4 3 8 3s4-3 8-3M4 18c4 0 4 3 8 3s4-3 8-3"/></svg></div>
+    <div class="body">
+      <div class="row1"><span class="name">Air quality</span><span class="badge">Trending down</span></div>
+      <div class="why">AQI is expected to <b>ease, clearing up slightly</b> &mdash; this lines up with easing traffic, which means fewer road emissions.</div>
+      <div class="meter"><div class="fill" style="left:40%;width:10%"></div></div>
+      <div class="meter-caption"><span>Poor air</span><span>Good air</span></div>
+    </div>
+  </div>
+
+  <div class="item c-weather">
+    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M4.9 4.9l2 2M17 17l2 2M3 12h3M18 12h3M4.9 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="3.5"/></svg></div>
+    <div class="body">
+      <div class="row1"><span class="name">Temperature</span><span class="badge">Trending up</span></div>
+      <div class="why">Readings are <b>trending upward</b>, likely from ordinary diurnal heating or the urban heat island effect.</div>
+      <div class="meter"><div class="fill" style="left:50%;width:20%"></div></div>
+      <div class="meter-caption"><span>Cooler</span><span>Warmer</span></div>
+    </div>
+  </div>
+
+  <div class="item c-energy">
+    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+    <div class="body">
+      <div class="row1"><span class="name">Energy demand</span><span class="badge">Trending up</span></div>
+      <div class="why">Electricity demand is <b>rising</b>, potentially driven by increased cooling needs as temperatures climb.</div>
+      <div class="meter"><div class="fill" style="left:50%;width:25%"></div></div>
+      <div class="meter-caption"><span>Less demand</span><span>More demand</span></div>
+    </div>
+  </div>
+
+  <div class="connects">
+    <div class="section-label">Interconnected output logic</div>
+    <div class="section-help">These four signals aren't independent &mdash; here's how the model links them.</div>
+
+    <div class="chain">
+      <span class="pill" style="background:rgba(255,138,61,0.14);color:var(--traffic)">Traffic trending down</span>
+      <span class="arrow">&#8594;</span>
+      <span class="pill" style="background:rgba(70,201,176,0.14);color:var(--aqi)">AQI trending down</span>
+      <div class="because">Easing traffic pressure means fewer road emissions, which is factored into the near-term AQI call. Secondary correlations with temperature are also weighed in.</div>
+    </div>
+
+    <div class="chain">
+      <span class="pill" style="background:rgba(111,184,232,0.14);color:var(--weather)">Temperature trending up</span>
+      <span class="arrow">&#8594;</span>
+      <span class="pill" style="background:rgba(180,142,234,0.14);color:var(--energy)">Energy trending up</span>
+      <div class="because">Rising temperature shifts the baseline for electricity demand as cooling needs adjust upward.</div>
+    </div>
+
+    <div class="chain" style="justify-content:center;">
+      <span style="font-size:13px;color:var(--muted);">Overall network momentum:</span>
+      <span class="pill" style="background:rgba(255,138,61,0.14);color:var(--traffic);margin-left:10px;">Traffic ↓</span>
+      <span class="arrow" style="padding:0 6px;">|</span>
+      <span class="pill" style="background:rgba(70,201,176,0.14);color:var(--aqi);">AQI ↓</span>
+      <span class="arrow" style="padding:0 6px;">|</span>
+      <span class="pill" style="background:rgba(111,184,232,0.14);color:var(--weather);">Temp ↑</span>
+      <span class="arrow">&#8594;</span>
+      <span class="pill" style="background:rgba(180,142,234,0.14);color:var(--energy);">Energy ↑</span>
+    </div>
+  </div>
+
+  <div class="summary" style="flex-direction:column;align-items:stretch;">
+    <p style="margin-bottom:14px;"><b>Simple summary</b></p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);">
+        <span style="color:var(--traffic);font-size:16px;">&#8595;</span>Traffic flow is trending <b>down</b> from current levels.
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);">
+        <span style="color:var(--aqi);font-size:16px;">&#8595;</span>AQI is trending <b>down</b> into the next hour.
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);">
+        <span style="color:var(--weather);font-size:16px;">&#8593;</span>Temperature is trending <b>up</b> relative to the current value.
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);">
+        <span style="color:var(--energy);font-size:16px;">&#8593;</span>Electricity demand is trending <b>up</b>.
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -6,7 +6,10 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT) || 5000,
-  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+  clientOrigin: (process.env.CLIENT_ORIGIN || 'http://localhost:3000,http://localhost:3001')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   http: {
     timeoutMs: Number(process.env.HTTP_TIMEOUT_MS) || 8000,
     retries: Number(process.env.HTTP_RETRIES) || 2,
