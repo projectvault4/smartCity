@@ -3,6 +3,11 @@ const path = require('path');
 
 const config = require('../config/env');
 
+const artifactSuffix = () => {
+  const year = config.modelForecast.forecastYear || '2026';
+  return year === '2026' ? '2026' : '';
+};
+
 const parseCsvLine = (line) => {
   const values = [];
   let current = '';
@@ -24,10 +29,11 @@ const parseCsvLine = (line) => {
 };
 
 const readEvents = () => {
+  const suffix = artifactSuffix();
   const eventsPath = path.join(
     config.modelForecast.projectRoot,
     'outputs',
-    'urban_events.json'
+    `urban_events${suffix ? `_${suffix}` : ''}.json`
   );
 
   if (!fs.existsSync(eventsPath)) {
@@ -38,10 +44,11 @@ const readEvents = () => {
 };
 
 const readTimelineRows = () => {
+  const suffix = artifactSuffix();
   const timelinePath = path.join(
     config.modelForecast.projectRoot,
     'outputs',
-    'urban_anomaly_timeline.csv'
+    `urban_anomaly_timeline${suffix ? `_${suffix}` : ''}.csv`
   );
 
   if (!fs.existsSync(timelinePath)) {
@@ -142,32 +149,48 @@ const getDailySeries = (rows) => {
     });
 };
 
-const buildAnomalies = (events) =>
-  events.map((event) => {
-    const features = (event.drivers || [])
-      .slice(0, 3)
-      .map((driver) => ({
-        name: featureNameFor(driver.feature),
-        dir: 'up',
-        pct: Math.min(100, Math.round(Math.abs(toNumber(driver.contribution) || 0) * 22))
-      }));
-
-    return {
-      key: keyOfTimestamp(event.timestamp),
-      label: formatLabel(event.timestamp),
-      score: Math.round((toNumber(event.anomaly_score) || 0) * 100) / 100,
-      severity: mapSeverity(event.severity),
-      features,
-      tags: [event.event_type, 'Model-detected'],
-      shap: (event.drivers || [])
-        .slice(0, 5)
-        .map((driver) => ({
-          f: featureNameFor(driver.feature),
-          v: Math.round((toNumber(driver.contribution) || 0) * 100) / 100
-        })),
-      interp: event.description || `Model detected a ${event.severity} anomaly (score ${event.anomaly_score}).`
-    };
+const buildAnomalies = (events) => {
+  // Collapse per-hour events to one per day (highest score) so the list,
+  // the calendar heatmap and the 3D day-sphere model all describe the same
+  // daily series instead of disagreeing on granularity.
+  const byDay = new Map();
+  events.forEach((event) => {
+    const key = keyOfTimestamp(event.timestamp);
+    const score = toNumber(event.anomaly_score) || 0;
+    const existing = byDay.get(key);
+    if (!existing || score > (toNumber(existing.anomaly_score) || 0)) {
+      byDay.set(key, { ...event, _key: key });
+    }
   });
+
+  return Array.from(byDay.values())
+    .sort((a, b) => (toNumber(b.anomaly_score) || 0) - (toNumber(a.anomaly_score) || 0))
+    .map((event) => {
+      const features = (event.drivers || [])
+        .slice(0, 3)
+        .map((driver) => ({
+          name: featureNameFor(driver.feature),
+          dir: 'up',
+          pct: Math.min(100, Math.round(Math.abs(toNumber(driver.contribution) || 0) * 22))
+        }));
+
+      return {
+        key: event._key,
+        label: formatLabel(event.timestamp),
+        score: Math.round((toNumber(event.anomaly_score) || 0) * 100) / 100,
+        severity: mapSeverity(event.severity),
+        features,
+        tags: [event.event_type, 'Model-detected'],
+        shap: (event.drivers || [])
+          .slice(0, 5)
+          .map((driver) => ({
+            f: featureNameFor(driver.feature),
+            v: Math.round((toNumber(driver.contribution) || 0) * 100) / 100
+          })),
+        interp: event.description || `Model detected a ${event.severity} anomaly (score ${event.anomaly_score}).`
+      };
+    });
+};
 
 const getAnomalyDashboard = () => {
   const events = readEvents();

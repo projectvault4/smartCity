@@ -2,19 +2,32 @@ FROM node:22-alpine AS deps
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY backend/package*.json ./
 RUN npm ci --omit=dev
 
 FROM node:22-alpine AS runtime
 
 ENV NODE_ENV=production
+ENV PROJECT_ROOT=/app
 WORKDIR /app
 
 RUN addgroup -S foresightx && adduser -S foresightx -G foresightx
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package*.json ./
-COPY src ./src
+COPY backend/package*.json ./
+COPY backend/src ./src
+
+# Forecast / anomaly artifacts served by the model API. These are copied from
+# the repository root build context (docker-compose sets context: .).
+RUN mkdir -p /app/outputs
+COPY outputs/past_present_future_forecast.csv ./outputs/past_present_future_forecast.csv
+COPY outputs/forecast_2026.csv ./outputs/forecast_2026.csv
+COPY outputs/urban_events.json ./outputs/urban_events.json
+COPY outputs/urban_anomaly_timeline.csv ./outputs/urban_anomaly_timeline.csv
+COPY outputs/urban_events_2026.json ./outputs/urban_events_2026.json
+COPY outputs/urban_anomaly_timeline_2026.csv ./outputs/urban_anomaly_timeline_2026.csv
+
+RUN chown -R foresightx:foresightx /app
 
 USER foresightx
 

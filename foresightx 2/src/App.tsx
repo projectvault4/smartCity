@@ -10,6 +10,7 @@ import SectionWrapper from './components/SectionWrapper';
 import Card from './components/Card';
 import Sparkline from './components/Sparkline';
 import CityPulseForecast from './components/CityPulseForecast';
+import YearlyOutlook from './components/YearlyOutlook';
 import XaiPanel from './components/XaiPanel';
 import MultivariatePanel from './components/MultivariatePanel';
 import QueryInterface from './components/QueryInterface';
@@ -45,7 +46,7 @@ function RootRedirect() {
 }
 
 // ── Admin dashboard ───────────────────────────────────────────────────────────
-type DashboardView = 'overview' | 'simulation' | 'prediction' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'advisories' | 'model';
+type DashboardView = 'overview' | 'simulation' | 'prediction' | 'yearly' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'advisories' | 'model';
 
 function AdminDashboard() {
   const { logout } = useAuth();
@@ -94,12 +95,31 @@ function AdminDashboard() {
     return () => { mounted = false; };
   }, []);
 
+  // Refresh the model forecast on a rolling interval so the prediction window
+  // stays anchored to the live server clock ("now -> now + horizon").
+  useEffect(() => {
+    const id = setInterval(() => {
+      backendApi.modelForecast('bangalore', 6)
+        .then((response) => setModelForecast(response.data))
+        .catch(() => {});
+      backendApi.modelConditions('bangalore')
+        .then((response: any) => {
+          if (!response?.data) return;
+          setModelConditions(response.data);
+          setCityData((prev) => cityDataFromModelConditions(response.data, prev));
+        })
+        .catch(() => {});
+    }, 300000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     if (['traffic', 'air', 'energy', 'weather', 'home'].includes(activeTab)) {
       setDashboardView('overview');
       setHeroMode(activeTab === 'home' ? 'home' : activeTab as any);
     } else if (activeTab === 'simulation') setDashboardView('simulation');
     else if (activeTab === 'prediction') setDashboardView('prediction');
+    else if (activeTab === 'yearly') setDashboardView('yearly');
     else if (activeTab === 'xai') setDashboardView('xai');
     else if (activeTab === 'analytics') setDashboardView('analytics');
     else if (activeTab === 'anomaly') setDashboardView('anomaly');
@@ -136,7 +156,7 @@ function AdminDashboard() {
             {dashboardView === 'overview' && (
               <div className="space-y-12">
                 <div className="space-y-8">
-                  <QueryInterface />
+                  <QueryInterface modelConditions={modelConditions} forecast={modelForecast || []} />
                   <EventImpact />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -181,6 +201,14 @@ function AdminDashboard() {
               <div className="space-y-8">
                 <SectionWrapper id="s-forecast" label="6-Hour Forecast" theme="home">
                   <CityPulseForecast forecast={modelForecast} />
+                </SectionWrapper>
+              </div>
+            )}
+
+            {dashboardView === 'yearly' && (
+              <div className="space-y-8">
+                <SectionWrapper id="s-yearly" label="2026 Long-Range Forecast" theme="home">
+                  <YearlyOutlook city="bangalore" />
                 </SectionWrapper>
               </div>
             )}

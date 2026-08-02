@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Loader2, RefreshCw, Send, Trash2 } from 'lucide-react';
-import { backendApi, ModelConditions } from '../services/dataService';
+import { Loader2, RefreshCw, Send, Trash2, TrendingUp } from 'lucide-react';
+import { backendApi, ForecastPoint, ModelConditions } from '../services/dataService';
 import { HealthKey } from '../services/memberProfile';
 
 interface Member {
@@ -26,6 +26,14 @@ interface Prediction {
   drivers: string[];
   factors: string[];
   status: { label: 'ALERT' | 'WATCH' | 'SAFE'; color: string };
+  peakHour?: string;
+}
+
+interface ForecastHour {
+  stepAhead: number;
+  timestamp: string;
+  cond: Conditions;
+  alertCount: number;
 }
 
 const HTML_KEY: Record<HealthKey, string> = {
@@ -112,18 +120,28 @@ const computeScore = (member: Member, cond: Conditions): Prediction => {
   };
 };
 
-const draftMessage = (member: Member, drivers: string[]): string => {
+const draftMessage = (member: Member, drivers: string[], peakHour?: string): string => {
   const trigger = drivers.length ? drivers.join(' + ') : 'current conditions';
+  const when = peakHour ? ` around ${peakHour}` : '';
   const first = member.name.split(' ')[0];
   const health = member.preferences?.health_conditions || [];
   if (health.some((k) => ['asthma_copd', 'heart', 'pregnant'].includes(k))) {
-    return `Hi ${first}, conditions in ${member.ward || 'your area'} may affect your health today (${trigger}). Please limit outdoor exposure and keep any prescribed medication on hand.`;
+    return `Hi ${first}, conditions in ${member.ward || 'your area'} may affect your health${when} (${trigger}). Please limit outdoor exposure and keep any prescribed medication on hand.`;
   }
   if (health.some((k) => ['works_outdoors', 'limited_mobility'].includes(k))) {
-    return `Hi ${first}, conditions in ${member.ward || 'your area'} are difficult today (${trigger}). Take extra breaks/care if you're outdoors or travelling.`;
+    return `Hi ${first}, conditions in ${member.ward || 'your area'} are difficult${when} (${trigger}). Take extra breaks/care if you're outdoors or travelling.`;
   }
-  return `Hi ${first}, conditions in ${member.ward || 'your area'} have shifted (${trigger}). Take normal precautions today.`;
+  return `Hi ${first}, conditions in ${member.ward || 'your area'} have shifted${when} (${trigger}). Take normal precautions today.`;
 };
+
+const forecastToConditions = (p: ForecastPoint): Conditions => ({
+  aqi: Math.round(Number(p.aqi) || 0),
+  temp: Math.round(Number(p.temperature) || 0),
+  rain: p.weather?.main === 'Rain' ? 12 : 0,
+  traffic: p.traffic?.congestionLevel === 'severe' || p.traffic?.congestionLevel === 'heavy'
+    ? 'Severe'
+    : p.traffic?.congestionLevel === 'moderate' ? 'Moderate' : 'Low',
+});
 
 const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelConditions?: ModelConditions | null }) => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -133,6 +151,9 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
   const [toast, setToast] = useState('');
+  const [forecastMode, setForecastMode] = useState(false);
+  const [forecastHours, setForecastHours] = useState<ForecastHour[]>([]);
+  const [selectedHour, setSelectedHour] = useState<number | null>(null);
 
   const loadMembers = async () => {
     try {
@@ -149,6 +170,28 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
       setSmsHistory(response.data || []);
     } catch (err: any) {
       setError(err?.message || 'Could not load SMS history.');
+    }
+  };
+
+  const loadForecast = async () => {
+    setLoading('forecast');
+    setError('');
+    try {
+      const response: any = await backendApi.modelForecast('bangalore', 6);
+      const points: ForecastPoint[] = response.data || [];
+      const hours: ForecastHour[] = points.map((p) => ({
+        stepAhead: p.stepAhead,
+        timestamp: p.timestamp,
+        cond: forecastToConditions(p),
+        alertCount: 0,
+      }));
+      setForecastHours(hours);
+      setForecastMode(true);
+      if (!selectedHour && hours.length) setSelectedHour(hours[0].stepAhead);
+    } catch (err: any) {
+      setError(err?.message || 'Could not load model forecast.');
+    } finally {
+      setLoading('');
     }
   };
 
@@ -190,10 +233,39 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
   };
 
   const predict = () => {
-    setPredictions(members.map((m) => computeScore(m, cond)));
+    if (forecastMode && forecastHours.length) {
+      const perHour = forecastHours.map((h) => ({
+        hour: h,
+        preds: members.map((m) => computeScore(m, h.cond)),
+      }));
+
+      const worst: Prediction[] = members.map((m, i) => {
+        let best = perHour[0].preds[i];
+        let bestHour = perHour[0].hour;
+        perHour.forEach((entry) => {
+          if (entry.preds[i].score > best.score) {
+            best = entry.preds[i];
+            bestHour = entry.hour;
+          }
+        });
+        return { ...best, peakHour: `T+${bestHour.stepAhead}H` };
+      });
+
+      const withCounts = perHour.map((entry) => ({
+        ...entry,
+        hour: {
+          ...entry.hour,
+          alertCount: entry.preds.filter((p) => p.status.label === 'ALERT').length,
+        },
+      }));
+      setForecastHours(withCounts.map((e) => e.hour));
+      setPredictions(worst);
+    } else {
+      setPredictions(members.map((m) => computeScore(m, cond)));
+    }
   };
 
-  useEffect(() => { predict(); }, [members, cond]);
+  useEffect(() => { predict(); }, [members, cond, forecastMode, forecastHours]);
 
   const removeMember = async (id: string) => {
     setLoading(id);
@@ -223,7 +295,7 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
           advisory: {
             userId: p.member.id,
             title: `Health advisory for ${p.member.name}`,
-            message: draftMessage(p.member, p.drivers),
+            message: draftMessage(p.member, p.drivers, p.peakHour),
             severity: p.score >= 70 ? 'critical' : 'warning',
             riskScore: p.score,
             deliveryChannels: channels,
@@ -255,9 +327,64 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {/* LIVE CONDITIONS + PREDICTIONS */}
+        {/* LIVE / FORECAST CONDITIONS + PREDICTIONS */}
         <div className="rounded-2xl border border-[#1c3326] bg-[#0f1f16] p-6">
-          <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.08em] text-[#7b9686]">② Live conditions → predicted risk per member</div>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#7b9686]">② Conditions → predicted risk per member</div>
+            <div className="flex rounded-lg border border-[#1c3326] p-1">
+              <button
+                onClick={() => { setForecastMode(false); setSelectedHour(null); }}
+                className={`rounded-md px-3.5 py-1.5 text-[11px] font-bold transition ${
+                  !forecastMode ? 'bg-[#7ef7ba] text-[#06150c]' : 'text-[#7b9686] hover:text-white'
+                }`}
+              >
+                Live conditions
+              </button>
+              <button
+                onClick={loadForecast}
+                disabled={loading === 'forecast'}
+                className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-[11px] font-bold transition ${
+                  forecastMode ? 'bg-[#7ef7ba] text-[#06150c]' : 'text-[#7b9686] hover:text-white'
+                }`}
+              >
+                {loading === 'forecast' ? <Loader2 size={12} className="animate-spin" /> : <TrendingUp size={12} />}
+                Forecast T+1H→T+6H
+              </button>
+            </div>
+          </div>
+
+          {forecastMode && forecastHours.length > 0 && (
+            <div className="mb-5 rounded-xl border border-[#1c3326] bg-[#0a1810] p-3">
+              <div className="mb-2.5 font-mono text-[10.5px] uppercase tracking-[0.08em] text-[#4d6357]">
+                Model forecast window — alerts auto-trigger on the worst hour per member
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {forecastHours.map((h) => (
+                  <button
+                    key={h.stepAhead}
+                    onClick={() => setSelectedHour(h.stepAhead)}
+                    className={`min-w-[92px] rounded-lg border px-3 py-2 text-left transition ${
+                      selectedHour === h.stepAhead
+                        ? 'border-[#7ef7ba] bg-[rgba(126,247,186,0.08)]'
+                        : 'border-[#1c3326] bg-[#12261b] hover:border-[#2f6b45]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10.5px] font-bold text-[#7ef7ba]">T+{h.stepAhead}H</span>
+                      {h.alertCount > 0 && (
+                        <span className="rounded-full bg-[#f0665f]/15 px-1.5 py-0.5 font-mono text-[9.5px] font-bold text-[#f0665f]">
+                          {h.alertCount}
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 font-mono text-[10px] text-[#7b9686]">
+                      AQI {h.cond.aqi} · {h.cond.temp}°C
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-end gap-3">
             {([['aqi', 'AQI', 'number'], ['temp', 'Temp °C', 'number'], ['rain', 'Rain mm', 'number']] as const).map(([key, label, type]) => (
@@ -266,8 +393,9 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
                 <input
                   type={type}
                   value={cond[key]}
+                  disabled={forecastMode}
                   onChange={(e) => setCond({ ...cond, [key]: Number(e.target.value) || 0 })}
-                  className="w-full rounded-lg border border-[#1c3326] bg-[#12261b] px-2.5 py-2 font-mono text-[13px] text-white outline-none focus:border-[#4ade80]/50"
+                  className="w-full rounded-lg border border-[#1c3326] bg-[#12261b] px-2.5 py-2 font-mono text-[13px] text-white outline-none focus:border-[#4ade80]/50 disabled:opacity-40"
                 />
               </div>
             ))}
@@ -275,8 +403,9 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
               <label className="mb-1.5 block text-[10.5px] uppercase tracking-[0.08em] text-[#4d6357]">Traffic</label>
               <select
                 value={cond.traffic}
+                disabled={forecastMode}
                 onChange={(e) => setCond({ ...cond, traffic: e.target.value as Conditions['traffic'] })}
-                className="w-full rounded-lg border border-[#1c3326] bg-[#12261b] px-2.5 py-2 font-mono text-[13px] text-white outline-none focus:border-[#4ade80]/50"
+                className="w-full rounded-lg border border-[#1c3326] bg-[#12261b] px-2.5 py-2 font-mono text-[13px] text-white outline-none focus:border-[#4ade80]/50 disabled:opacity-40"
               >
                 <option>Low</option>
                 <option>Moderate</option>
@@ -355,6 +484,11 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
                           Driven by <b className="text-[#f0b849]">{p.drivers.join(', ')}</b>
                         </div>
                       )}
+                      {p.peakHour && (
+                        <div className="mt-1 font-mono text-[10.5px] text-[#4d6357]">
+                          Peaks at <b className="text-[#7ef7ba]">{p.peakHour}</b>
+                        </div>
+                      )}
                     </td>
                     <td className="px-3 py-3">
                       <span
@@ -386,7 +520,7 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-[#16281d] pt-4">
             <div className="text-[13px] text-[#7b9686]">
-              <b className="font-mono text-[16px] text-[#7ef7ba]">{flagged.length}</b> flagged for an advisory right now
+              <b className="font-mono text-[16px] text-[#7ef7ba]">{flagged.length}</b> flagged for an advisory {forecastMode ? 'in the forecast window' : 'right now'}
             </div>
             <button
               onClick={sendAlerts}
@@ -403,8 +537,11 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
               <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#7b9686]">Auto-drafted, per-person</div>
               {flagged.map((p) => (
                 <div key={p.member.id} className="flex gap-2.5 border-b border-[#16281d] py-2 text-[12px] text-[#7b9686] last:border-b-0">
-                  <b className="inline-block min-w-[100px] text-white">{p.member.name}</b>
-                  {draftMessage(p.member, p.drivers)}
+                  <b className="inline-block min-w-[100px] text-white">
+                    {p.member.name}
+                    {p.peakHour ? <span className="block font-mono text-[9.5px] text-[#7ef7ba]">{p.peakHour}</span> : null}
+                  </b>
+                  {draftMessage(p.member, p.drivers, p.peakHour)}
                 </div>
               ))}
             </div>
@@ -416,6 +553,7 @@ const RiskAdvisoryConsole = ({ initialModelConditions = null }: { initialModelCo
             </div>
           )}
         </div>
+
       </div>
 
       {/* INBOX / SMS HISTORY */}

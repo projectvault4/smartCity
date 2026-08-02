@@ -10,14 +10,12 @@ import { ForecastPoint } from '../services/dataService';
 function buildSeries(forecast?: ForecastPoint[] | null) {
   if (forecast && forecast.length > 0) {
     const sorted = [...forecast].sort((a, b) => a.stepAhead - b.stepAhead);
-    return Array.from({ length: 12 }, (_, i) => {
-      const p = sorted[i % sorted.length];
-      return {
-        aqi: p.aqi ?? 55,
-        energy: p.electricityDemand ?? 4000,
-        traffic: p.trafficFlow ?? 6000,
-      };
-    });
+    // Use the current T+1 forecast point as a flat baseline so the curves
+    // line up exactly with the AQI / energy shown elsewhere on the dashboard.
+    const current = sorted[0];
+    const aqi = current.aqi ?? 45;
+    const energy = current.electricityDemand ?? 4755;
+    return Array.from({ length: 12 }, (_, i) => ({ aqi, energy, traffic: current.trafficFlow ?? 19960 }));
   }
   // Fallback when the model forecast isn't available
   return Array.from({ length: 12 }, (_, i) => {

@@ -28,11 +28,31 @@ const impactLabel = (from: string, to: string, s: MultivariateAnalysis['stats'])
   return 'Observed';
 };
 
-const causalDescs: Record<string, string> = {
-  'Traffic→AQI': 'Combustion emissions and road dust resuspension during peak flow, measured from the trained-model time series.',
-  'Weather→Energy': 'Thermodynamic load adjustment for industrial and residential cooling, from the trained-model temperature/energy series.',
-  'Energy→Economic': 'Proxy for industrial output and commercial activity intensity (model-derived correlation shown).',
-  'AQI→Health': 'Respiratory stressors and cardiovascular impact clusters (correlation shown from trained-model AQI series).',
+const strengthWord = (r: number) =>
+  r >= 0.9 ? 'very strong' : r >= 0.7 ? 'strong' : r >= 0.5 ? 'moderate' : r >= 0.3 ? 'weak' : 'very weak';
+
+const causalDescs = (from: string, to: string, s: MultivariateAnalysis['stats']): string => {
+  const r = (from === 'Traffic' && to === 'AQI')
+    ? s.phaseLagCorr
+    : (from === 'Weather' && to === 'Energy')
+      ? s.tempEnergyCorr
+      : (from === 'Energy' && to === 'Economic')
+        ? s.aqiEnergyCorr
+        : s.coherence;
+  const strength = strengthWord(r);
+
+  switch (from + '→' + to) {
+    case 'Traffic→AQI':
+      return `A ${strength} correlation (ρ=${r}) between vehicle flow and air quality, measured from the trained-model time series — the model links more traffic to more pollution in the air.`;
+    case 'Weather→Energy':
+      return `A ${strength} correlation (ρ=${r}) between temperature and electricity use, from the trained-model series — the model ties warmer weather to more cooling demand.`;
+    case 'Energy→Economic':
+      return `A ${strength} correlation (ρ=${r}) in the trained-model series — used as a proxy for industrial output and commercial activity, since direct economic data is not part of the model.`;
+    case 'AQI→Health':
+      return `A ${strength} correlation (ρ=${r}) in the trained-model AQI series — a proxy for respiratory and cardiovascular stress, since direct health records are not part of the model.`;
+    default:
+      return 'Observed relationship in the trained-model series.';
+  }
 };
 
 const MultivariatePanel = ({ data }: { data: CityData }) => {
@@ -136,7 +156,7 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
                 </div>
                 <div className="flex-1">
                    <div className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Impact: {impactLabel(rel.from, rel.to, stats)}</div>
-                   <p className="text-xs text-white/60 font-medium leading-normal">{causalDescs[`${rel.from}→${rel.to}`]}</p>
+                   <p className="text-xs text-white/60 font-medium leading-normal">{causalDescs(rel.from, rel.to, stats)}</p>
                 </div>
              </div>
            ))}

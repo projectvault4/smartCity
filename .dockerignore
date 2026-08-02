@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+
+# Backend node modules / builds
+**/node_modules
+**/dist
+
+# Python virtual environments
+**/venv
+**/.venv
+__pycache__
+*.pyc
+
+# Raw datasets (large, local-only)
+datasets/
+
+# Large binary/model outputs (kept local)
+*.pt
+*.pkl
+*.zip
+*.jpg
+*.jpeg
+*.png
+outputs/checkpoints/
+outputs/**/checkpoints/
+outputs/fair_tuning_checkpoints/
+outputs/cache/
+outputs/plots/
+outputs/graph_outputs/
+outputs/mplconfig/
+
+# Only the small artifacts the backend API serves are needed
+outputs/*
+!outputs/past_present_future_forecast.csv
+!outputs/forecast_2026.csv
+!outputs/urban_events.json
+!outputs/urban_anomaly_timeline.csv
+!outputs/urban_events_2026.json
+!outputs/urban_anomaly_timeline_2026.csv
+
+# Frontend sources (built separately with its own context)
+foresightx 2/
+
+# Environment & local cruft
+.env
+.env.*
+!.env.example
+!.env.*.example
+.DS_Store
+**/.DS_Store
+*.log

@@ -1,0 +1,2242 @@
+[
+  {
+    "timestamp": "2026-05-01T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.7594,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.054
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.299
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.975792227294834,
+    "longitude": 77.62622967891897
+  },
+  {
+    "timestamp": "2026-05-01T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "High",
+    "anomaly_score": 0.7082,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 9.067
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 4.753
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.269
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.248
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.965828794409825,
+    "longitude": 77.62875466497213
+  },
+  {
+    "timestamp": "2026-04-02T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "High",
+    "anomaly_score": 0.7031,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.906
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.942487298347624,
+    "longitude": 77.56932817440803
+  },
+  {
+    "timestamp": "2026-05-01T03:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6981,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 9.654
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 5.794
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.88
+      },
+      {
+        "feature": "Temperature Lag 24",
+        "contribution": 2.248
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.960972782592323,
+    "longitude": 77.62939184129577
+  },
+  {
+    "timestamp": "2026-09-01T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6825,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.685
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.476
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.95124087508042,
+    "longitude": 77.6181711908898
+  },
+  {
+    "timestamp": "2026-05-01T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6691,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 7.188
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.386
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.76
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.612
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.970802385763843,
+    "longitude": 77.62769625974869
+  },
+  {
+    "timestamp": "2026-05-01T04:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6674,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 8.649
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.533
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.454
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.556
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.956333284166636,
+    "longitude": 77.62959993043486
+  },
+  {
+    "timestamp": "2026-04-01T09:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6466,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.793
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.673
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.201
+      },
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 2.153
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Traffic Flow Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.003695509929704,
+    "longitude": 77.57291595037486
+  },
+  {
+    "timestamp": "2026-05-02T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.6441,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.752
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.977414852284095,
+    "longitude": 77.57332331769561
+  },
+  {
+    "timestamp": "2026-04-01T08:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.642,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 8.692
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.426
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.973
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.112
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Traffic Flow Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.005356053555477,
+    "longitude": 77.57609601651339
+  },
+  {
+    "timestamp": "2026-04-01T18:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6413,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.852
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.765
+      },
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 2.531
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.361
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Std 24, Electricity Demand Diff 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.967229979460893,
+    "longitude": 77.55976577028022
+  },
+  {
+    "timestamp": "2026-04-01T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6204,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 9.152
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 4.424
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.762
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.597
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.997620549389877,
+    "longitude": 77.60226286269024
+  },
+  {
+    "timestamp": "2026-09-01T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6078,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 8.006
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.68
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.935
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.576
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.947395032219296,
+    "longitude": 77.61515700131393
+  },
+  {
+    "timestamp": "2026-09-01T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.6042,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 10.012
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 5.147
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.466
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.332
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.944042328763533,
+    "longitude": 77.61188928259193
+  },
+  {
+    "timestamp": "2026-04-09T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5984,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.034
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.976844659200673,
+    "longitude": 77.56534575171024
+  },
+  {
+    "timestamp": "2026-09-01T09:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5982,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.278
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.282
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.77
+      },
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 2.021
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.938553954626885,
+    "longitude": 77.5855644041489
+  },
+  {
+    "timestamp": "2026-04-23T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.597,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.034
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.994827975176769,
+    "longitude": 77.56040855081977
+  },
+  {
+    "timestamp": "2026-04-01T17:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5968,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.225
+      },
+      {
+        "feature": "Electricity Demand Lag 6",
+        "contribution": 2.482
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.256
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 12",
+        "contribution": 2.243
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Electricity Demand Lag 6, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.972218512491358,
+    "longitude": 77.55960330634636
+  },
+  {
+    "timestamp": "2026-04-16T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5963,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.034
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.005162050319502,
+    "longitude": 77.56233911470423
+  },
+  {
+    "timestamp": "2026-04-01T06:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5949,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 9.268
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.684
+      },
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.277
+      },
+      {
+        "feature": "Traffic Flow Diff 1",
+        "contribution": 2.385
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Aqi Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.00659413641781,
+    "longitude": 77.58309874252451
+  },
+  {
+    "timestamp": "2026-04-30T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5941,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.034
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.95774358858636,
+    "longitude": 77.559618454691
+  },
+  {
+    "timestamp": "2026-04-01T07:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5854,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 9.158
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.097
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.321
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.124
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Traffic Flow Roll Std 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006328868929412,
+    "longitude": 77.57950429196426
+  },
+  {
+    "timestamp": "2026-04-01T10:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5812,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.849
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.255
+      },
+      {
+        "feature": "Electricity Demand Diff 1",
+        "contribution": 2.463
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.107
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Aqi Roll Std 12, Electricity Demand Diff 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.001381069102955,
+    "longitude": 77.57000331325004
+  },
+  {
+    "timestamp": "2026-05-01T05:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.572,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.981
+      },
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.671
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.928
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.042
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 6, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.95200482185701,
+    "longitude": 77.62937636602963
+  },
+  {
+    "timestamp": "2026-05-23T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5694,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.285
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.209
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Aqi Roll Z 24, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.97473593470489,
+    "longitude": 77.59094038456332
+  },
+  {
+    "timestamp": "2026-05-09T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5686,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.31
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.283
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Traffic Flow Roll Mean 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.942811783241448,
+    "longitude": 77.57873243058067
+  },
+  {
+    "timestamp": "2026-05-16T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5684,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.285
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.274
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Aqi Roll Z 24, Traffic Flow Roll Mean 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.941362433300615,
+    "longitude": 77.58467081179798
+  },
+  {
+    "timestamp": "2026-02-01T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5677,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.294
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.494
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.953953586662035,
+    "longitude": 77.61394269344353
+  },
+  {
+    "timestamp": "2026-09-01T08:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5666,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.118
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.097
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.044
+      },
+      {
+        "feature": "Traffic Flow Roll Std 6",
+        "contribution": 2.536
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.937248929003562,
+    "longitude": 77.58936946040029
+  },
+  {
+    "timestamp": "2026-05-30T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5645,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.285
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.135
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Aqi Roll Z 24, Humidity Roll Z 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.004497962039775,
+    "longitude": 77.59733202508258
+  },
+  {
+    "timestamp": "2026-04-01T16:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5635,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.521
+      },
+      {
+        "feature": "Electricity Demand Lag 6",
+        "contribution": 2.367
+      },
+      {
+        "feature": "Electricity Demand Lag 3",
+        "contribution": 2.288
+      },
+      {
+        "feature": "Electricity Demand Roll Mean 12",
+        "contribution": 2.137
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Electricity Demand Lag 6, Electricity Demand Lag 3. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.977194444270504,
+    "longitude": 77.55987245603767
+  },
+  {
+    "timestamp": "2026-06-02T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5609,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.924
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.959220516615947,
+    "longitude": 77.55968060611717
+  },
+  {
+    "timestamp": "2026-09-01T06:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5605,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.663
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 4.523
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.084
+      },
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 2.289
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936750759754704,
+    "longitude": 77.597125374098
+  },
+  {
+    "timestamp": "2026-04-01T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5602,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 11.604
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.179
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 2.94
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.287
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.000688111775561,
+    "longitude": 77.59842887373205
+  },
+  {
+    "timestamp": "2026-04-01T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5598,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 5.233
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.304
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.99402285788485,
+    "longitude": 77.60600234569372
+  },
+  {
+    "timestamp": "2026-04-01T19:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5475,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.386
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 3.109
+      },
+      {
+        "feature": "Traffic Flow Lag 1",
+        "contribution": 2.481
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.432
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Std 24, Traffic Flow Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.962330478952579,
+    "longitude": 77.56035784417433
+  },
+  {
+    "timestamp": "2026-06-16T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5444,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.991
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.954373866615066,
+    "longitude": 77.56114155009921
+  },
+  {
+    "timestamp": "2026-06-23T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.543,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.991
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.9918836223105,
+    "longitude": 77.56356790288504
+  },
+  {
+    "timestamp": "2026-04-16T01:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5425,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.801
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.667
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.387
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.352
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.003406526754263,
+    "longitude": 77.56404309765591
+  },
+  {
+    "timestamp": "2026-04-09T01:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5424,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.799
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.665
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.387
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.353
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.971864485176516,
+    "longitude": 77.56765667881113
+  },
+  {
+    "timestamp": "2026-04-23T01:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5414,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.801
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.668
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.387
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.352
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.998318836714406,
+    "longitude": 77.56144875267444
+  },
+  {
+    "timestamp": "2026-06-09T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5409,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.991
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936702449370548,
+    "longitude": 77.55983121562153
+  },
+  {
+    "timestamp": "2026-04-30T01:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5398,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.801
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.668
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.387
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.351
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Aqi Roll Z 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.96246061251517,
+    "longitude": 77.55996017915169
+  },
+  {
+    "timestamp": "2026-04-01T03:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5391,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 12.446
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.523
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.825
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.149
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.003163048123733,
+    "longitude": 77.59454766333951
+  },
+  {
+    "timestamp": "2026-06-30T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5388,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.991
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.829
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006033906938667,
+    "longitude": 77.56702934213253
+  },
+  {
+    "timestamp": "2026-06-01T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5378,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.093
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.854
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.992739765348462,
+    "longitude": 77.6245691742272
+  },
+  {
+    "timestamp": "2026-03-02T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5349,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.889
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.441
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936663050580984,
+    "longitude": 77.56045297405217
+  },
+  {
+    "timestamp": "2026-04-01T05:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5328,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 9.041
+      },
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.173
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.181
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.142
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 6, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.006146451599042,
+    "longitude": 77.5868350378968
+  },
+  {
+    "timestamp": "2026-09-01T03:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5322,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 10.498
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 6.247
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.045
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.134
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.941251070946937,
+    "longitude": 77.60840833544299
+  },
+  {
+    "timestamp": "2026-04-08T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5305,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.724
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.956774732578323,
+    "longitude": 77.61183041118008
+  },
+  {
+    "timestamp": "2026-04-15T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5305,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.724
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936600007678285,
+    "longitude": 77.61708375027023
+  },
+  {
+    "timestamp": "2026-09-01T10:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5278,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 5.408
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 4.891
+      },
+      {
+        "feature": "Electricity Demand Roll Z 24",
+        "contribution": 2.517
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.139
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Aqi Roll Std 12, Electricity Demand Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.940532243165178,
+    "longitude": 77.58187078374684
+  },
+  {
+    "timestamp": "2026-04-22T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.527,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.724
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.956732743422023,
+    "longitude": 77.62158713599995
+  },
+  {
+    "timestamp": "2026-04-01T04:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5237,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 11.241
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 8.47
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 4.568
+      },
+      {
+        "feature": "Aqi Lag 12",
+        "contribution": 2.148
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.004994935370409,
+    "longitude": 77.59066709841412
+  },
+  {
+    "timestamp": "2026-04-29T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5234,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.725
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.993987236047573,
+    "longitude": 77.6251903563619
+  },
+  {
+    "timestamp": "2026-09-01T07:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.523,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.559
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 4.848
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 3.128
+      },
+      {
+        "feature": "Traffic Flow Diff 1",
+        "contribution": 1.985
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 24, Electricity Demand Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.93664375420748,
+    "longitude": 77.59323902480723
+  },
+  {
+    "timestamp": "2026-03-23T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5222,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.954
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.308
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.004859782088017,
+    "longitude": 77.56947052206105
+  },
+  {
+    "timestamp": "2026-03-16T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5219,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.954
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.308
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.995577945680115,
+    "longitude": 77.56545886377927
+  },
+  {
+    "timestamp": "2026-03-09T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5201,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.954
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.307
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.958682100305127,
+    "longitude": 77.56241921829663
+  },
+  {
+    "timestamp": "2026-04-01T11:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5164,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 6.959
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.32
+      },
+      {
+        "feature": "Electricity Demand Lag 1",
+        "contribution": 2.367
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.149
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Aqi Roll Std 12, Electricity Demand Lag 1. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.99845988428706,
+    "longitude": 77.56739402664286
+  },
+  {
+    "timestamp": "2026-03-30T00:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5163,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 3.954
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 3.308
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Humidity Roll Z 24, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.975838257020566,
+    "longitude": 77.57432038287575
+  },
+  {
+    "timestamp": "2026-09-01T05:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5162,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.48
+      },
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.658
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 4.121
+      },
+      {
+        "feature": "Electricity Demand Roll Std 24",
+        "contribution": 2.62
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 12, Aqi Roll Std 6, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.937567765569952,
+    "longitude": 77.60098057799313
+  },
+  {
+    "timestamp": "2026-03-30T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.514,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.789
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.073
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.925
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.557
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.980741424362659,
+    "longitude": 77.57128239044559
+  },
+  {
+    "timestamp": "2026-03-01T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5134,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.522
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.152
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 3.115
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.937
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Temperature Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.004513759916708,
+    "longitude": 77.62847965814959
+  },
+  {
+    "timestamp": "2026-03-23T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5134,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.789
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.073
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.925
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.557
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 13.00607267430623,
+    "longitude": 77.56692415495473
+  },
+  {
+    "timestamp": "2026-03-16T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5129,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.79
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.073
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.925
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.556
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.991703745172277,
+    "longitude": 77.56348905696296
+  },
+  {
+    "timestamp": "2026-05-02T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5127,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 4.765
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.78
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.739
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 2.649
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Z 24, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.982269376579302,
+    "longitude": 77.57037305464233
+  },
+  {
+    "timestamp": "2026-03-09T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5115,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.79
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 3.073
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.925
+      },
+      {
+        "feature": "Temperature Roll Z 24",
+        "contribution": 2.556
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.954182499035635,
+    "longitude": 77.56109167536619
+  },
+  {
+    "timestamp": "2026-09-01T04:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5074,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 9.21
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 7.017
+      },
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 3.636
+      },
+      {
+        "feature": "Electricity Demand Lag 24",
+        "contribution": 2.11
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.939078126402318,
+    "longitude": 77.60475709032885
+  },
+  {
+    "timestamp": "2026-04-02T01:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5068,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 3.012
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.387
+      },
+      {
+        "feature": "Electricity Demand Lag 12",
+        "contribution": 2.291
+      },
+      {
+        "feature": "Aqi Roll Z 12",
+        "contribution": 2.242
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Humidity Roll Z 24, Electricity Demand Lag 12. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.940017851364999,
+    "longitude": 77.57216896387578
+  },
+  {
+    "timestamp": "2026-03-31T00:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5054,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 4.321
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 4.283
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Traffic Flow Roll Mean 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.957701021976378,
+    "longitude": 77.5995910076612
+  },
+  {
+    "timestamp": "2026-03-24T00:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5052,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 4.321
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 4.263
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Traffic Flow Roll Mean 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.93661542022121,
+    "longitude": 77.6058082151124
+  },
+  {
+    "timestamp": "2026-03-17T00:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5045,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 4.322
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 4.231
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Traffic Flow Roll Mean 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.955819529378285,
+    "longitude": 77.61165156862525
+  },
+  {
+    "timestamp": "2026-05-16T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.503,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 5.421
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.247
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.636
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 2.584
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Traffic Flow Roll Mean 24, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.937620375167306,
+    "longitude": 77.57751796953183
+  },
+  {
+    "timestamp": "2026-04-01T20:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5026,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 24",
+        "contribution": 4.807
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 3.217
+      },
+      {
+        "feature": "Traffic Flow Lag 2",
+        "contribution": 2.481
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 12",
+        "contribution": 2.262
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 24, Traffic Flow Roll Std 24, Traffic Flow Lag 2. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.957619830837652,
+    "longitude": 77.56137222599145
+  },
+  {
+    "timestamp": "2026-08-01T00:00:00",
+    "event_type": "Possible weather impact",
+    "severity": "Medium",
+    "anomaly_score": 0.5013,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.506
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.15
+      },
+      {
+        "feature": "Humidity Roll Z 6",
+        "contribution": 2.831
+      },
+      {
+        "feature": "Temperature Roll Z 12",
+        "contribution": 2.485
+      }
+    ],
+    "description": "Possible weather impact inferred from unusual historical movement in Humidity Roll Z 24, Humidity Roll Z 12, Humidity Roll Z 6. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.939664138830608,
+    "longitude": 77.62918930235563
+  },
+  {
+    "timestamp": "2026-03-10T00:00:00",
+    "event_type": "Possible congestion pattern",
+    "severity": "Medium",
+    "anomaly_score": 0.5005,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 4.323
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 4.184
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 3.465
+      },
+      {
+        "feature": "Humidity Roll Z 12",
+        "contribution": 3.213
+      }
+    ],
+    "description": "Possible congestion pattern inferred from unusual historical movement in Traffic Flow Roll Std 24, Traffic Flow Roll Mean 24, Humidity Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.99319709105153,
+    "longitude": 77.61692616109791
+  },
+  {
+    "timestamp": "2026-05-09T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Medium",
+    "anomaly_score": 0.5001,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 5.421
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.285
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.637
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 2.584
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Traffic Flow Roll Mean 24, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.949589131998493,
+    "longitude": 77.57224697939884
+  },
+  {
+    "timestamp": "2026-05-23T02:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Low",
+    "anomaly_score": 0.4996,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 5.421
+      },
+      {
+        "feature": "Traffic Flow Roll Mean 24",
+        "contribution": 3.182
+      },
+      {
+        "feature": "Traffic Flow Roll Std 24",
+        "contribution": 2.636
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 2.584
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Traffic Flow Roll Mean 24, Traffic Flow Roll Std 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.964783980939076,
+    "longitude": 77.58335873677044
+  },
+  {
+    "timestamp": "2026-03-02T01:00:00",
+    "event_type": "Possible air-quality deterioration",
+    "severity": "Low",
+    "anomaly_score": 0.4988,
+    "threshold": 0.4487,
+    "drivers": [
+      {
+        "feature": "Aqi Roll Std 6",
+        "contribution": 6.745
+      },
+      {
+        "feature": "Aqi Roll Std 12",
+        "contribution": 2.982
+      },
+      {
+        "feature": "Aqi Roll Z 24",
+        "contribution": 2.941
+      },
+      {
+        "feature": "Humidity Roll Z 24",
+        "contribution": 2.445
+      }
+    ],
+    "description": "Possible air-quality deterioration inferred from unusual historical movement in Aqi Roll Std 6, Aqi Roll Std 12, Aqi Roll Z 24. This is a model-generated explanation from uploaded historical data, not a confirmed real-world event.",
+    "latitude": 12.936719978289013,
+    "longitude": 77.55981197566673
+  }
+]
