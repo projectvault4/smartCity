@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Card from './Card';
-import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { ForecastPoint } from '../services/dataService';
+import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
+import { ForecastPoint, backendApi } from '../services/dataService';
 
 // Traffic congestion drives AQI and grid load up — that's the ripple effect.
 // Baseline comes from the model's predicted series; the slider adds the
@@ -26,6 +26,23 @@ function buildSeries(forecast?: ForecastPoint[] | null) {
 
 const RippleSimulator = ({ forecast }: { forecast?: ForecastPoint[] | null }) => {
   const [congestion, setCongestion] = useState(50);
+  const [yearlyAvgAqi, setYearlyAvgAqi] = useState<number | null>(null);
+  const [yearlyAvgEnergy, setYearlyAvgEnergy] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    backendApi.modelYearlyForecast('bangalore', 2026, 'monthly')
+      .then((res) => {
+        if (!mounted) return;
+        const annual = res.data?.annual;
+        if (annual) {
+          setYearlyAvgAqi(annual.aqi);
+          setYearlyAvgEnergy(annual.electricityDemand);
+        }
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
   const base = useMemo(() => buildSeries(forecast), [forecast]);
 
@@ -90,6 +107,9 @@ const RippleSimulator = ({ forecast }: { forecast?: ForecastPoint[] | null }) =>
                   <XAxis dataKey="time" tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0, aqiMax]} tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ background: '#0d1a10', border: '1px solid #ffffff22', fontSize: 11 }} />
+                  {yearlyAvgAqi != null && (
+                    <ReferenceLine y={yearlyAvgAqi} stroke="#ffffff66" strokeDasharray="4 4" label={{ value: `2026 avg ${yearlyAvgAqi}`, position: 'insideTopRight', fill: '#ffffff88', fontSize: 10 }} />
+                  )}
                   <Area type="monotone" dataKey="aqi" stroke="#3498db" fill="url(#aqiFill)" strokeWidth={3} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -116,12 +136,15 @@ const RippleSimulator = ({ forecast }: { forecast?: ForecastPoint[] | null }) =>
                   <XAxis dataKey="time" tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0, energyMax]} tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ background: '#0d1a10', border: '1px solid #ffffff22', fontSize: 11 }} />
+                  {yearlyAvgEnergy != null && (
+                    <ReferenceLine y={yearlyAvgEnergy} stroke="#ffffff66" strokeDasharray="4 4" label={{ value: `2026 avg ${yearlyAvgEnergy} MW`, position: 'insideTopRight', fill: '#ffffff88', fontSize: 10 }} />
+                  )}
                   <Area type="monotone" dataKey="energy" stroke="#2ecc71" fill="url(#energyFill)" strokeWidth={3} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <div className="text-[10px] text-white/30 text-center">
-              Load correlation: {congestion}% congestion → {Math.round((chartData[0]?.energy ?? 0) * congFactor)}MW baseline
+              Load correlation: {congestion}% congestion → {chartData[0]?.energy ?? 0}MW baseline
             </div>
           </div>
         </div>

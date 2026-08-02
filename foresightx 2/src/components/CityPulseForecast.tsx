@@ -228,7 +228,7 @@ export default function CityPulseForecast({
       {/* ── Metric grid ────────────────────────────────────────────────── */}
       <div className="grid mt-7 gap-5" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
         {metrics.map((m) => {
-          const delta = deltaTag(m.values[1], m.values[0]);
+          const delta = deltaTag(m.values[m.values.length - 1], m.values[0]);
           return (
             <div key={m.key} className="flex flex-col rounded-[14px] p-5"
               style={{ background: '#0e1712', border: '1px solid #1e2b24' }}>

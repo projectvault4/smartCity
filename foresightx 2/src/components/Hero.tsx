@@ -94,7 +94,8 @@ const Hero = ({ mode, setMode, data }: HeroProps) => {
                     ${mode === kpi.id ? `border-${kpi.color}-acc bg-${kpi.color}-acc/5 ring-1 ring-${kpi.color}-acc/30` : 'hover:border-white/30'}`}
                 >
                   <div className="text-[10px] text-white/50 tracking-[2px] font-bold uppercase">{kpi.label}</div>
-                  <div className={`text-[11px] mt-2 font-black ${kpi.delta.includes('Down') ? 'text-[#ff7675]' : kpi.delta.includes('Stable') ? 'text-white/40' : 'text-home-acc'}`}>
+                  <div className="text-[22px] mt-2 font-black leading-none">{kpi.val}</div>
+                  <div className={`text-[11px] mt-1 font-black ${kpi.delta.includes('Down') ? 'text-[#ff7675]' : kpi.delta.includes('Stable') ? 'text-white/40' : 'text-home-acc'}`}>
                     {kpi.delta}
                   </div>
                   <div className="text-[8px] mt-1 text-white/20 font-bold uppercase truncate max-w-[120px]">{kpi.range.split(' · ')[1]}</div>
