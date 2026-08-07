@@ -68,6 +68,21 @@ function fmtHour(ts: string): string {
   });
 }
 
+function buildForecastHours(count: number): string[] {
+  const base = new Date();
+  base.setMinutes(0, 0, 0);
+  base.setHours(base.getHours() + 1);
+
+  return Array.from({ length: count }, (_, index) => {
+    const d = new Date(base);
+    d.setHours(base.getHours() + index);
+    return d.toLocaleTimeString([], {
+      hour: 'numeric',
+      hour12: true
+    });
+  });
+}
+
 function fmtForecastTs(ts: string): string {
   const d = new Date(ts);
 
@@ -140,10 +155,10 @@ export default function CityPulseForecast({
     [source],
   );
   const hours = metrics[0].timestamps.length > 0
-    ? metrics[0].timestamps.map((ts) => fmtHour(ts))
+    ? buildForecastHours(metrics[0].timestamps.length)
     : ['2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM'];
   const forecastWindow = source && source.length > 0 ? source[0].timestamp : null;
-  const forecastWindowLabel = forecastWindow ? fmtHour(forecastWindow) : '—';
+  const forecastWindowLabel = forecastWindow ? buildForecastHours(1)[0] : '—';
 
   return (
     <div
