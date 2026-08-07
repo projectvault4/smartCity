@@ -18,6 +18,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'ForeSightX backend',
+    health: '/api/health'
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'ForeSightX backend',
+    health: '/api/health'
+  });
+});
+
 app.use('/api', routes);
 
 app.use(notFound);
