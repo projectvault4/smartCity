@@ -16,5 +16,7 @@ router.get('/time', (req, res) => {
     offsetMinutes: new Date().getTimezoneOffset()
   });
 });
-
+router.get('/chatgpt-test-123', (req, res) => {
+  res.send('HELLO FROM RENDER');
+});
 module.exports = router;
