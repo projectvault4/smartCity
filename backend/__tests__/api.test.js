@@ -178,6 +178,48 @@ describe('API', () => {
     }));
   });
 
+  test('GET /api/model/forecast-yearly returns the 2026 outlook', async () => {
+    const response = await request(app)
+      .get('/api/model/forecast-yearly?city=bangalore&year=2026')
+      .expect(200);
+
+    expect(response.body.data).toEqual(expect.objectContaining({
+      year: 2026,
+      city: 'bangalore',
+      totalHours: 8760,
+      annual: expect.objectContaining({
+        trafficFlow: expect.any(Number),
+        aqi: expect.any(Number)
+      }),
+      monthly: expect.arrayContaining([
+        expect.objectContaining({ month: expect.any(Number), label: expect.any(String) })
+      ])
+    }));
+  });
+
+  test('GET /api/model/forecast-yearly serves hourly series', async () => {
+    const response = await request(app)
+      .get('/api/model/forecast-yearly?city=bangalore&year=2026&granularity=hourly')
+      .expect(200);
+
+    expect(response.body.data.series.length).toBeGreaterThan(1000);
+    expect(response.body.data.series[0]).toEqual(expect.objectContaining({
+      timestamp: expect.any(String),
+      trafficFlow: expect.any(Number),
+      aqi: expect.any(Number)
+    }));
+  });
+
+  test('GET /api/model/forecast-yearly returns 500 for a missing year output', async () => {
+    const response = await request(app)
+      .get('/api/model/forecast-yearly?city=bangalore&year=1999')
+      .expect(500);
+
+    expect(response.body.error).toEqual(expect.objectContaining({
+      message: expect.stringContaining('forecast_1999.csv')
+    }));
+  });
+
   test('POST /api/notifications/deliver delegates delivery service', async () => {
     notificationService.deliverAdvisory.mockResolvedValue({
       userId,

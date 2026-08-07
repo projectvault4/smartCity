@@ -1,5 +1,9 @@
 import { motion } from 'motion/react';
+import { useCallback, useState } from 'react';
 import { CityData, ForecastPoint } from '../services/dataService';
+
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Trend = 'up' | 'down' | 'stable';
@@ -11,21 +15,27 @@ interface Signal {
   barBg: string;           // tailwind / inline style for filled bar
   leftLabel: string;
   rightLabel: string;
-  reason: (trend: Trend) => string;
   trend: Trend;
+  value: number | null;    // latest model value
+  nextValue: number | null; // forecast value 6h ahead
+  unit: string;
+  reason: (trend: Trend, value: number | null, nextValue: number | null) => string;
 }
 
 // ─── Bar helper ───────────────────────────────────────────────────────────────
 /**
  * Returns 0–1 fill fraction for the gradient bar.
- * "up"   → bar fills to the right  (75 %)
- * "down" → bar fills to the left   (25 %)
- * "stable" → bar sits in the middle (50 %)
+ * Position is driven by the real first→last change in the model series,
+ * clamped to a visible band so the animation reads clearly.
  */
-function barFill(trend: Trend): number {
-  if (trend === 'up')   return 0.75;
-  if (trend === 'down') return 0.25;
-  return 0.5;
+function barFill(trend: Trend, changePct?: number): number {
+  if (trend === 'stable') return 0.5;
+  if (trend === 'up') {
+    const mag = Math.min(0.85, 0.58 + Math.abs(changePct ?? 0) * 0.5);
+    return mag;
+  }
+  const mag = Math.max(0.15, 0.42 - Math.abs(changePct ?? 0) * 0.5);
+  return mag;
 }
 
 function trendArrow(trend: Trend) {
@@ -38,6 +48,11 @@ function trendLabel(trend: Trend) {
   if (trend === 'up')   return 'Trending up';
   if (trend === 'down') return 'Trending down';
   return 'Stable';
+}
+
+function fmt(v: number | null): string {
+  if (v === null || !Number.isFinite(v)) return '—';
+  return String(Math.round(v).toLocaleString());
 }
 
 // ─── Trend derivation from model forecast ────────────────────────────────────
@@ -61,20 +76,18 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
   // Prefer the model's predicted series for trend direction when available
   const predicted = forecast && forecast.length > 0 ? forecast : null;
 
-  const trafficTrend: Trend  = predicted
-    ? trendFromSeries(seriesFromForecast(predicted, (p) => p.trafficFlow))
-    : data.traffic.trend === 'down' ? 'down' : data.traffic.trend === 'up' ? 'up' : 'stable';
-  const airTrend: Trend      = predicted
-    ? trendFromSeries(seriesFromForecast(predicted, (p) => p.aqi))
-    : data.air.trend     === 'down' ? 'down' : data.air.trend     === 'up' ? 'up' : 'stable';
-  const weatherTrend: Trend  = predicted
-    ? trendFromSeries(seriesFromForecast(predicted, (p) => p.temperature))
-    : data.weather.trend === 'up'   ? 'up'   : data.weather.trend === 'down' ? 'down' : 'stable';
-  const energyTrend: Trend   = predicted
-    ? trendFromSeries(seriesFromForecast(predicted, (p) => p.electricityDemand))
-    : weatherTrend === 'up' || trafficTrend === 'up' ? 'up'
-    : weatherTrend === 'down' && trafficTrend === 'down' ? 'down'
-    : 'stable';
+  const trafficSeries = predicted ? seriesFromForecast(predicted, (p) => p.trafficFlow) : [];
+  const airSeries     = predicted ? seriesFromForecast(predicted, (p) => p.aqi) : [];
+  const weatherSeries = predicted ? seriesFromForecast(predicted, (p) => p.temperature) : [];
+  const energySeries  = predicted ? seriesFromForecast(predicted, (p) => p.electricityDemand) : [];
+
+  const trafficTrend: Trend  = trafficSeries.length ? trendFromSeries(trafficSeries) : data.traffic.trend === 'down' ? 'down' : data.traffic.trend === 'up' ? 'up' : 'stable';
+  const airTrend: Trend      = airSeries.length ? trendFromSeries(airSeries) : data.air.trend === 'down' ? 'down' : data.air.trend === 'up' ? 'up' : 'stable';
+  const weatherTrend: Trend  = weatherSeries.length ? trendFromSeries(weatherSeries) : data.weather.trend === 'up' ? 'up' : data.weather.trend === 'down' ? 'down' : 'stable';
+  const energyTrend: Trend   = energySeries.length ? trendFromSeries(energySeries) : weatherTrend === 'up' || trafficTrend === 'up' ? 'up' : weatherTrend === 'down' && trafficTrend === 'down' ? 'down' : 'stable';
+
+  const changePct = (series: number[]) =>
+    series.length >= 2 ? (series[series.length - 1] - series[0]) / (Math.abs(series[0]) || 1) : 0;
 
   const signals: Signal[] = [
     {
@@ -85,12 +98,15 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
       leftLabel: 'Less traffic',
       rightLabel: 'More traffic',
       trend: trafficTrend,
-      reason: (t) =>
+      value: trafficSeries.length ? trafficSeries[trafficSeries.length - 1] : null,
+      nextValue: trafficSeries.length ? trafficSeries[0] : null,
+      unit: 'vehicles/hr',
+      reason: (t, v, nv) =>
         t === 'down'
-          ? 'Volume may decrease, because recent readings have been cooling down across major junctions.'
+          ? `Traffic is easing. The model expects about ${fmt(v)} vehicles per hour by the end of the window — down from ${fmt(nv)} now.`
           : t === 'up'
-          ? 'Volume is rising — congestion building at key intersections during peak hours.'
-          : 'Traffic is holding steady near the current baseline.',
+          ? `Traffic is going up. The model expects about ${fmt(v)} vehicles per hour by the end of the window — up from ${fmt(nv)} now.`
+          : 'Traffic stays about the same across the forecast window.',
     },
     {
       key: 'air',
@@ -100,12 +116,15 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
       leftLabel: 'Poor air',
       rightLabel: 'Good air',
       trend: airTrend,
-      reason: (t) =>
+      value: airSeries.length ? airSeries[airSeries.length - 1] : null,
+      nextValue: airSeries.length ? airSeries[0] : null,
+      unit: 'AQI',
+      reason: (t, v, nv) =>
         t === 'down'
-          ? 'AQI is expected to ease, clearing up slightly — this lines up with easing traffic, which means fewer road emissions.'
+          ? `Air quality is getting better. The AQI should ease to ${fmt(v)} from ${fmt(nv)} — the model links this to lighter traffic and fewer emissions.`
           : t === 'up'
-          ? 'AQI is rising. Increased traffic or wind-pattern shift may be concentrating particulates.'
-          : 'Air quality is holding at current levels.',
+          ? `Air quality is getting worse. The AQI rises to ${fmt(v)} from ${fmt(nv)} — more traffic means more pollution in the air.`
+          : 'Air quality stays near its current level across the forecast window.',
     },
     {
       key: 'weather',
@@ -115,12 +134,15 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
       leftLabel: 'Cooler',
       rightLabel: 'Warmer',
       trend: weatherTrend,
-      reason: (t) =>
+      value: weatherSeries.length ? weatherSeries[weatherSeries.length - 1] : null,
+      nextValue: weatherSeries.length ? weatherSeries[0] : null,
+      unit: '°C',
+      reason: (t, v, nv) =>
         t === 'up'
-          ? 'Readings are trending upward, likely from ordinary diurnal heating or the urban heat island effect.'
+          ? `It's getting slightly warmer. Temperature moves up to ${fmt(v)}°C from ${fmt(nv)}°C — a normal daytime warming pattern.`
           : t === 'down'
-          ? 'Temperature is dipping — cloud cover or an evening cool-down may be contributing.'
-          : 'Temperature is stable near the current reading.',
+          ? `It's getting slightly cooler. Temperature dips to ${fmt(v)}°C — cloud cover or an evening cool-down is likely.`
+          : 'Temperature stays about the same as the current reading.',
     },
     {
       key: 'energy',
@@ -130,12 +152,15 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
       leftLabel: 'Less demand',
       rightLabel: 'More demand',
       trend: energyTrend,
-      reason: (t) =>
+      value: energySeries.length ? energySeries[energySeries.length - 1] : null,
+      nextValue: energySeries.length ? energySeries[0] : null,
+      unit: 'MW',
+      reason: (t, v, nv) =>
         t === 'up'
-          ? 'Electricity demand is rising, potentially driven by increased cooling needs as temperatures climb.'
+          ? `Electricity use is going up. The model expects about ${fmt(v)} MW by the end of the window — up from ${fmt(nv)} MW — as warmer weather means more cooling.`
           : t === 'down'
-          ? 'Grid load is easing — lower temperatures or reduced activity are cutting cooling and industrial draw.'
-          : 'Demand is steady relative to the current baseline.',
+          ? `Electricity use is easing to about ${fmt(v)} MW — cooler weather or lower activity means less cooling is needed.`
+          : 'Electricity use stays about the same across the forecast window.',
     },
   ];
 
@@ -144,30 +169,30 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
     const rising = trafficTrend === 'up';
     const easing = airTrend === 'down';
     if (rising && easing) {
-      return 'Even with road volume climbing, the near-term AQI call still eases — wind dispersion and secondary factors outweigh the added tailpipe emissions in the model window.';
+      return 'Even though traffic is rising, the model still expects air quality to improve. In this forecast, wind and other weather factors outweigh the extra vehicle pollution for the next few hours.';
     }
     if (rising && airTrend === 'up') {
-      return 'Rising road volume concentrates emissions at junctions, and the model carries that directly into the AQI forecast.';
+      return 'More cars on the road means more exhaust and pollution. So when the model sees traffic rising, it raises the air-quality reading too.';
     }
     if (!rising && easing) {
-      return 'Easing traffic pressure means fewer road emissions, which is factored into the near-term AQI call. Secondary correlations with temperature are also weighed in.';
+      return 'Less traffic means fewer exhaust fumes. The model carries that directly into the air-quality forecast, so AQI comes down as traffic eases.';
     }
-    return 'The model weighs how road emissions interact with wind and temperature before committing to the AQI call.';
+    return 'The model checks how traffic pollution mixes with wind and temperature before deciding on air quality.';
   })();
 
   const tempToEnergy = (() => {
     const cooling = weatherTrend === 'up';
     const easing = energyTrend === 'down';
     if (cooling && energyTrend === 'up') {
-      return 'Rising temperature shifts the baseline for electricity demand as cooling needs adjust upward.';
+      return 'Warmer weather means people use more fans and air conditioning. So the model raises electricity demand as temperature climbs.';
     }
     if (!cooling && easing) {
-      return 'Dropping temperature trims cooling load, letting the model ease grid demand across the window.';
+      return 'Cooler weather means less need for cooling. The model lowers electricity demand as the temperature drops.';
     }
     if (cooling && easing) {
-      return 'Temperature rises, but the model still eases grid demand — evening hours and reduced activity pull more weight than the cooling signal.';
+      return 'Even though it is warming up, the model still sees electricity use falling — evening hours and lower activity have a bigger effect than the extra cooling.';
     }
-    return 'The model ties grid load to temperature swings, with cooling and industrial draw moving together.';
+    return 'The model links electricity use to temperature — hotter days push demand up, cooler days pull it down.';
   })();
 
   const causalLinks = [
@@ -184,11 +209,70 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
   ];
 
   const summaryLines = [
-    { icon: trendArrow(trafficTrend),  text: `Traffic flow is ${trendLabel(trafficTrend).toLowerCase()} from current levels.` },
-    { icon: trendArrow(airTrend),      text: `AQI is ${trendLabel(airTrend).toLowerCase()} into the next hour.` },
-    { icon: trendArrow(weatherTrend),  text: `Temperature is ${trendLabel(weatherTrend).toLowerCase()} relative to the current value.` },
-    { icon: trendArrow(energyTrend),   text: `Electricity demand is ${trendLabel(energyTrend).toLowerCase()}.` },
+    { icon: trendArrow(trafficTrend),  text: `Traffic is ${trendLabel(trafficTrend).toLowerCase()} — around ${fmt(trafficSeries.length ? trafficSeries[trafficSeries.length - 1] : null)} vehicles per hour by the end of the window.` },
+    { icon: trendArrow(airTrend),      text: `Air quality is ${trendLabel(airTrend).toLowerCase()} — AQI near ${fmt(airSeries.length ? airSeries[airSeries.length - 1] : null)}.` },
+    { icon: trendArrow(weatherTrend),  text: `Temperature is ${trendLabel(weatherTrend).toLowerCase()} — around ${fmt(weatherSeries.length ? weatherSeries[weatherSeries.length - 1] : null)}°C.` },
+    { icon: trendArrow(energyTrend),   text: `Electricity demand is ${trendLabel(energyTrend).toLowerCase()} — about ${fmt(energySeries.length ? energySeries[energySeries.length - 1] : null)} MW.` },
   ];
+
+  // ── Groq plain-language explanation ─────────────────────────────────────
+  const [plain, setPlain] = useState<string>('');
+  const [plainLoading, setPlainLoading] = useState(false);
+
+  const generatePlain = useCallback(async () => {
+    setPlainLoading(true);
+    setPlain('');
+    try {
+      const points = predicted
+        ? predicted.map((p) => ({
+            h: `T+${p.stepAhead}H`,
+            traffic: Math.round(p.trafficFlow),
+            aqi: Math.round(p.aqi),
+            temp: Math.round(p.temperature),
+            energy: Math.round(p.electricityDemand),
+          }))
+        : [];
+      const prompt = `
+You are explaining a trained city forecast model to a regular citizen — no jargon, no AI terms.
+
+Real model forecast values for the next 6 hours:
+${JSON.stringify(points)}
+
+Summarise in 4-5 short, simple sentences (max ~110 words):
+1. What is happening overall (are traffic, air quality, temperature and electricity demand going up, down, or steady?).
+2. Why it is happening in everyday words.
+3. What it means for the person (one practical tip, e.g. about travel or breathing).
+Mention the real numbers naturally. Never refuse or claim the data is insufficient.
+`;
+      const response = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.GROQ_API_KEY || ''}`,
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [
+            { role: 'system', content: 'You explain city forecast data in plain, simple language a general audience understands. 4-5 short, easy sentences, max ~110 words, everyday words, no jargon, mention real numbers, never refuse.' },
+            { role: 'user', content: prompt },
+          ],
+          temperature: 0.5,
+          max_tokens: 400,
+        }),
+      });
+      if (!response.ok) throw new Error(`Groq request failed (${response.status})`);
+      const data = await response.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      const cleaned = text.replace(/<data>(.*?)<\/data>/s, '$1').replace(/```json|```/g, '').trim();
+      const dataMatch = cleaned.match(/<data>(.*?)<\/data>/s);
+      setPlain(dataMatch ? dataMatch[1].trim() : cleaned);
+    } catch (e) {
+      console.error('XAI Groq error', e);
+      setPlain('Could not reach the language model just now — please try again in a moment.');
+    } finally {
+      setPlainLoading(false);
+    }
+  }, [predicted]);
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", color: '#e9f3ee' }}>
@@ -207,12 +291,20 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
         <p className="text-[0.875rem] max-w-[58ch] leading-relaxed" style={{ color: '#8fa69b' }}>
           Why the model thinks this — in plain language, with the signals connected instead of listed separately.
         </p>
+        <div
+          className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[0.68rem] font-mono"
+          style={{ background: '#0e1a16', borderColor: '#1f3831', color: '#6fe7b7' }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#6fe7b7', boxShadow: '0 0 6px #6fe7b7' }} />
+          Signal trends computed from live trained-model forecast
+          {predicted ? ` · T+1H → T+${predicted.length}H` : ' · fallback to current conditions'}
+        </div>
       </div>
 
       {/* ── Signal cards ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         {signals.map((sig, i) => {
-          const fill = barFill(sig.trend);
+          const fill = barFill(sig.trend, changePct(sig.key === 'traffic' ? trafficSeries : sig.key === 'air' ? airSeries : sig.key === 'weather' ? weatherSeries : energySeries));
           return (
             <motion.div
               key={sig.key}
@@ -245,9 +337,24 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
                 </span>
               </div>
 
+              {/* Model readout */}
+              <div className="flex items-baseline gap-2 mt-3">
+                <span className="font-display text-[1.5rem] font-black leading-none" style={{ color: '#e9f3ee' }}>
+                  {fmt(sig.value)}
+                </span>
+                <span className="text-[0.62rem] font-mono uppercase tracking-widest" style={{ color: '#5c7269' }}>
+                  {sig.unit} · model T+6H
+                </span>
+                {sig.nextValue !== null && sig.value !== null && sig.nextValue !== sig.value && (
+                  <span className="font-mono text-[0.7rem]" style={{ color: sig.trend === 'up' ? '#f0a857' : sig.trend === 'down' ? '#3498db' : '#8fa69b' }}>
+                    from {fmt(sig.nextValue)}
+                  </span>
+                )}
+              </div>
+
               {/* Reason text */}
-              <p className="text-[0.82rem] leading-relaxed mt-3 mb-4" style={{ color: '#8fa69b' }}>
-                {sig.reason(sig.trend)}
+              <p className="text-[0.82rem] leading-relaxed mt-2 mb-4" style={{ color: '#8fa69b' }}>
+                {sig.reason(sig.trend, sig.value, sig.nextValue)}
               </p>
 
               {/* Gradient bar */}
@@ -390,6 +497,50 @@ export default function XaiPanel({ data, forecast }: { data: CityData; forecast?
             </li>
           ))}
         </ul>
+      </motion.div>
+
+      {/* ── Groq plain-language explanation ───────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.55, duration: 0.4 }}
+        className="rounded-[16px] border p-6 mt-5"
+        style={{ background: '#10201a', borderColor: '#1f3831' }}
+      >
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <div
+              className="text-[0.65rem] font-mono uppercase tracking-[0.16em] mb-1"
+              style={{ color: '#5c7269' }}
+            >
+              In plain words (Groq)
+            </div>
+            <p className="text-[0.8rem]" style={{ color: '#8fa69b' }}>
+              The same model forecast, explained in everyday language.
+            </p>
+          </div>
+          <button
+            onClick={generatePlain}
+            disabled={plainLoading}
+            className="px-4 py-2 rounded-[10px] text-[0.75rem] font-semibold transition-opacity disabled:opacity-50"
+            style={{
+              background: 'linear-gradient(90deg, #0f766e, #2ecc71)',
+              color: '#e9f3ee',
+              boxShadow: '0 0 14px rgba(46,204,113,0.25)',
+            }}
+          >
+            {plainLoading ? 'Explaining…' : plain ? 'Regenerate' : 'Explain in plain words'}
+          </button>
+        </div>
+        {plain ? (
+          <p className="text-[0.9rem] leading-relaxed whitespace-pre-line" style={{ color: '#e9f3ee' }}>
+            {plain}
+          </p>
+        ) : (
+          <p className="text-[0.82rem]" style={{ color: '#5c7269' }}>
+            Press the button and a language model will read the live forecast and describe it simply.
+          </p>
+        )}
       </motion.div>
     </div>
   );

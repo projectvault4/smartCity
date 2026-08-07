@@ -131,6 +131,15 @@ def _train_autoencoder_scores(x_scaled: np.ndarray, random_seed: int) -> np.ndar
     return np.mean(np.square(x_scaled - reconstructed), axis=1)
 
 
+# Number of leading rows whose lag/rolling features are not fully populated.
+# The feature engineer creates lag_1..lag_24 and roll_6/12/24, so the first
+# `max_lag` rows have no history: their lag/rolling columns are NaN and get
+# zero-filled. The autoencoder then mistakes that all-zero window for a
+# severe anomaly. Exclude it from flagging so the model start is not
+# misreported as a burst of abnormal events.
+ANOMALY_WARMUP_ROWS = 24
+
+
 def _classify_severity(score: float) -> str:
     if score >= 0.9:
         return "Critical"
@@ -231,6 +240,21 @@ def detect_urban_anomalies(raw_df: pd.DataFrame, config, max_events: int = 24) -
     combined_score = 0.55 * isolation_score + 0.45 * autoencoder_score
     threshold = _robust_threshold(combined_score, percentile=94.0)
     is_anomaly = combined_score >= threshold
+
+    # Never flag the model warm-up window: its lag/rolling features are
+    # zero-filled for lack of history, which otherwise looks like a burst of
+    # anomalies at the very start of the dataset. Also zero the warm-up
+    # scores so per-day aggregates (calendar heatmap, 3D day spheres) do not
+    # show an inflated spike for the first day.
+    if ANOMALY_WARMUP_ROWS > 0:
+        is_anomaly = is_anomaly.copy()
+        is_anomaly[:ANOMALY_WARMUP_ROWS] = False
+        isolation_score = isolation_score.copy()
+        autoencoder_score = autoencoder_score.copy()
+        combined_score = combined_score.copy()
+        isolation_score[:ANOMALY_WARMUP_ROWS] = 0.0
+        autoencoder_score[:ANOMALY_WARMUP_ROWS] = 0.0
+        combined_score[:ANOMALY_WARMUP_ROWS] = 0.0
 
     timeline = feature_df[["timestamp", *[col for col in config.domain_columns if col in feature_df.columns]]].copy()
     timeline["isolation_score"] = isolation_score

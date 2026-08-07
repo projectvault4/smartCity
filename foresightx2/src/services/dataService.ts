@@ -110,6 +110,55 @@ export interface MultivariateAnalysis {
   };
 }
 
+export interface MonthlyForecast {
+  month: number;
+  label: string;
+  days: number;
+  trafficFlow: number | null;
+  aqi: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  electricityDemand: number | null;
+  maxTrafficFlow: number | null;
+  maxAqi: number | null;
+  maxTemperature: number | null;
+}
+
+export interface YearlyForecastPoint {
+  timestamp: string;
+  stepAhead: number | null;
+  trafficFlow: number | null;
+  aqi: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  electricityDemand: number | null;
+}
+
+export interface YearlyForecast {
+  year: number;
+  city: string;
+  source: string;
+  generatedFrom: string;
+  through: string;
+  totalHours: number;
+  annual: {
+    trafficFlow: number | null;
+    aqi: number | null;
+    temperature: number | null;
+    humidity: number | null;
+    electricityDemand: number | null;
+  };
+  peaks: {
+    peakTrafficMonth: MonthlyForecast;
+    peakAqiMonth: MonthlyForecast;
+    peakTemperatureMonth: MonthlyForecast;
+    hottestMonth: MonthlyForecast;
+    coolestMonth: MonthlyForecast;
+  };
+  monthly: MonthlyForecast[];
+  series: YearlyForecastPoint[];
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 export interface BackendHealth {
@@ -188,6 +237,11 @@ export const backendApi = {
   modelForecast: (city = 'bangalore', steps = 24) => (
     apiRequest<{ data: ForecastPoint[] }>(
       `/model/forecast?city=${encodeURIComponent(city)}&steps=${encodeURIComponent(steps)}`
+    )
+  ),
+  modelYearlyForecast: (city = 'bangalore', year = 2026, granularity = 'monthly') => (
+    apiRequest<{ data: YearlyForecast }>(
+      `/model/forecast-yearly?city=${encodeURIComponent(city)}&year=${encodeURIComponent(year)}&granularity=${encodeURIComponent(granularity)}`
     )
   ),
   modelMultivariate: (windowHours = 720) => (

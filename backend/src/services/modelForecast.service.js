@@ -23,7 +23,14 @@ const parseCsvLine = (line) => {
   return values;
 };
 
-const readForecastRows = (city = config.modelForecast.defaultCity) => {
+const forecastFileName = (year) => {
+  if (year === '2026') {
+    return 'forecast_2026.csv';
+  }
+  return 'past_present_future_forecast.csv';
+};
+
+const readForecastRows = (city = config.modelForecast.defaultCity, year = 'ppf') => {
   const cityKey = String(city || '').toLowerCase();
   // The default-city training run writes to the repository root outputs/ dir
   // (shared with the anomaly + multivariate pipelines). Only cities with a
@@ -33,12 +40,12 @@ const readForecastRows = (city = config.modelForecast.defaultCity) => {
         config.modelForecast.projectRoot,
         'outputs',
         cityKey,
-        'past_present_future_forecast.csv'
+        forecastFileName(year)
       )
     : path.join(
         config.modelForecast.projectRoot,
         'outputs',
-        'past_present_future_forecast.csv'
+        forecastFileName(year)
       );
 
   if (!fs.existsSync(forecastPath)) {
@@ -62,6 +69,81 @@ const readForecastRows = (city = config.modelForecast.defaultCity) => {
 const toNumber = (value) => {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : null;
+};
+
+const pad = (n) => String(n).padStart(2, '0');
+
+const formatTimestamp = (date) => (
+  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+  `${pad(date.getHours())}:${pad(date.getMinutes())}:00`
+);
+
+const toTimestampMs = (timestamp) => {
+  const [date, time] = String(timestamp).split(' ');
+  return new Date(`${date}T${time || '00:00:00'}`).getTime();
+};
+
+// Re-anchor future rows to the live server clock. The model forecasts N steps
+// ahead of its last training timestamp; we keep the relative spacing and map
+// step_ahead k onto the k-th step boundary after "now", so the dashboard reads
+// like a rolling next-24h outlook instead of a frozen 2025 date.
+const floorToLocalHour = (date) => {
+  const floored = new Date(date);
+  floored.setMinutes(0, 0, 0);
+  return floored.getTime();
+};
+
+const rebaseFutureTimestamps = (rows) => {
+  const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
+  const now = Date.now();
+  const anchorMs = floorToLocalHour(new Date(now));
+
+  return rows.map((row) => {
+    if (row.time_segment !== 'future') {
+      return row;
+    }
+    const step = Math.max(1, Number(row.step_ahead) || 1);
+    return {
+      ...row,
+      timestamp: formatTimestamp(new Date(anchorMs + step * stepMs))
+    };
+  });
+};
+
+// The full-year 2026 forecast file already contains real 2026 timestamps. We
+// anchor it to the live server clock by finding the hourly row nearest to
+// "now" and relabeling rows before/after it so the dashboard reads like a
+// rolling real-time forecast for the current 2026 date.
+const anchor2026Rows = (rows) => {
+  const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
+  const nowMs = floorToLocalHour(new Date());
+
+  let anchor = -1;
+  for (let i = 0; i < rows.length; i += 1) {
+    if (toTimestampMs(rows[i].timestamp) <= nowMs) {
+      anchor = i;
+    } else {
+      break;
+    }
+  }
+
+  return rows.map((row, index) => {
+    const step = index - anchor; // 0 = now, 1 = +1h, ...
+    return {
+      ...row,
+      time_segment: step > 0 ? 'future' : step === 0 ? 'now' : 'past',
+      step_ahead: Math.max(0, step)
+    };
+  });
+};
+
+const readForecastRowsLive = (city) => {
+  const year = config.modelForecast.forecastYear || '2026';
+  const rows = readForecastRows(city, year);
+  if (year === '2026') {
+    return anchor2026Rows(rows);
+  }
+  return rebaseFutureTimestamps(rows);
 };
 
 const classifyTraffic = (trafficFlow) => {
@@ -97,7 +179,9 @@ const classifyWeather = ({ temperature, humidity }) => {
 };
 
 const getLatestModelConditions = ({ city = config.modelForecast.defaultCity, stepAhead = 1 } = {}) => {
-  const rows = readForecastRows(city);
+  const rows = config.modelForecast.liveRebase
+    ? readForecastRowsLive(city)
+    : readForecastRows(city);
   const futureRows = rows.filter((row) => row.time_segment === 'future');
   const selected = futureRows.find((row) => Number(row.step_ahead) === stepAhead) || futureRows[0] || rows[rows.length - 1];
 
@@ -144,7 +228,9 @@ const getLatestModelConditions = ({ city = config.modelForecast.defaultCity, ste
 };
 
 const getForecastSeries = ({ city = config.modelForecast.defaultCity, steps = 24 } = {}) => {
-  const rows = readForecastRows(city);
+  const rows = config.modelForecast.liveRebase
+    ? readForecastRowsLive(city)
+    : readForecastRows(city);
   const futureRows = rows
     .filter((row) => row.time_segment === 'future')
     .sort((a, b) => Number(a.step_ahead) - Number(b.step_ahead))

@@ -1,4 +1,10 @@
-const anomalyModelService = require('./anomalyModel.service');
+const yearlyForecastService = require('./yearlyForecast.service');
+const config = require('../config/env');
+
+const toTimestampMs = (timestamp) => {
+  const [date, time] = String(timestamp).split(' ');
+  return new Date(`${date}T${time || '00:00:00'}`).getTime();
+};
 
 const toNumber = (value) => {
   const numeric = Number(value);
@@ -49,14 +55,34 @@ const normalize = (values) => {
   return values.map((v) => Math.round(((v - min) / span) * 100));
 };
 
-const getMultivariateAnalysis = ({ windowHours = 720 } = {}) => {
-  const rows = anomalyModelService.readTimelineRows();
-  const recent = rows.slice(-windowHours);
+const getMultivariateAnalysis = ({ windowHours = 720, city } = {}) => {
+  const year = config.modelForecast.forecastYear || '2026';
+  const allRows = yearlyForecastService.readYearlyForecastRows(
+    city || config.modelForecast.defaultCity,
+    year
+  );
 
-  const traffic = recent.map((r) => toNumber(r.traffic_flow) || 0);
-  const aqi = recent.map((r) => toNumber(r.aqi) || 0);
-  const energy = recent.map((r) => toNumber(r.electricity_demand) || 0);
-  const temperature = recent.map((r) => toNumber(r.temperature) || 0);
+  // Anchor the trailing window to the live server clock so the 24H observation
+  // always describes "now - window -> now" instead of a frozen training slice.
+  const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
+  const nowMs = Math.floor(Date.now() / stepMs) * stepMs;
+
+  let anchor = allRows.length - 1;
+  for (let i = 0; i < allRows.length; i += 1) {
+    if (toTimestampMs(allRows[i].timestamp) <= nowMs) {
+      anchor = i;
+    } else {
+      break;
+    }
+  }
+
+  const start = Math.max(0, anchor - windowHours + 1);
+  const rows = allRows.slice(start, anchor + 1);
+
+  const traffic = rows.map((r) => toNumber(r.traffic_flow) || 0);
+  const aqi = rows.map((r) => toNumber(r.aqi) || 0);
+  const energy = rows.map((r) => toNumber(r.electricity_demand) || 0);
+  const temperature = rows.map((r) => toNumber(r.temperature) || 0);
 
   const phaseLag = crossCorrelationLag(traffic, aqi, 12);
   const syncFactor = pearson(traffic, energy);
@@ -87,8 +113,8 @@ const getMultivariateAnalysis = ({ windowHours = 720 } = {}) => {
     source: 'trained_model_multivariate_outputs',
     window: {
       hours: windowHours,
-      from: recent[0].timestamp,
-      to: recent[recent.length - 1].timestamp
+      from: rows[0].timestamp,
+      to: rows[rows.length - 1].timestamp
     },
     series,
     stats: {

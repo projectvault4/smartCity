@@ -61,7 +61,16 @@ const config = {
   modelForecast: {
     enabled: process.env.MODEL_FORECAST_ENABLED !== 'false',
     defaultCity: process.env.MODEL_FORECAST_CITY || 'bangalore',
-    projectRoot: process.env.PROJECT_ROOT || path.resolve(__dirname, '../../..')
+    projectRoot: process.env.PROJECT_ROOT || path.resolve(__dirname, '../../..'),
+    // When true (default) future-row timestamps are rebased to the current
+    // server time so the forecast always reads "now -> now + horizon".
+    liveRebase: process.env.MODEL_FORECAST_LIVE !== 'false',
+    // Hourly step used for rebasing (must match the model's training cadence).
+    stepMinutes: Number(process.env.MODEL_FORECAST_STEP_MINUTES) || 60,
+    // Source forecast file for the live conditions/forecast endpoints.
+    // '2026' (default) anchors the full-year forecast_2026.csv to the live
+    // clock; anything else falls back to past_present_future_forecast.csv.
+    forecastYear: process.env.MODEL_FORECAST_YEAR || '2026'
   },
   redis: {
     url: process.env.REDIS_URL || 'redis://localhost:6379',

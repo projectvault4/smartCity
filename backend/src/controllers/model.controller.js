@@ -1,4 +1,5 @@
 const modelForecastService = require('../services/modelForecast.service');
+const yearlyForecastService = require('../services/yearlyForecast.service');
 const anomalyModelService = require('../services/anomalyModel.service');
 const multivariateModelService = require('../services/multivariateModel.service');
 const asyncHandler = require('../utils/asyncHandler');
@@ -23,6 +24,18 @@ const getModelForecast = asyncHandler(async (req, res) => {
   res.status(200).json({ data: forecast });
 });
 
+const getModelYearlyForecast = asyncHandler(async (req, res) => {
+  const year = req.query.year ? Number(req.query.year) : 2026;
+
+  const forecast = yearlyForecastService.getYearlyForecast({
+    city: req.query.city,
+    year,
+    granularity: req.query.granularity
+  });
+
+  res.status(200).json({ data: forecast });
+});
+
 const getModelAnomalies = asyncHandler(async (req, res) => {
   const dashboard = anomalyModelService.getAnomalyDashboard();
 
@@ -31,7 +44,8 @@ const getModelAnomalies = asyncHandler(async (req, res) => {
 
 const getModelMultivariate = asyncHandler(async (req, res) => {
   const analysis = multivariateModelService.getMultivariateAnalysis({
-    windowHours: req.query.window ? Number(req.query.window) : 720
+    windowHours: req.query.window ? Number(req.query.window) : 720,
+    city: req.query.city
   });
 
   res.status(200).json({ data: analysis });
@@ -40,6 +54,7 @@ const getModelMultivariate = asyncHandler(async (req, res) => {
 module.exports = {
   getModelConditions,
   getModelForecast,
+  getModelYearlyForecast,
   getModelAnomalies,
   getModelMultivariate
 };

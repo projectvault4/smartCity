@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Card from './Card';
 import { backendApi, CityData, MultivariateAnalysis } from '../services/dataService';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const fallbackSeries = Array.from({ length: 24 }).map((_, i) => ({
   time: `${i}:00`,
@@ -28,11 +28,31 @@ const impactLabel = (from: string, to: string, s: MultivariateAnalysis['stats'])
   return 'Observed';
 };
 
-const causalDescs: Record<string, string> = {
-  'Traffic→AQI': 'Combustion emissions and road dust resuspension during peak flow, measured from the trained-model time series.',
-  'Weather→Energy': 'Thermodynamic load adjustment for industrial and residential cooling, from the trained-model temperature/energy series.',
-  'Energy→Economic': 'Proxy for industrial output and commercial activity intensity (model-derived correlation shown).',
-  'AQI→Health': 'Respiratory stressors and cardiovascular impact clusters (correlation shown from trained-model AQI series).',
+const strengthWord = (r: number) =>
+  r >= 0.9 ? 'very strong' : r >= 0.7 ? 'strong' : r >= 0.5 ? 'moderate' : r >= 0.3 ? 'weak' : 'very weak';
+
+const causalDescs = (from: string, to: string, s: MultivariateAnalysis['stats']): string => {
+  const r = (from === 'Traffic' && to === 'AQI')
+    ? s.phaseLagCorr
+    : (from === 'Weather' && to === 'Energy')
+      ? s.tempEnergyCorr
+      : (from === 'Energy' && to === 'Economic')
+        ? s.aqiEnergyCorr
+        : s.coherence;
+  const strength = strengthWord(r);
+
+  switch (from + '→' + to) {
+    case 'Traffic→AQI':
+      return `A ${strength} correlation (ρ=${r}) between vehicle flow and air quality, measured from the trained-model time series — the model links more traffic to more pollution in the air.`;
+    case 'Weather→Energy':
+      return `A ${strength} correlation (ρ=${r}) between temperature and electricity use, from the trained-model series — the model ties warmer weather to more cooling demand.`;
+    case 'Energy→Economic':
+      return `A ${strength} correlation (ρ=${r}) in the trained-model series — used as a proxy for industrial output and commercial activity, since direct economic data is not part of the model.`;
+    case 'AQI→Health':
+      return `A ${strength} correlation (ρ=${r}) in the trained-model AQI series — a proxy for respiratory and cardiovascular stress, since direct health records are not part of the model.`;
+    default:
+      return 'Observed relationship in the trained-model series.';
+  }
 };
 
 const MultivariatePanel = ({ data }: { data: CityData }) => {
@@ -49,11 +69,14 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
   }, []);
 
   const stats = analysis?.stats || fallbackStats;
-  const syncData = analysis?.series?.map((p) => ({
+  const syncData = analysis?.series?.map((p: any) => ({
     time: p.time,
     traffic: p.traffic,
     aqi: p.aqi,
     energy: p.energy,
+    trafficRaw: p.trafficRaw ?? p.traffic,
+    aqiRaw: p.aqiRaw ?? p.aqi,
+    energyRaw: p.energyRaw ?? p.energy,
   })) || fallbackSeries;
 
   const phaseLagText = analysis
@@ -87,20 +110,45 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
 
           <div className="h-[320px] w-full bg-black/20 rounded-2xl p-4 border border-white/5">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={syncData}>
+              <ComposedChart data={syncData} margin={{ top: 5, right: 40, bottom: 0, left: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                {[
+                  { key: 'traffic', label: 'Traffic Flow', color: '#f39c12', band: 0 },
+                  { key: 'aqi', label: 'Atmospheric AQI', color: '#3498db', band: 100 },
+                  { key: 'energy', label: 'Grid Load (MW)', color: '#2ecc71', band: 200 },
+                ].map((s) => (
+                  <YAxis key={s.key} yAxisId={s.key} hide domain={[s.band, s.band + 100]} />
+                ))}
                 <XAxis dataKey="time" hide />
-                <YAxis hide />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0c0c0c', border: '1px solid #ffffff10', borderRadius: '12px' }}
-                  itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    const d = payload[0].payload;
+                    return (
+                      <div className="bg-[#0c0c0c] border border-white/10 rounded-xl p-3 shadow-xl space-y-1">
+                        <div className="text-[11px] font-bold text-white/50 mb-1">Time: {label}</div>
+                        {[
+                          { key: 'traffic', label: 'Traffic Flow', color: '#f39c12', raw: d.trafficRaw != null ? `${d.trafficRaw} veh/hr` : d.traffic },
+                          { key: 'aqi', label: 'Atmospheric AQI', color: '#3498db', raw: d.aqiRaw != null ? `${d.aqiRaw} AQI` : d.aqi },
+                          { key: 'energy', label: 'Grid Load', color: '#2ecc71', raw: d.energyRaw != null ? `${d.energyRaw} MW` : d.energy },
+                        ].map((s) => (
+                          <div key={s.key} className="text-[11px] font-bold" style={{ color: s.color }}>
+                            {s.label}: {s.raw} <span className="text-[10px] text-white/40">({d[s.key]}/100 norm)</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
-                <Line type="monotone" dataKey="traffic" name="Traffic Flow" stroke="#f39c12" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="aqi" name="Atmospheric AQI" stroke="#3498db" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="energy" name="Grid Load (MW)" stroke="#2ecc71" strokeWidth={3} dot={false} />
-              </LineChart>
+                <Line type="monotone" yAxisId="traffic" dataKey="traffic" name="Traffic Flow" stroke="#f39c12" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+                <Line type="monotone" yAxisId="aqi" dataKey="aqi" name="Atmospheric AQI" stroke="#3498db" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+                <Line type="monotone" yAxisId="energy" dataKey="energy" name="Grid Load (MW)" stroke="#2ecc71" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+              </ComposedChart>
             </ResponsiveContainer>
+          </div>
+          <div className="text-[10px] text-white/40 px-2 italic">
+            * Note: All 3 series are normalized to a 0–100 scale to compare phase synchronization and temporal lag across disparate units (veh/hr, AQI, MW). Hover over the chart to view exact raw values.
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
@@ -136,7 +184,7 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
                 </div>
                 <div className="flex-1">
                    <div className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Impact: {impactLabel(rel.from, rel.to, stats)}</div>
-                   <p className="text-xs text-white/60 font-medium leading-normal">{causalDescs[`${rel.from}→${rel.to}`]}</p>
+                   <p className="text-xs text-white/60 font-medium leading-normal">{causalDescs(rel.from, rel.to, stats)}</p>
                 </div>
              </div>
            ))}
