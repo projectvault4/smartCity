@@ -116,25 +116,21 @@ const rebaseFutureTimestamps = (rows) => {
 // rolling real-time forecast for the current 2026 date.
 const anchor2026Rows = (rows) => {
   const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
-  const nowMs = floorToLocalHour(new Date());
 
-  let anchor = -1;
-  for (let i = 0; i < rows.length; i += 1) {
-    if (toTimestampMs(rows[i].timestamp) <= nowMs) {
-      anchor = i;
-    } else {
-      break;
-    }
-  }
+  const now = new Date();
 
-  return rows.map((row, index) => {
-    const step = index - anchor; // 0 = now, 1 = +1h, ...
-    return {
-      ...row,
-      time_segment: step > 0 ? 'future' : step === 0 ? 'now' : 'past',
-      step_ahead: Math.max(0, step)
-    };
-  });
+  // Start forecasts from the next whole hour
+  now.setMinutes(0, 0, 0);
+  now.setHours(now.getHours() + 1);
+
+  return rows.map((row, index) => ({
+    ...row,
+    time_segment: index === 0 ? 'future' : 'future',
+    step_ahead: index + 1,
+    timestamp: formatTimestamp(
+      new Date(now.getTime() + index * stepMs)
+    )
+  }));
 };
 
 const readForecastRowsLive = (city) => {
