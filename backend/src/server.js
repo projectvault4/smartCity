@@ -4,15 +4,15 @@ const { testConnection } = require('./config/db');
 const advisoryCron = require('./jobs/advisoryCron.job');
 const logger = require('./utils/logger');
 
-console.log("====================================");
-console.log("Server time:", new Date().toString());
-console.log("ISO time   :", new Date().toISOString());
-console.log("Timezone   :", Intl.DateTimeFormat().resolvedOptions().timeZone);
-console.log("====================================");
-
 const startServer = async () => {
   try {
     await testConnection();
+
+    logger.info('SERVER STARTUP', {
+      serverTime: new Date().toString(),
+      isoTime: new Date().toISOString(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
 
     app.listen(config.port, () => {
       logger.info('ForeSightX backend running', {
