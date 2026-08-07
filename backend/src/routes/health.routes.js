@@ -7,4 +7,14 @@ router.get('/', getHealth);
 router.get('/metrics', getMetrics);
 router.get('/ready', getReadiness);
 
+// Temporary debug endpoint
+router.get('/time', (req, res) => {
+  res.json({
+    serverTime: new Date().toString(),
+    isoTime: new Date().toISOString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    offsetMinutes: new Date().getTimezoneOffset()
+  });
+});
+
 module.exports = router;
