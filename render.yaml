@@ -79,7 +79,7 @@ services:
   - type: web
     name: foresightx-frontend
     env: static
-    rootDir: "foresightx 2"
+    rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
