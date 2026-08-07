@@ -73,14 +73,10 @@ const toNumber = (value) => {
 
 const pad = (n) => String(n).padStart(2, '0');
 
-const formatTimestamp = (date) => (
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
-  `${pad(date.getHours())}:${pad(date.getMinutes())}:00`
-);
+const formatTimestamp = (date) => date.toISOString();
 
 const toTimestampMs = (timestamp) => {
-  const [date, time] = String(timestamp).split(' ');
-  return new Date(`${date}T${time || '00:00:00'}`).getTime();
+  return new Date(timestamp).getTime();
 };
 
 // Re-anchor future rows to the live server clock. The model forecasts N steps
