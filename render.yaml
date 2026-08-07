@@ -76,11 +76,12 @@ services:
         sync: false
 
   # ---- Frontend (static SPA, served on render.com) ----
-  - type: static
+  - type: web
     name: foresightx-frontend
-    rootDir: foresightx 2
+    env: static
+    rootDir: "foresightx 2"
     buildCommand: npm ci && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     envVars:
       # Point the browser at the backend API above.
       - key: VITE_API_BASE_URL
