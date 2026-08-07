@@ -22,6 +22,21 @@ const METRICS: MetricSpec[] = [
 
 const HOURS = [1, 2, 3, 4, 5, 6];
 
+function buildForecastLabels(count: number): string[] {
+  const base = new Date();
+  base.setMinutes(0, 0, 0);
+  base.setHours(base.getHours() + 1);
+
+  return Array.from({ length: count }, (_, index) => {
+    const d = new Date(base);
+    d.setHours(base.getHours() + index);
+    return d.toLocaleTimeString([], {
+      hour: 'numeric',
+      hour12: true
+    });
+  });
+}
+
 // opacity steps: full → very faint, mirroring the HTML "fade & dash" confidence cue
 const ROW_OPACITY = [1, 0.88, 0.72, 0.56, 0.4, 0.26];
 
@@ -89,6 +104,8 @@ export default function PredictionPanel({
     energy:  data.energy.value,
     weather: data.weather.value,
   }), [data]);
+
+  const forecastLabels = useMemo(() => buildForecastLabels(HOURS.length), []);
 
   const getVal = (key: MetricKey, hour: number): number => {
     const fc = forecasts[hour];
@@ -213,7 +230,7 @@ export default function PredictionPanel({
                     fontWeight: isFirst ? 600 : 400,
                   }}
                 >
-                  +{h}H
+                  {forecastLabels[idx]}
                 </span>
               </div>
 
