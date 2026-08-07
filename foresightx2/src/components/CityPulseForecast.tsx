@@ -59,26 +59,26 @@ function Spark({ values, color }: { values: number[]; color: string }) {
 }
 
 // ─── Time formatting ──────────────────────────────────────────────────────────
-// format "2025-08-10 00:00:00" -> "12:00 AM"
 function fmtHour(ts: string): string {
-  const match = ts.match(/(\d{2}):(\d{2})/);
-  if (!match) return ts;
-  let h = Number(match[1]) % 12;
-  if (h === 0) h = 12;
-  const ampm = Number(match[1]) >= 12 ? 'PM' : 'AM';
-  return `${h}:${match[2]} ${ampm}`;
+  const d = new Date(ts);
+
+  return d.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
 }
 
-// format "2025-08-10 00:00:00" -> "Aug 10 · 12:00 AM"
 function fmtForecastTs(ts: string): string {
-  const match = ts.match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
-  if (!match) return ts;
-  const [, year, month, day, hour, minute] = match;
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  let h = Number(hour) % 12;
-  if (h === 0) h = 12;
-  const ampm = Number(hour) >= 12 ? 'PM' : 'AM';
-  return `${months[Number(month) - 1]} ${Number(day)} · ${h}:${minute} ${ampm}`;
+  const d = new Date(ts);
+
+  return d.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }).replace(',', ' ·');
 }
 
 const DELTA_CLASS: Record<string, string> = {
