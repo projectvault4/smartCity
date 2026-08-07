@@ -79,8 +79,8 @@ services:
   - type: web
     name: foresightx-frontend
     env: static
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
+    rootDir: foresightx2
+    buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
       # Point the browser at the backend API above.
