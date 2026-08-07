@@ -249,7 +249,7 @@ function AdminDashboard() {
                       </thead>
                       <tbody>
                         {[
-                          { name: 'ForeSight BiLSTM', acc: '98.4%', lat: '12ms', eff: 'High' },
+                          { name: 'ForeSight GRU+TFT+SARIMA', acc: '98.4%', lat: '12ms', eff: 'High' },
                           { name: 'Urban Transformer', acc: '97.2%', lat: '45ms', eff: 'Moderate' },
                           { name: 'Hybrid Ensemble', acc: '99.1%', lat: '120ms', eff: 'Low' },
                           { name: 'Light Adaptive', acc: '94.5%', lat: '2ms', eff: 'Ultra-High' },

@@ -7,20 +7,34 @@ import { ForecastPoint, backendApi } from '../services/dataService';
 // Baseline comes from the model's predicted series; the slider adds the
 // congestion shock on top.
 
+function fmtHour(ts: string): string {
+  const match = ts.match(/(\d{2}):(\d{2})/);
+  if (!match) return ts;
+  let h = Number(match[1]) % 12;
+  if (h === 0) h = 12;
+  const ampm = Number(match[1]) >= 12 ? 'PM' : 'AM';
+  return `${h}:${match[2]} ${ampm}`;
+}
+
 function buildSeries(forecast?: ForecastPoint[] | null) {
   if (forecast && forecast.length > 0) {
     const sorted = [...forecast].sort((a, b) => a.stepAhead - b.stepAhead);
-    // Use the current T+1 forecast point as a flat baseline so the curves
-    // line up exactly with the AQI / energy shown elsewhere on the dashboard.
-    const current = sorted[0];
-    const aqi = current.aqi ?? 45;
-    const energy = current.electricityDemand ?? 4755;
-    return Array.from({ length: 12 }, (_, i) => ({ aqi, energy, traffic: current.trafficFlow ?? 19960 }));
+    return sorted.map((p, i) => ({
+      time: p.timestamp ? fmtHour(p.timestamp) : `${i}:00`,
+      aqi: p.aqi ?? 45,
+      energy: p.electricityDemand ?? 4755,
+      traffic: p.trafficFlow ?? 19960,
+    }));
   }
   // Fallback when the model forecast isn't available
   return Array.from({ length: 12 }, (_, i) => {
     const wave = Math.sin(i / 2) * 8;
-    return { aqi: 55 + wave, energy: 4000 + wave * 20, traffic: 6000 + wave * 100 };
+    return {
+      time: `${i}:00`,
+      aqi: Math.round(55 + wave),
+      energy: Math.round(4000 + wave * 20),
+      traffic: Math.round(6000 + wave * 100),
+    };
   });
 }
 
@@ -50,8 +64,8 @@ const RippleSimulator = ({ forecast }: { forecast?: ForecastPoint[] | null }) =>
   const congFactor = 0.6 + (congestion / 100) * 1.0;
 
   const chartData = useMemo(() => {
-    return base.map((p, i) => ({
-      time: i + ':00',
+    return base.map((p) => ({
+      time: p.time,
       aqi: Math.round(p.aqi * congFactor),
       energy: Math.round(p.energy * congFactor),
       traffic: Math.round(p.traffic),
