@@ -64,7 +64,6 @@ function fmtHour(ts: string): string {
 
   return d.toLocaleTimeString([], {
     hour: 'numeric',
-    minute: '2-digit',
     hour12: true
   });
 }
@@ -142,8 +141,9 @@ export default function CityPulseForecast({
   );
   const hours = metrics[0].timestamps.length > 0
     ? metrics[0].timestamps.map((ts) => fmtHour(ts))
-    : ['2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
+    : ['2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM'];
   const forecastWindow = source && source.length > 0 ? source[0].timestamp : null;
+  const forecastWindowLabel = forecastWindow ? fmtHour(forecastWindow) : '—';
 
   return (
     <div
@@ -173,7 +173,7 @@ export default function CityPulseForecast({
             {forecastWindow ? 'Forecast from' : 'Reference'}
           </div>
           <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 500, marginTop: 2 }}>
-            {forecastWindow ? fmtForecastTs(forecastWindow) : '—'}
+            {forecastWindowLabel}
           </div>
         </div>
       </header>
