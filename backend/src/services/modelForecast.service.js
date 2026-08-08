@@ -108,23 +108,41 @@ const rebaseFutureTimestamps = (rows) => {
 
 // The full-year 2026 forecast file already contains real 2026 timestamps. We
 // anchor it to the live server clock by finding the hourly row nearest to
-// "now" and relabeling rows before/after it so the dashboard reads like a
+// "now" (so the forecast always reflects the CURRENT month/season instead of
+// always restarting from the file's first row on January 1st) and then rebase
+// the selected window onto the live clock so the dashboard reads like a
 // rolling real-time forecast for the current 2026 date.
 const anchor2026Rows = (rows) => {
   const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
 
   const now = new Date();
-
-  // Start forecasts from the next whole hour
   now.setMinutes(0, 0, 0);
-  now.setHours(now.getHours() + 1);
+  now.setSeconds(0, 0);
+  const targetMs = now.getTime();
 
-  return rows.map((row, index) => ({
+  // Find the row whose real 2026 timestamp is closest to the current time.
+  let startIndex = 0;
+  let bestDiff = Infinity;
+  rows.forEach((row, index) => {
+    const ts = toTimestampMs(row.timestamp);
+    if (!Number.isFinite(ts)) {
+      return;
+    }
+    const diff = Math.abs(ts - targetMs);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      startIndex = index;
+    }
+  });
+
+  const window = rows.slice(startIndex);
+
+  return window.map((row, index) => ({
     ...row,
-    time_segment: index === 0 ? 'future' : 'future',
+    time_segment: 'future',
     step_ahead: index + 1,
     timestamp: formatTimestamp(
-      new Date(now.getTime() + index * stepMs)
+      new Date(targetMs + index * stepMs)
     )
   }));
 };
