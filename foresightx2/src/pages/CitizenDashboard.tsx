@@ -269,6 +269,47 @@ export default function CitizenDashboard() {
   const currentUser = profile;
   const alerts = buildAlerts(ward, currentUser);
 
+  // Plain-language summary of the live conditions, used when nothing is flagged
+  const conditionExplainer: Array<{ metric: string; line: string }> = (() => {
+    const lines: Array<{ metric: string; line: string }> = [];
+    const aqi = ward.aqi.value;
+    lines.push({
+      metric: 'Air quality',
+      line: aqi >= 120
+        ? `AQI is ${aqi} (${ward.aqi.level}) — very poor air. This can bother sensitive groups like people with respiratory issues, the elderly and children.`
+        : aqi >= 80
+          ? `AQI is ${aqi} (${ward.aqi.level}). Not urgent, but a bit of care is wise for sensitive groups.`
+          : `AQI is ${aqi} (${ward.aqi.level}) — clean enough that we have nothing to warn you about.`,
+    });
+    const traffic = ward.traffic.value;
+    lines.push({
+      metric: 'Traffic',
+      line: ward.traffic.pct >= 60
+        ? `Traffic is ${traffic.toLocaleString()} vehicles/hr and surging about ${ward.traffic.pct}% above the usual baseline — expect slower commutes.`
+        : `Traffic is about ${traffic.toLocaleString()} vehicles/hr (${ward.traffic.level}) — a normal level, so no delay warning.`,
+    });
+    const temp = ward.temp.value;
+    lines.push({
+      metric: 'Temperature',
+      line: temp >= 30
+        ? `It's ${temp}°C (${ward.temp.level}) and climbing. Heat at this level can affect the elderly, children and outdoor workers.`
+        : `It's ${temp}°C (${ward.temp.level}) — below the 30°C heat alert, so nothing to flag.`,
+    });
+    return lines;
+  })();
+
+  // Which alert categories actually matter for this member's tags
+  const watchedForYou = (() => {
+    const map: Record<string, string[]> = {
+      'Air quality': ['Respiratory', 'Elder', 'Child'],
+      Traffic: ['Commuter', 'Worker'],
+      Temperature: ['Elder', 'Child', 'Worker'],
+    };
+    return (Object.entries(map) as Array<[string, string[]]>)
+      .filter(([, tags]) => currentUser.tags.some((t) => tags.includes(t)))
+      .map(([metric]) => metric);
+  })();
+
   const startEdit = () => {
     setDraft({ ...profile });
     setSaved(false);
@@ -418,8 +459,38 @@ export default function CitizenDashboard() {
 
         <div className="flex flex-col gap-3 mb-9">
           {alerts.length === 0 ? (
-            <div className="text-center py-10 px-5 text-[#5c7269] border border-dashed border-[#1f3831] rounded-[14px] text-[0.9rem]">
-              Nothing flagged for your profile in {ward.name} right now. We'll let you know the moment that changes.
+            <div className="py-8 px-5 text-[#5c7269] border border-dashed border-[#1f3831] rounded-[14px]">
+              <div className="text-center">
+                <div className="text-[0.9rem]">Nothing flagged for your profile in {ward.name} right now.</div>
+                <div className="text-[0.8rem] mt-1">We'll let you know the moment that changes.</div>
+              </div>
+
+              <details className="mt-5 rounded-[12px] border border-[#1f3831] bg-[#0e1a16] p-[16px_18px]">
+                <summary className="cursor-pointer inline-flex items-center gap-[6px] font-mono text-[0.72rem] tracking-[0.04em] text-[#6fe7b7]">
+                  Why am I seeing this? <span>⌄</span>
+                </summary>
+                <div className="mt-4 space-y-4 text-[0.85rem] leading-relaxed text-[#8fa69b]">
+                  <div>
+                    <div className="font-semibold text-[#e9f3ee] mb-1">What's happening right now in {ward.name}:</div>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {conditionExplainer.map((c) => (
+                        <li key={c.metric}>
+                          <span className="font-semibold text-[#6fe7b7]">{c.metric}:</span> {c.line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-[#e9f3ee] mb-1">Why it matters for you:</div>
+                    <p>
+                      You're tagged <span className="text-[#6fe7b7]">{currentUser.tags.join(' + ') || 'no tags'}</span>.
+                      {watchedForYou.length
+                        ? ` We keep a closer eye on ${watchedForYou.join(' and ')} for people with your profile. None of those are at a worrying level right now.`
+                        : ' None of the alert categories specifically match your tags today, so nothing is flagged.'}
+                    </p>
+                  </div>
+                </div>
+              </details>
             </div>
           ) : (
             alerts.map((a, i) => (
