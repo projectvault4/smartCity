@@ -35,14 +35,14 @@ function deltaTag(curr: number, prev: number): { text: string; cls: 'up' | 'down
 }
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
+// Scaled by value/max (same scale as the per-row value bars) so the line,
+// the bars, and the numbers all agree.
 function Spark({ values, color }: { values: number[]; color: string }) {
   const w = 280, h = 64, pad = 6;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
+  const max = Math.max(...values) || 1;
   const pts = values.map((v, i) => ({
     x: pad + (i / (values.length - 1)) * (w - pad * 2),
-    y: h - pad - ((v - min) / range) * (h - pad * 2),
+    y: h - pad - (v / max) * (h - pad * 2),
   }));
   const line = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
   const area = line + ` L${pts[pts.length - 1].x.toFixed(1)},${h} L${pts[0].x.toFixed(1)},${h} Z`;
