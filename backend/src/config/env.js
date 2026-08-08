@@ -41,7 +41,12 @@ const config = {
       accountSid: process.env.TWILIO_ACCOUNT_SID || '',
       authToken: process.env.TWILIO_AUTH_TOKEN || '',
       phoneNumber: process.env.TWILIO_PHONE_NUMBER || '',
-      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID || ''
+      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID || '',
+      // Max chars for the SMS body we send to Twilio. Trial accounts add the
+      // "Sent from your Twilio trial account - " prefix (38 chars) and only
+      // allow a single 160-char GSM-7 segment, so the body is capped at 122.
+      // Override with TWILIO_MAX_SMS_CHARS once the account is upgraded.
+      maxSmsChars: Number(process.env.TWILIO_MAX_SMS_CHARS) || 122
     }
   },
   jobs: {

@@ -21,12 +21,41 @@ const getClient = () => {
   return client;
 };
 
-const truncateSms = (message) => {
-  if (message.length <= 1500) {
+const GSM7_REPLACEMENTS = {
+  '\u00b0': 'deg',
+  '\u2018': "'",
+  '\u2019': "'",
+  '\u201c': '"',
+  '\u201d': '"',
+  '\u2013': '-',
+  '\u2014': '-',
+  '\u2026': '...'
+};
+
+const toGsm7Safe = (message) =>
+  message
+    .replace(/[\u00b0\u2018\u2019\u201c\u201d\u2013\u2014\u2026]/g, (char) => GSM7_REPLACEMENTS[char])
+    // Any character outside printable ASCII would switch the whole message to
+    // UCS-2 encoding (70 chars/segment), which trial accounts cannot send.
+    .replace(/[^\x20-\x7E]/g, ' ')
+    .replace(/ {2,}/g, ' ')
+    .trim();
+
+// The body is truncated to the configured max chars so the body plus Twilio's
+// trial prefix ("Sent from your Twilio trial account - ", 38 chars) stays
+// within a single 160-char GSM-7 segment (trial accounts fail with error
+// 30044 on multi-segment messages) rather than hard-cutting mid-word.
+const truncateSms = (message, maxChars = config.notifications.twilio.maxSmsChars) => {
+  if (message.length <= maxChars) {
     return message;
   }
 
-  return `${message.slice(0, 1497)}...`;
+  const suffix = '...';
+  const cut = message.slice(0, maxChars - suffix.length).trimEnd();
+  const lastSpace = cut.lastIndexOf(' ');
+  const truncated = lastSpace > maxChars * 0.5 ? cut.slice(0, lastSpace) : cut;
+
+  return `${truncated.slice(0, maxChars - suffix.length)}${suffix}`;
 };
 
 const normalizeRecipientPhoneNumber = (phoneNumber) => {
@@ -64,7 +93,7 @@ const sendSms = async ({ to, message }) => {
       : { from: config.notifications.twilio.phoneNumber };
 
     const result = await getClient().messages.create({
-      body: truncateSms(message),
+      body: truncateSms(toGsm7Safe(message)),
       to: recipient,
       ...sender
     });
@@ -86,5 +115,7 @@ const sendSms = async ({ to, message }) => {
 
 module.exports = {
   normalizeRecipientPhoneNumber,
+  toGsm7Safe,
+  truncateSms,
   sendSms
 };

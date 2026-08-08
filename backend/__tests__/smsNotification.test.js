@@ -10,4 +10,9 @@ describe('SMS notification service', () => {
   test('keeps already international recipient phone numbers', () => {
     expect(normalizeRecipientPhoneNumber('+14155552671')).toBe('+14155552671');
   });
+
+  test('sanitizes non-GSM-7 characters that would force UCS-2 encoding', () => {
+    const { toGsm7Safe } = require('../src/services/smsNotification.service');
+    expect(toGsm7Safe('45°C heat — limit exposure')).toBe('45degC heat - limit exposure');
+  });
 });
