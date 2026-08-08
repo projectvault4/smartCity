@@ -6,8 +6,14 @@ import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveCo
 const fallbackSeries = Array.from({ length: 24 }).map((_, i) => ({
   time: `${i}:00`,
   traffic: Math.sin(i / 3) * 30 + 60 + Math.random() * 5,
-  aqi: Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10,
-  energy: Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5,
+  aqi: Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10 + 100,
+  energy: Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5 + 200,
+  trafficNorm: Math.sin(i / 3) * 30 + 60 + Math.random() * 5,
+  aqiNorm: Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10,
+  energyNorm: Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5,
+  trafficRaw: Math.round(Math.sin(i / 3) * 30 + 60 + Math.random() * 5) * 100,
+  aqiRaw: Math.round(Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10),
+  energyRaw: Math.round(Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5) * 100,
 }));
 
 const fallbackStats = {
@@ -72,8 +78,11 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
   const syncData = analysis?.series?.map((p: any) => ({
     time: p.time,
     traffic: p.traffic,
-    aqi: p.aqi,
-    energy: p.energy,
+    aqi: p.aqi + 100,
+    energy: p.energy + 200,
+    trafficNorm: p.traffic,
+    aqiNorm: p.aqi,
+    energyNorm: p.energy,
     trafficRaw: p.trafficRaw ?? p.traffic,
     aqiRaw: p.aqiRaw ?? p.aqi,
     energyRaw: p.energyRaw ?? p.energy,
@@ -128,12 +137,12 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
                       <div className="bg-[#0c0c0c] border border-white/10 rounded-xl p-3 shadow-xl space-y-1">
                         <div className="text-[11px] font-bold text-white/50 mb-1">Time: {label}</div>
                         {[
-                          { key: 'traffic', label: 'Traffic Flow', color: '#f39c12', raw: d.trafficRaw != null ? `${d.trafficRaw} veh/hr` : d.traffic },
-                          { key: 'aqi', label: 'Atmospheric AQI', color: '#3498db', raw: d.aqiRaw != null ? `${d.aqiRaw} AQI` : d.aqi },
-                          { key: 'energy', label: 'Grid Load', color: '#2ecc71', raw: d.energyRaw != null ? `${d.energyRaw} MW` : d.energy },
+                          { key: 'traffic', label: 'Traffic Flow', color: '#f39c12', raw: d.trafficRaw != null ? `${d.trafficRaw} veh/hr` : d.traffic, norm: d.trafficNorm },
+                          { key: 'aqi', label: 'Atmospheric AQI', color: '#3498db', raw: d.aqiRaw != null ? `${d.aqiRaw} AQI` : d.aqi, norm: d.aqiNorm },
+                          { key: 'energy', label: 'Grid Load', color: '#2ecc71', raw: d.energyRaw != null ? `${d.energyRaw} MW` : d.energy, norm: d.energyNorm },
                         ].map((s) => (
                           <div key={s.key} className="text-[11px] font-bold" style={{ color: s.color }}>
-                            {s.label}: {s.raw} <span className="text-[10px] text-white/40">({d[s.key]}/100 norm)</span>
+                            {s.label}: {s.raw} <span className="text-[10px] text-white/40">({s.norm}/100 norm)</span>
                           </div>
                         ))}
                       </div>
