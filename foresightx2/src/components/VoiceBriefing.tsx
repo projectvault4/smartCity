@@ -48,9 +48,15 @@ const buildModelBriefing = (data: CityData, modelConditions: ModelConditions | n
   const temp = formatNumber(modelConditions.weather?.temperature?.value);
   const energy = formatNumber(Number(modelConditions.raw?.electricity_demand ?? data.energy.value));
   const weather = modelConditions.weather?.weather?.description || modelConditions.weather?.weather?.main || data.weather.label;
-  const forecastTime = modelConditions.forecastFor
-    ? new Date(modelConditions.forecastFor).toLocaleString()
-    : 'the next forecast step';
+  // Show the live current time (not the floored forecast-step timestamp) so the
+  // briefing always reads as "now" instead of a frozen-looking hour like 8:30 AM.
+  const forecastTime = new Date().toLocaleString([], {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
 
   return {
     today: {
