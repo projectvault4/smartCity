@@ -155,10 +155,10 @@ export default function CityPulseForecast({
     [source],
   );
   const hours = metrics[0].timestamps.length > 0
-    ? buildForecastHours(metrics[0].timestamps.length)
-    : ['2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM'];
+    ? metrics[0].timestamps.map(fmtHour)
+    : buildForecastHours(metrics[0].timestamps.length);
   const forecastWindow = source && source.length > 0 ? source[0].timestamp : null;
-  const forecastWindowLabel = forecastWindow ? buildForecastHours(1)[0] : '—';
+  const forecastWindowLabel = forecastWindow ? fmtHour(forecastWindow) : '—';
 
   return (
     <div
@@ -280,7 +280,7 @@ export default function CityPulseForecast({
                       {fmt(v)}<span style={{ color: '#6f8079', fontWeight: 400, fontSize: 11 }}> {m.unit}</span>
                     </span>
                     <div className="col-span-3 h-[3px] rounded mt-2 overflow-hidden" style={{ gridColumn: '1/-1', background: '#1e2b24' }}>
-                      <div className="h-full rounded" style={{ width: `${CONF_PCT[i]}%`, background: m.color }} />
+                      <div className="h-full rounded" style={{ width: `${((v / Math.max(...m.values)) * 100).toFixed(1)}%`, background: m.color }} />
                     </div>
                   </div>
                 ))}
