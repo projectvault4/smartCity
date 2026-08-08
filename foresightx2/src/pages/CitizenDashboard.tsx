@@ -1,9 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import VoiceBriefing from '../components/VoiceBriefing';
-import { CityData, ModelConditions } from '../services/dataService';
+import {
+  CityData,
+  ModelConditions,
+  backendApi,
+  cityDataFromModelConditions,
+  getInitialData,
+} from '../services/dataService';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type WardKey = 'channasandra' | 'indiranagar';
@@ -32,6 +38,24 @@ interface Alert {
   why: string;
   time: string;
 }
+
+interface SmsAlert {
+  id: string;
+  title: string;
+  message: string;
+  severity: string;
+  sentAt: string;
+}
+
+const formatSent = (iso: string) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  let h = d.getHours() % 12;
+  if (h === 0) h = 12;
+  const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+  const m = String(d.getMinutes()).padStart(2, '0');
+  return `${h}:${m} ${ampm}`;
+};
 
 // ── Mock data (same as HTML) ───────────────────────────────────────────────────
 const wards: Record<WardKey, WardData> = {
@@ -137,6 +161,7 @@ function buildCityData(ward: WardData): CityData {
 
 const levelTagClass: Record<string, string> = {
   heavy: 'bad', 'very poor': 'bad', high: 'warn', moderate: 'warn', comfortable: 'good',
+  poor: 'warn', severe: 'bad', hot: 'warn', heatwave: 'bad', warm: 'warn', cool: 'good', cold: 'warn',
 };
 const tagBg: Record<string, string> = {
   good: 'bg-[rgba(111,231,183,0.12)] text-[#6fe7b7]',
@@ -157,7 +182,7 @@ export default function CitizenDashboard() {
   // Build the member profile from the signed-in user (no mock fallback)
   const memberTags = user?.tags?.length ? user.tags : ['Commuter'];
 
-  const [wardKey, setWardKey] = useState<WardKey>(() => {
+  const [wardKey] = useState<WardKey>(() => {
     const wardMatch = Object.keys(wards).find((w) =>
       user?.ward?.toLowerCase().includes(w.toLowerCase())
     ) as WardKey | undefined;
@@ -178,15 +203,69 @@ export default function CitizenDashboard() {
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [openWhy, setOpenWhy] = useState<number | null>(null);
-  const [lastUpdated, setLastUpdated] = useState(9);
+  const [lastUpdated, setLastUpdated] = useState(0);
+  const [modelConditions, setModelConditions] = useState<ModelConditions | null>(null);
+  const [smsAlerts, setSmsAlerts] = useState<SmsAlert[]>([]);
+  const [dataFetchedAt, setDataFetchedAt] = useState<number | null>(null);
 
-  // Tick "updated Xs ago"
+  // Tick "updated Xs ago" — real elapsed time since the last live fetch
   useEffect(() => {
-    const id = setInterval(() => setLastUpdated((p) => p + 3), 3000);
+    if (!dataFetchedAt) return;
+    const id = setInterval(() => {
+      setLastUpdated(Math.max(0, Math.floor((Date.now() - dataFetchedAt) / 1000)));
+    }, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [dataFetchedAt]);
 
-  const ward = wards[wardKey];
+  // Pull live model conditions + this member's SMS history
+  useEffect(() => {
+    let cancelled = false;
+    const fetchLive = async () => {
+      try {
+        const [condRes, smsRes] = await Promise.all([
+          backendApi.modelConditions('bangalore', 1),
+          backendApi.listSmsHistory(50) as Promise<{ data: any[] }>,
+        ]);
+        if (cancelled) return;
+        setModelConditions(condRes.data);
+        setDataFetchedAt(Date.now());
+        const phoneDigits = (user?.phone || '').replace(/\D/g, '').slice(-10);
+        setSmsAlerts((smsRes.data || [])
+          .filter((r: any) => String(r.member_phone || '').replace(/\D/g, '').slice(-10) === phoneDigits)
+          .map((r: any) => ({
+            id: r.id,
+            title: r.title,
+            message: r.message,
+            severity: r.severity,
+            sentAt: r.sent_at,
+          })));
+      } catch {
+        // keep last known values — dashboard stays usable offline
+      }
+    };
+    fetchLive();
+    const id = setInterval(fetchLive, 60000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [user?.phone]);
+
+  const baseWard = wards[wardKey];
+  // Merge live trained-model conditions into the ward's snapshot, with a mock fallback.
+  const ward = useMemo<WardData>(() => {
+    if (!modelConditions) return baseWard;
+    const trafficFlow = Math.round(Number(modelConditions.traffic?.flow ?? baseWard.traffic.value));
+    const aqi = Math.round(Number(modelConditions.aqi?.aqi ?? baseWard.aqi.value));
+    const temp = Math.round(Number(modelConditions.weather?.temperature?.value ?? baseWard.temp.value));
+    const baseline = 8000;
+    const pct = Math.max(0, Math.round(((trafficFlow - baseline) / baseline) * 100));
+    const aqiLabel = aqi <= 50 ? 'good' : aqi <= 100 ? 'moderate' : aqi <= 200 ? 'poor' : aqi <= 300 ? 'very poor' : 'severe';
+    const tempLabel = temp >= 38 ? 'heatwave' : temp >= 32 ? 'hot' : temp >= 24 ? 'warm' : temp >= 15 ? 'cool' : 'cold';
+    return {
+      name: baseWard.name,
+      traffic: { value: trafficFlow, unit: 'veh/hr', level: modelConditions.traffic?.congestionLevel || 'moderate', pct },
+      aqi: { value: aqi, level: aqiLabel },
+      temp: { value: temp, level: tempLabel },
+    };
+  }, [baseWard, modelConditions]);
   const currentUser = profile;
   const alerts = buildAlerts(ward, currentUser);
 
@@ -201,10 +280,35 @@ export default function CitizenDashboard() {
     setEditing(false);
   };
 
-  const saveProfile = () => {
-    setProfile({ ...draft });
-    if (draft.ward !== wardKey) setWardKey(draft.ward);
+  const saveProfile = async () => {
     setEditing(false);
+    try {
+      const phone = user?.phone || '';
+      const wardName = wardKey === 'indiranagar' ? 'Indiranagar' : 'Channasandra';
+      const payload = { name: draft.name.trim(), age: draft.age, ward: wardName, preferences: { tags: draft.tags } };
+      // Resolve the backend user by phone so admin sees the update.
+      const list = (await backendApi.listUsers()) as any;
+      const users: any[] = Array.isArray(list) ? list : (list?.data || []);
+      const phoneDigits = phone.replace(/\D/g, '').slice(-10);
+      const existing = users.find((u: any) => String(u.phone || '').replace(/\D/g, '').slice(-10) === phoneDigits);
+      if (existing) {
+        await backendApi.updateUser(existing.id, payload);
+      } else if (phoneDigits) {
+        await backendApi.createUser({
+          user_id: `citizen_${Date.now()}`,
+          name: draft.name.trim(),
+          age: draft.age,
+          phone,
+          city: 'bangalore',
+          ward: wardName,
+          status: 'active',
+          preferences: { tags: draft.tags },
+        });
+      }
+    } catch {
+      // keep local state even if the backend is unreachable
+    }
+    setProfile({ ...draft });
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -246,17 +350,9 @@ export default function CitizenDashboard() {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Ward selector */}
-            <div className="relative">
-              <select
-                value={wardKey}
-                onChange={(e) => setWardKey(e.target.value as WardKey)}
-                className="appearance-none bg-[#10201a] border border-[#1f3831] text-[#e9f3ee] font-mono text-[0.75rem] tracking-[0.03em] py-[9px] pl-3 pr-8 rounded-[20px] cursor-pointer focus:outline-none"
-              >
-                <option value="channasandra">Channasandra</option>
-                <option value="indiranagar">Indiranagar</option>
-              </select>
-              <span className="absolute right-3 top-1/2 -translate-y-[55%] text-[#8fa69b] pointer-events-none text-[0.8rem]">⌄</span>
+            {/* Fixed ward chip — area comes from registration, not a dropdown */}
+            <div className="bg-[#10201a] border border-[#1f3831] rounded-[20px] px-4 py-[9px] font-mono text-[0.75rem] text-[#8fa69b] tracking-[0.03em]">
+              <span className="text-[#6fe7b7]">{ward.name}</span>
             </div>
 
             {/* Signed-in member chip */}
@@ -359,6 +455,38 @@ export default function CitizenDashboard() {
           )}
         </div>
 
+        {/* ── SMS alerts (delivered) ─────────────────────────────── */}
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="font-['Fraunces',serif] font-medium text-[1.15rem] m-0">SMS alerts</h2>
+          <span className="font-mono text-[0.72rem] text-[#5c7269]">{smsAlerts.length} delivered</span>
+        </div>
+
+        <div className="flex flex-col gap-3 mb-9">
+          {smsAlerts.length === 0 ? (
+            <div className="text-center py-10 px-5 text-[#5c7269] border border-dashed border-[#1f3831] rounded-[14px] text-[0.9rem]">
+              No SMS alerts have been sent to your phone yet.
+            </div>
+          ) : (
+            smsAlerts.map((s) => (
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-[#10201a] border border-[#1f3831] border-l-[3px] rounded-[12px] p-[18px_20px]"
+              >
+                <div className="flex justify-between gap-[14px] items-start">
+                  <p className="font-semibold text-[0.96rem] m-0 mb-[6px]">{s.title}</p>
+                  <span className="font-mono text-[0.68rem] text-[#5c7269] whitespace-nowrap mt-[2px]">{formatSent(s.sentAt)}</span>
+                </div>
+                <p className="text-[#8fa69b] text-[0.88rem] m-0 mb-3">{s.message}</p>
+                <span className={`inline-block text-[0.68rem] px-2 py-[2px] rounded-[20px] font-mono ${s.severity === 'critical' ? tagBg.bad : tagBg.warn}`}>
+                  {s.severity === 'critical' ? 'Critical · SMS sent' : 'Advisory · SMS sent'}
+                </span>
+              </motion.div>
+            ))
+          )}
+        </div>
+
         {/* ── Profile card ────────────────────────────────────────── */}
         <div className="flex items-baseline justify-between mb-4">
           <h2 className="font-['Fraunces',serif] font-medium text-[1.15rem] m-0">Your profile</h2>
@@ -399,15 +527,10 @@ export default function CitizenDashboard() {
               </div>
 
               <div>
-                <label className="block text-[0.68rem] tracking-[0.1em] uppercase text-[#5c7269] font-mono mb-2">Ward</label>
-                <select
-                  value={draft.ward}
-                  onChange={(e) => setDraft({ ...draft, ward: e.target.value as WardKey })}
-                  className="appearance-none w-full bg-[#0e1a16] border border-[#1f3831] text-[#e9f3ee] text-[0.85rem] px-3 py-2.5 rounded-[10px] focus:outline-none focus:border-[#3f8a71] cursor-pointer"
-                >
-                  <option value="channasandra">Channasandra</option>
-                  <option value="indiranagar">Indiranagar</option>
-                </select>
+                <label className="block text-[0.68rem] tracking-[0.1em] uppercase text-[#5c7269] font-mono mb-2">Ward / Area</label>
+                <div className="bg-[#0e1a16] border border-[#1f3831] text-[#8fa69b] text-[0.85rem] px-3 py-2.5 rounded-[10px]">
+                  {ward.name}
+                </div>
               </div>
 
               <div>
@@ -487,7 +610,10 @@ export default function CitizenDashboard() {
           <h2 className="font-['Fraunces',serif] font-medium text-[1.15rem] m-0">Voice briefing</h2>
           <span className="font-mono text-[0.72rem] text-[#5c7269]">{ward.name}</span>
         </div>
-        <VoiceBriefing data={buildCityData(ward)} modelConditions={null} />
+        <VoiceBriefing
+          data={modelConditions ? cityDataFromModelConditions(modelConditions, getInitialData()) : buildCityData(ward)}
+          modelConditions={modelConditions}
+        />
 
         <p className="text-center text-[#5c7269] text-[0.76rem] mt-9 font-['Inter',sans-serif]">
           Messages are generated for your profile and ward only — not broadcast city-wide.{' '}
