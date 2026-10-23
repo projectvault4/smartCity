@@ -83,10 +83,13 @@ const toTimestampMs = (timestamp) => {
 // ahead of its last training timestamp; we keep the relative spacing and map
 // step_ahead k onto the k-th step boundary after "now", so the dashboard reads
 // like a rolling next-24h outlook instead of a frozen 2025 date.
+// Floor to the top of the hour in the CITY's timezone (IST by default), not the
+// server's. Render runs in UTC, and IST is UTC+5:30, so flooring in UTC lands on
+// :30 IST and can publish an hour that has already passed.
 const floorToLocalHour = (date) => {
-  const floored = new Date(date);
-  floored.setMinutes(0, 0, 0);
-  return floored.getTime();
+  const offsetMs = (config.modelForecast.tzOffsetMinutes ?? 330) * 60 * 1000;
+  const hourMs = 60 * 60 * 1000;
+  return Math.floor((date.getTime() + offsetMs) / hourMs) * hourMs - offsetMs;
 };
 
 const rebaseFutureTimestamps = (rows) => {
@@ -107,43 +110,57 @@ const rebaseFutureTimestamps = (rows) => {
 };
 
 // The full-year 2026 forecast file already contains real 2026 timestamps. We
-// anchor it to the live server clock by finding the hourly row nearest to
-// "now" (so the forecast always reflects the CURRENT month/season instead of
-// always restarting from the file's first row on January 1st) and then rebase
-// the selected window onto the live clock so the dashboard reads like a
-// rolling real-time forecast for the current 2026 date.
+// anchor it to the live server clock by finding the hourly row for the FIRST
+// forecast hour (so the forecast always reflects the CURRENT month/season
+// instead of always restarting from the file's first row on January 1st) and
+// then rebase the selected window onto the live clock so the dashboard reads
+// like a rolling real-time forecast for the current 2026 date.
 const anchor2026Rows = (rows) => {
   const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
 
-  const now = new Date();
-  now.setMinutes(0, 0, 0);
-  now.setSeconds(0, 0);
-  const targetMs = now.getTime();
+  // step_ahead k means "k steps after the current step boundary", so the first
+  // row must land on the hour AFTER the current one. Anchoring on the floored
+  // current hour would publish a T+1H row that is already in the past (e.g. at
+  // 10:48 it would read "forecast from 10 AM" instead of 11 AM).
+  const anchorMs = floorToLocalHour(new Date());
+  const targetMs = anchorMs + stepMs;
 
-  // Find the row whose real 2026 timestamp is closest to the current time.
-  let startIndex = 0;
-  let bestDiff = Infinity;
+  // Pick the earliest row at or after the first forecast hour so the seasonal
+  // values line up with the horizon we publish. Choosing purely on absolute
+  // distance could snap backwards onto an already-elapsed hour.
+  let startIndex = -1;
+  let earliestForwardTs = Infinity;
+  let fallbackIndex = 0;
+  let fallbackDiff = Infinity;
+
   rows.forEach((row, index) => {
     const ts = toTimestampMs(row.timestamp);
     if (!Number.isFinite(ts)) {
       return;
     }
-    const diff = Math.abs(ts - targetMs);
-    if (diff < bestDiff) {
-      bestDiff = diff;
+
+    if (ts >= targetMs && ts < earliestForwardTs) {
+      earliestForwardTs = ts;
       startIndex = index;
+    }
+
+    const diff = Math.abs(ts - targetMs);
+    if (diff < fallbackDiff) {
+      fallbackDiff = diff;
+      fallbackIndex = index;
     }
   });
 
-  const window = rows.slice(startIndex);
+  // At the very end of the file there is no forward row left; fall back to the
+  // closest one so the endpoint still returns a usable window.
+  const window = rows.slice(startIndex >= 0 ? startIndex : fallbackIndex);
 
   return window.map((row, index) => ({
     ...row,
     time_segment: 'future',
     step_ahead: index + 1,
-    timestamp: formatTimestamp(
-      new Date(targetMs + index * stepMs)
-    )
+    // step_ahead k maps onto anchor + k * step, matching rebaseFutureTimestamps.
+    timestamp: formatTimestamp(new Date(targetMs + index * stepMs))
   }));
 };
 

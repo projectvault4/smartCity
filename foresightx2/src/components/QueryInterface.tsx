@@ -4,9 +4,8 @@ import { Search, Loader2, BarChart2, TrendingUp, Sparkles } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts';
 import { ModelConditions, ForecastPoint } from '../services/dataService';
 
-// Groq API (OpenAI-compatible). Uses process.env.GROQ_API_KEY injected via vite.
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+// Google Gemini (see services/gemini.ts). Uses process.env.GEMINI_API_KEY injected via vite.
+import { generateWithGemini } from '../services/gemini';
 
 // Normalize the model's response into the exact shape the charts expect:
 // { text: string, forecast: [{time, value}], shap: [{name, val}] }
@@ -194,35 +193,15 @@ const QueryInterface = ({
         4. Include "shap": an ARRAY of 4 objects, each {"name":"<driver>","val":<number>}, ranking the drivers of the trend with real magnitudes.
       `;
 
-      // Using Groq's OpenAI-compatible chat completions API
-      const response = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GROQ_API_KEY || ''}`,
-        },
-        body: JSON.stringify({
-          model: GROQ_MODEL,
-          messages: [
-            {
-              role: 'system',
-              content:
-                "You explain city forecast data in plain, simple language that a general audience understands. Always answer the user's query with 4-5 short, easy sentences (max ~110 words total), using everyday words and no jargon. Mention the key forecast number(s) naturally. Never refuse or claim the data is insufficient — reason from the evidence and keep it simple. Format your response as a JSON object inside <data> tags with fields: text (your explanation), forecast (array of {time,value}), and shap (array of {name,val}). Do not include markdown code blocks.",
-            },
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.5,
-          max_tokens: 1200,
-        }),
+      const rawText = await generateWithGemini({
+        system:
+          "You explain city forecast data in plain, simple language that a general audience understands. Always answer the user's query with 4-5 short, easy sentences (max ~110 words total), using everyday words and no jargon. Mention the key forecast number(s) naturally. Never refuse or claim the data is insufficient — reason from the evidence and keep it simple. Format your response as a JSON object inside <data> tags with fields: text (your explanation), forecast (array of {time,value} with numeric values), and shap (array of {name,val} with numeric values). Do not include markdown code blocks.",
+        prompt,
+        temperature: 0.5,
+        maxOutputTokens: 1200,
       });
-
-      if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`Groq request failed (${response.status}): ${body.slice(0, 200)}`);
-      }
-
-      const data = await response.json();
-      const responseText = data?.choices?.[0]?.message?.content || '';
+      // Strip stray markdown fences in case the model adds them anyway.
+      const responseText = rawText.replace(/```json|```/g, '');
 
       const dataMatch = responseText.match(/<data>(.*?)<\/data>/s);
       let structuredData = null;

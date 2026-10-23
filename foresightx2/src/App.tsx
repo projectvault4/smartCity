@@ -75,24 +75,44 @@ function AdminDashboard() {
     return () => clearInterval(interval);
   }, [modelConditions]);
 
+  // Connect to the backend, retrying until it responds. The Render free tier
+  // sleeps when idle and can take ~30-60 s to wake, so a single check on page
+  // load would leave the dashboard stuck on "offline" with fallback data.
   useEffect(() => {
     let mounted = true;
-    backendApi.health()
-      .then(() => {
-        if (mounted) setBackendStatus('online');
-        return backendApi.modelConditions('bangalore');
-      })
-      .then((response: any) => {
-        if (!mounted || !response?.data) return;
-        setModelConditions(response.data);
-        setCityData((prev) => cityDataFromModelConditions(response.data, prev));
-      })
-      .catch(() => { if (mounted) setBackendStatus('offline'); });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let attempt = 0;
 
-    backendApi.modelForecast('bangalore', 6)
-      .then((response) => { if (mounted) setModelForecast(response.data); })
-      .catch(() => {});
-    return () => { mounted = false; };
+    const connect = async () => {
+      try {
+        await backendApi.health();
+        if (!mounted) return;
+        setBackendStatus('online');
+        const [conditions, forecast] = await Promise.all([
+          backendApi.modelConditions('bangalore'),
+          backendApi.modelForecast('bangalore', 6),
+        ]);
+        if (!mounted) return;
+        if ((conditions as any)?.data) {
+          setModelConditions((conditions as any).data);
+          setCityData((prev) => cityDataFromModelConditions((conditions as any).data, prev));
+        }
+        if (forecast?.data) setModelForecast(forecast.data);
+      } catch {
+        if (!mounted) return;
+        // Show "checking" while the backend may still be waking up, then "offline".
+        setBackendStatus(attempt < 6 ? 'checking' : 'offline');
+        attempt += 1;
+        // Retry every 10 s for the first minute, then every 30 s.
+        timer = setTimeout(connect, attempt <= 6 ? 10000 : 30000);
+      }
+    };
+
+    connect();
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   // Refresh the model forecast on a rolling interval so the prediction window
@@ -105,10 +125,11 @@ function AdminDashboard() {
       backendApi.modelConditions('bangalore')
         .then((response: any) => {
           if (!response?.data) return;
+          setBackendStatus('online');
           setModelConditions(response.data);
           setCityData((prev) => cityDataFromModelConditions(response.data, prev));
         })
-        .catch(() => {});
+        .catch(() => setBackendStatus('offline'));
     }, 300000);
     return () => clearInterval(id);
   }, []);

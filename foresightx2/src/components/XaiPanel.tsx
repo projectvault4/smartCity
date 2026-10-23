@@ -2,8 +2,7 @@ import { motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 import { CityData, ForecastPoint } from '../services/dataService';
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+import { generateWithGemini } from '../services/gemini';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Trend = 'up' | 'down' | 'stable';
@@ -244,30 +243,17 @@ Summarise in 4-5 short, simple sentences (max ~110 words):
 3. What it means for the person (one practical tip, e.g. about travel or breathing).
 Mention the real numbers naturally. Never refuse or claim the data is insufficient.
 `;
-      const response = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GROQ_API_KEY || ''}`,
-        },
-        body: JSON.stringify({
-          model: GROQ_MODEL,
-          messages: [
-            { role: 'system', content: 'You explain city forecast data in plain, simple language a general audience understands. 4-5 short, easy sentences, max ~110 words, everyday words, no jargon, mention real numbers, never refuse.' },
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.5,
-          max_tokens: 400,
-        }),
+      const text = await generateWithGemini({
+        system: 'You explain city forecast data in plain, simple language a general audience understands. 4-5 short, easy sentences, max ~110 words, everyday words, no jargon, mention real numbers, never refuse.',
+        prompt,
+        temperature: 0.5,
+        maxOutputTokens: 400,
       });
-      if (!response.ok) throw new Error(`Groq request failed (${response.status})`);
-      const data = await response.json();
-      const text = data?.choices?.[0]?.message?.content || '';
       const cleaned = text.replace(/<data>(.*?)<\/data>/s, '$1').replace(/```json|```/g, '').trim();
       const dataMatch = cleaned.match(/<data>(.*?)<\/data>/s);
       setPlain(dataMatch ? dataMatch[1].trim() : cleaned);
     } catch (e) {
-      console.error('XAI Groq error', e);
+      console.error('XAI Gemini error', e);
       setPlain('Could not reach the language model just now — please try again in a moment.');
     } finally {
       setPlainLoading(false);
@@ -513,7 +499,7 @@ Mention the real numbers naturally. Never refuse or claim the data is insufficie
               className="text-[0.65rem] font-mono uppercase tracking-[0.16em] mb-1"
               style={{ color: '#5c7269' }}
             >
-              In plain words (Groq)
+              In plain words (Gemini)
             </div>
             <p className="text-[0.8rem]" style={{ color: '#8fa69b' }}>
               The same model forecast, explained in everyday language.

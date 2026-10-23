@@ -72,6 +72,11 @@ const config = {
     liveRebase: process.env.MODEL_FORECAST_LIVE !== 'false',
     // Hourly step used for rebasing (must match the model's training cadence).
     stepMinutes: Number(process.env.MODEL_FORECAST_STEP_MINUTES) || 60,
+    // City timezone offset in minutes (IST = UTC+5:30 = 330). Forecast hours are
+    // aligned to the city's clock, not the server's (Render runs in UTC).
+    tzOffsetMinutes: process.env.MODEL_FORECAST_TZ_OFFSET_MINUTES
+      ? Number(process.env.MODEL_FORECAST_TZ_OFFSET_MINUTES)
+      : 330,
     // Source forecast file for the live conditions/forecast endpoints.
     // '2026' (default) anchors the full-year forecast_2026.csv to the live
     // clock; anything else falls back to past_present_future_forecast.csv.
