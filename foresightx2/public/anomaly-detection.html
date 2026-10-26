@@ -211,10 +211,10 @@ button,input{font-family:inherit;}
       <div class="live"><span class="rd"></span>LIVE</div>
       <div class="loc">📍 Bengaluru · Last updated <span id="lastUpdated">9s ago</span></div>
       <div class="spacer"></div>
-      <div class="metric">Traffic<b>5575/10K</b></div>
-      <div class="metric">AQI<b>158</b></div>
-      <div class="metric">Grid<b>854 MW</b></div>
-      <div class="metric">Temp<b>28°C</b></div>
+      <div class="metric">Traffic<b id="hdrTraffic">—</b></div>
+      <div class="metric">AQI<b id="hdrAqi">—</b></div>
+      <div class="metric">Grid<b id="hdrGrid">—</b></div>
+      <div class="metric">Temp<b id="hdrTemp">—</b></div>
       <div class="opstatus">⚡ System Operational</div>
     </div>
 
@@ -718,8 +718,13 @@ function onResize3d(){
     9. INIT
  ============================================================ */
 (async function bootstrap(){
+  // The dashboard passes its API base (?api=...). Without it, use the local
+  // backend in development and the Render backend everywhere else.
+  const qsApi = new URLSearchParams(location.search).get('api');
+  const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+  const API_BASE = qsApi || (isLocal ? 'http://localhost:5001/api' : 'https://foresightx-backend.onrender.com/api');
   try{
-    const res = await fetch('http://localhost:5001/api/model/anomalies');
+    const res = await fetch(`${API_BASE}/model/anomalies`);
     if(res.ok){
       const json = await res.json();
       const d = json && json.data;
@@ -736,6 +741,17 @@ function onResize3d(){
     }
   }catch(err){
     console.warn('Anomaly model fetch failed, using bundled data', err);
+  }
+  // Header strip: live model conditions instead of fixed demo numbers.
+  try{
+    const c = (await (await fetch(`${API_BASE}/model/conditions?city=bangalore`)).json()).data;
+    const n = (v)=>Number.isFinite(Number(v)) ? Math.round(Number(v)).toLocaleString('en-IN') : '—';
+    document.getElementById('hdrTraffic').textContent = n(c.traffic && c.traffic.flow);
+    document.getElementById('hdrAqi').textContent = n(c.aqi && c.aqi.aqi);
+    document.getElementById('hdrGrid').textContent = `${n(c.raw && c.raw.electricity_demand)} MW`;
+    document.getElementById('hdrTemp').textContent = `${n(c.weather && c.weather.temperature && c.weather.temperature.value)}°C`;
+  }catch(err){
+    console.warn('Model conditions fetch failed', err);
   }
   renderStats();
   renderDayList();

@@ -1,7 +1,11 @@
 import Card from './Card';
 import { ModelConditions } from '../services/dataService';
 
-const ANOMALY_APP_URL = import.meta.env.VITE_ANOMALY_APP_URL || '/anomaly-detection.html';
+// The embedded page reads the same backend as the dashboard (it used to call
+// a hardcoded localhost URL and silently fell back to bundled sample days).
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://foresightx-backend.onrender.com/api';
+const ANOMALY_PAGE = import.meta.env.VITE_ANOMALY_APP_URL || '/anomaly-detection.html';
+const ANOMALY_APP_URL = `${ANOMALY_PAGE}${ANOMALY_PAGE.includes('?') ? '&' : '?'}api=${encodeURIComponent(API_BASE)}`;
 
 const formatNumber = (value: unknown) => (
   Number.isFinite(Number(value)) ? Math.round(Number(value)).toLocaleString() : 'loading'
