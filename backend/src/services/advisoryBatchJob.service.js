@@ -5,8 +5,64 @@ const dataProviders = require('./dataProviders.service');
 const advisoryGenerator = require('./advisoryGenerator.service');
 const notificationService = require('./notification.service');
 const modelForecastService = require('./modelForecast.service');
+const decisionEngine = require('./decisionEngine.service');
+const intelligence = require('./intelligence.service');
+const advisorySentRepository = require('../repositories/advisorySent.repository');
 
 const jobName = 'advisory_batch';
+
+const deliveryChannelsFor = (user = {}) => {
+  const preferences = user.preferences || {};
+  const channels = [];
+  if (preferences.inApp !== false) channels.push('in_app');
+  if (preferences.email === true && user.email) channels.push('email');
+  if (preferences.sms === true && user.phone) channels.push('sms');
+  return channels;
+};
+
+// Probabilistic alerts from the shared decision engine, filtered to the
+// user's profiles and deduplicated against what was already sent within the
+// policy cooldown.
+const decisionAdvisories = async (user) => {
+  const policy = intelligence.getPolicy();
+  const profiles = decisionEngine.profilesForUser(user);
+  const decision = decisionEngine.getDecision({
+    city: String(user.city || config.modelForecast.defaultCity).toLowerCase(),
+    hours: 6,
+    profiles
+  });
+  let recent = new Set();
+  try {
+    recent = await advisorySentRepository.findRecentEventIds({ userId: user.id, sinceHours: policy.cooldown_hours });
+  } catch {
+    recent = new Set();
+  }
+  const fresh = decision.alerts.filter((alert) => !recent.has(alert.event));
+  const advisories = fresh.map((alert) => ({
+    userId: user.id,
+    personalizedFor: user.name,
+    title: alert.label,
+    message: alert.message,
+    smsMessage: alert.smsMessage,
+    severity: decisionEngine.SEVERITY_TO_DB[alert.severity] || 'warning',
+    riskScore: Number((alert.probability * 10).toFixed(2)),
+    riskLevel: alert.severity,
+    sourceFactors: [alert.event],
+    recommendedActions: [policy.actions[alert.event]?.[alert.profile] || policy.actions[alert.event]?.general].filter(Boolean),
+    deliveryChannels: deliveryChannelsFor(user),
+    context: {
+      event: alert.event,
+      profile: alert.profile,
+      probability: alert.probability,
+      cutoff: alert.cutoff,
+      startsAt: alert.startsAt,
+      forecast: alert.forecast,
+      drivers: alert.drivers,
+      source: 'decision_engine'
+    }
+  }));
+  return { advisories, suppressed: decision.alerts.length - fresh.length, forecastFor: decision.hours[0]?.timestamp };
+};
 
 const getUserCoordinates = (user) => {
   const latitude = user.latitude === null || user.latitude === undefined ? null : Number(user.latitude);
@@ -117,6 +173,31 @@ const countSentNotifications = (deliveryResult) => (
 ), 0);
 
 const processUser = async (user, { channels, sharedConditions } = {}) => {
+  // Automated runs use the validated decision engine. Manually entered console
+  // conditions keep the rule engine so operators can test specific scenarios.
+  if (!sharedConditions && config.modelForecast.enabled) {
+    try {
+      const { advisories, suppressed, forecastFor } = await decisionAdvisories(user);
+      if (!advisories.length) {
+        return { userId: user.id, advisoriesGenerated: 0, notificationsSent: 0, suppressedByCooldown: suppressed, providerErrors: [], source: 'decision_engine', forecastFor, delivery: null };
+      }
+      const delivery = await notificationService.deliverAdvisories({ user, advisories, channels });
+      return {
+        userId: user.id,
+        advisoriesGenerated: advisories.length,
+        notificationsSent: countSentNotifications(delivery),
+        suppressedByCooldown: suppressed,
+        providerErrors: [],
+        source: 'decision_engine',
+        forecastFor,
+        delivery
+      };
+    } catch (error) {
+      // Fall through to the legacy path if intelligence artifacts are missing.
+      if (error.statusCode !== 503) throw error;
+    }
+  }
+
   const liveResult = sharedConditions
     ? {
         conditions: sharedConditions,

@@ -12,15 +12,6 @@ const getColor = (val: number) => {
   return 'bg-[#22c55e]'; // Low Stress
 };
 
-// Deterministic pseudo-random fallback so the simulation doesn't flicker on re-render.
-const fakeValue = (month: number, day: number) => {
-  const x = Math.sin(month * 127.1 + day * 311.7) * 43758.5453;
-  let val = (x - Math.floor(x)) * 100;
-  if (month === 0 && day < 7) val = 95; // New Year stress
-  if (month === 2 && day > 20) val = 15; // Simulated lockdown green
-  return val;
-};
-
 const avg = (arr: number[]) => (arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : null);
 
 const StressHeatmap = ({ city = 'bangalore' }: { city?: string }) => {
@@ -93,14 +84,13 @@ const StressHeatmap = ({ city = 'bangalore' }: { city?: string }) => {
               <div className="flex gap-1 flex-1 overflow-auto pb-1">
                 {Array.from({ length: DAYS_IN_MONTH[mi] }).map((_, day) => {
                   const key = dateKey(mi + 1, day + 1);
-                  const val = hasModelData && dailyStress.has(key)
-                    ? dailyStress.get(key)!
-                    : fakeValue(mi, day + 1);
+                  // No invented values: days without model data stay grey.
+                  const val = hasModelData && dailyStress.has(key) ? dailyStress.get(key)! : null;
                   return (
                     <div
                       key={key}
-                      className={`w-3 h-3 rounded-[2px] shrink-0 ${getColor(val)} opacity-60 hover:opacity-100 transition-opacity cursor-pointer`}
-                      title={`${month} ${day + 1}: Stress Index ${Math.round(val)}`}
+                      className={`w-3 h-3 rounded-[2px] shrink-0 ${val === null ? 'bg-white/10' : getColor(val)} opacity-60 hover:opacity-100 transition-opacity cursor-pointer`}
+                      title={val === null ? `${month} ${day + 1}: no data` : `${month} ${day + 1}: Stress Index ${Math.round(val)}`}
                     />
                   );
                 })}
@@ -123,7 +113,7 @@ const StressHeatmap = ({ city = 'bangalore' }: { city?: string }) => {
         <div className="flex items-center gap-4 pt-2 border-t border-white/5">
           <span className="text-[10px] text-white/30 font-medium uppercase tracking-widest">Source:</span>
           <span className="text-[10px] text-white/40">
-            {status === 'loading' ? 'Loading 2026 forecast…' : hasModelData ? `Trained model · 2026 forecast · ${yearly?.totalHours} hourly steps` : 'Fallback simulation (backend offline)'}
+            {status === 'loading' ? 'Loading 2026 forecast…' : hasModelData ? `Trained model · 2026 forecast · ${yearly?.totalHours} hourly steps` : 'No data (backend offline)'}
           </span>
         </div>
       </div>

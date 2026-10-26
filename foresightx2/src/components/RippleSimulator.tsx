@@ -1,177 +1,136 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Card from './Card';
-import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
-import { ForecastPoint, backendApi } from '../services/dataService';
+import { backendApi, ForecastPoint, TARGET_META, TargetKey, WhatIf, fmtNum } from '../services/dataService';
 
-// Traffic congestion drives AQI and grid load up — that's the ripple effect.
-// Baseline comes from the model's predicted series; the slider adds the
-// congestion shock on top.
+// Data-driven what-if: every scenario was re-run through the full deployed
+// chain (features, SARIMA expert, network, calibration, blend) offline, so the
+// numbers here are the model's real response, not a slider multiplier.
 
-function fmtHour(ts: string): string {
-  const match = ts.match(/(\d{2}):(\d{2})/);
-  if (!match) return ts;
-  let h = Number(match[1]) % 12;
-  if (h === 0) h = 12;
-  const ampm = Number(match[1]) >= 12 ? 'PM' : 'AM';
-  return `${h}:${match[2]} ${ampm}`;
-}
+const DRIVERS = [
+  { key: 'traffic_flow', label: 'Traffic', unit: '%', steps: [-30, -20, -10, 0, 10, 20, 30] },
+  { key: 'temperature', label: 'Temperature', unit: '°C', steps: [-2, -1, 0, 1, 2] },
+  { key: 'humidity', label: 'Humidity', unit: '%', steps: [-10, 0, 10] }
+];
+const TARGETS = Object.keys(TARGET_META) as TargetKey[];
 
-function buildSeries(forecast?: ForecastPoint[] | null) {
-  if (forecast && forecast.length > 0) {
-    const sorted = [...forecast].sort((a, b) => a.stepAhead - b.stepAhead);
-    return sorted.map((p, i) => ({
-      time: p.timestamp ? fmtHour(p.timestamp) : `${i}:00`,
-      aqi: p.aqi ?? 45,
-      energy: p.electricityDemand ?? 4755,
-      traffic: p.trafficFlow ?? 19960,
-    }));
-  }
-  // Fallback when the model forecast isn't available
-  return Array.from({ length: 12 }, (_, i) => {
-    const wave = Math.sin(i / 2) * 8;
-    return {
-      time: `${i}:00`,
-      aqi: Math.round(55 + wave),
-      energy: Math.round(4000 + wave * 20),
-      traffic: Math.round(6000 + wave * 100),
-    };
-  });
-}
+const scenarioId = (driver: string, step: number) => {
+  const prefix = driver === 'traffic_flow' ? 'traffic' : driver;
+  return `${prefix}_${step > 0 ? '+' : ''}${step}`;
+};
 
-const RippleSimulator = ({ forecast }: { forecast?: ForecastPoint[] | null }) => {
-  const [congestion, setCongestion] = useState(50);
-  const [yearlyAvgAqi, setYearlyAvgAqi] = useState<number | null>(null);
-  const [yearlyAvgEnergy, setYearlyAvgEnergy] = useState<number | null>(null);
+const RippleSimulator = (_props: { forecast?: ForecastPoint[] | null }) => {
+  const [data, setData] = useState<WhatIf | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [driver, setDriver] = useState('traffic_flow');
+  const [step, setStep] = useState(-20);
+  const [focus, setFocus] = useState<TargetKey>('aqi');
 
   useEffect(() => {
-    let mounted = true;
-    backendApi.modelYearlyForecast('bangalore', 2026, 'monthly')
-      .then((res) => {
-        if (!mounted) return;
-        const annual = res.data?.annual;
-        if (annual) {
-          setYearlyAvgAqi(annual.aqi);
-          setYearlyAvgEnergy(annual.electricityDemand);
-        }
-      })
-      .catch(() => {});
-    return () => { mounted = false; };
+    backendApi.whatIf().then((r) => setData(r.data)).catch((e) => setError(e.message));
   }, []);
 
-  const base = useMemo(() => buildSeries(forecast), [forecast]);
+  const driverMeta = DRIVERS.find((d) => d.key === driver)!;
+  const scenario = useMemo(() => data?.scenarios.find((s) => s.id === scenarioId(driver, step)) || null, [data, driver, step]);
+  const byHour = useMemo(() => {
+    if (!scenario) return [];
+    const e = scenario.effects[focus];
+    return Array.from({ length: 24 }, (_, h) => ({ hour: `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`, change: e?.by_hour[String(h)] ?? 0 }));
+  }, [scenario, focus]);
 
-  // AQI and energy rise with congestion. congFactor goes 0.6x (0%) -> 1.6x (100%).
-  const congFactor = 0.6 + (congestion / 100) * 1.0;
-
-  const chartData = useMemo(() => {
-    return base.map((p) => ({
-      time: p.time,
-      aqi: Math.round(p.aqi * congFactor),
-      energy: Math.round(p.energy * congFactor),
-      traffic: Math.round(p.traffic),
-    }));
-  }, [base, congFactor]);
-
-  // Fixed Y domains so the curve visibly rises as congestion increases
-  const aqiMax = Math.ceil(Math.max(...base.map((p) => p.aqi)) * 1.7);
-  const energyMax = Math.ceil(Math.max(...base.map((p) => p.energy)) * 1.7);
+  if (error) return <Card title="What-if Explorer" theme="traffic"><p className="text-red-300">Unavailable: {error}</p></Card>;
+  if (!data) return <Card title="What-if Explorer" theme="traffic"><p>Loading counterfactual runs…</p></Card>;
 
   return (
-    <Card title="Cross-Domain Ripple Simulator" theme="traffic">
-      <div className="p-2 space-y-8">
-        <p className="text-sm text-white/50">
-          Drag the slider to see how traffic congestion ripples through air quality and energy demand.
+    <div className="space-y-6">
+      <Card title="What-if Explorer (counterfactual runs through the real model)" theme="traffic">
+        <p className="text-sm text-white/55 mb-6">
+          Change one input for the whole held-out window ({data.window.start.slice(0, 10)} → {data.window.end.slice(0, 10)}) and see how the
+          deployed forecast responds. {data.caveat}
         </p>
 
-        <div className="space-y-4 px-4 py-6 bg-white/5 rounded-2xl border border-white/5">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-bold text-traf-acc uppercase tracking-widest">Traffic Congestion %</span>
-            <span className="text-2xl font-display font-extrabold text-traf-acc">{congestion}%</span>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {DRIVERS.map((d) => (
+            <button key={d.key} onClick={() => { setDriver(d.key); setStep(d.steps.find((s) => s !== 0) ?? 0); }}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold border ${driver === d.key ? 'border-traf-acc/50 text-traf-acc bg-traf-acc/10' : 'border-white/10 text-white/50'}`}>
+              {d.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="px-4 py-5 bg-white/5 rounded-2xl border border-white/5 mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-traf-acc uppercase tracking-widest">{driverMeta.label} change</span>
+            <span className="text-2xl font-display font-extrabold text-traf-acc">{step > 0 ? '+' : ''}{step}{driverMeta.unit}</span>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={congestion}
-            onChange={(e) => setCongestion(parseInt(e.target.value))}
-            className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-traf-acc"
-          />
-          <div className="text-[10px] text-white/30">
-            {forecast && forecast.length > 0
-              ? 'Baseline: model predicted values · AQI scales with congestion'
-              : 'Model offline — showing synthetic baseline'}
+          <input type="range" min={0} max={driverMeta.steps.length - 1} step={1}
+            value={driverMeta.steps.indexOf(step)} onChange={(e) => setStep(driverMeta.steps[Number(e.target.value)])}
+            className="w-full accent-traf-acc" aria-label={`${driverMeta.label} change`} />
+          <div className="flex justify-between text-[10px] text-white/30 mt-1">
+            {driverMeta.steps.map((s) => <span key={s}>{s > 0 ? '+' : ''}{s}</span>)}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <div className="text-[10px] font-bold text-air-acc uppercase tracking-widest">
-              Predicted AQI Curve <span className="text-white/30 normal-case">(peak {chartData[chartData.length - 1]?.aqi ?? 0})</span>
+        {step === 0 || !scenario ? (
+          <p className="text-white/50 text-sm">Pick a non-zero change to see the model's response.</p>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[12px]">
+                <thead>
+                  <tr className="text-white/40 text-left">
+                    <th className="py-2 font-normal">Forecast</th>
+                    <th className="py-2 font-normal text-right">Average change</th>
+                    <th className="py-2 font-normal text-right">% change</th>
+                    <th className="py-2 font-normal text-right">90% of hours between</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {TARGETS.map((t) => {
+                    const e = scenario.effects[t];
+                    const m = TARGET_META[t];
+                    const digits = t === 'aqi' || t === 'temperature' ? 3 : 1;
+                    return (
+                      <tr key={t} onClick={() => setFocus(t)} className={`border-t border-white/5 cursor-pointer ${focus === t ? 'text-white' : 'text-white/65'}`}>
+                        <td className="py-2">{m.label}</td>
+                        <td className="py-2 text-right font-mono">{e.mean_change > 0 ? '+' : ''}{fmtNum(e.mean_change, digits)} {m.unit}</td>
+                        <td className="py-2 text-right font-mono">{e.mean_change_pct === null ? '—' : `${e.mean_change_pct > 0 ? '+' : ''}${e.mean_change_pct.toFixed(2)}%`}</td>
+                        <td className="py-2 text-right font-mono">{fmtNum(e.p05, digits)} to {fmtNum(e.p95, digits)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <div className="h-[150px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="aqiFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3498db" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="#3498db" stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="#ffffff10" vertical={false} />
-                  <XAxis dataKey="time" tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[0, aqiMax]} tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#0d1a10', border: '1px solid #ffffff22', fontSize: 11 }} />
-                  {yearlyAvgAqi != null && (
-                    <ReferenceLine y={yearlyAvgAqi} stroke="#ffffff66" strokeDasharray="4 4" label={{ value: `2026 avg ${yearlyAvgAqi}`, position: 'insideTopRight', fill: '#ffffff88', fontSize: 10 }} />
-                  )}
-                  <Area type="monotone" dataKey="aqi" stroke="#3498db" fill="url(#aqiFill)" strokeWidth={3} isAnimationActive={false} />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="mt-6">
+              <div className="text-[10px] uppercase tracking-widest text-white/40 mb-2">{TARGET_META[focus].label}: average change by hour of day</div>
+              <div className="h-[180px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={byHour} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="#ffffff10" vertical={false} />
+                    <XAxis dataKey="hour" tick={{ fill: '#ffffff55', fontSize: 10 }} interval={2} />
+                    <YAxis tick={{ fill: '#ffffff55', fontSize: 10 }} width={60} />
+                    <Tooltip contentStyle={{ background: '#0d1a10', border: '1px solid #ffffff22', fontSize: 11 }} formatter={(v: unknown) => fmtNum(Number(v), 3)} />
+                    <ReferenceLine y={0} stroke="#ffffff33" />
+                    <Bar dataKey="change" fill={TARGET_META[focus].color} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="text-[10px] text-white/30 text-center">
-              Simulated impact: {congestion > 70 ? 'CRITICAL POLLUTION' : congestion > 40 ? 'MODERATE IMPACT' : 'CLEAN AIR FLOW'}
-            </div>
-          </div>
+          </>
+        )}
+      </Card>
 
-          <div className="space-y-3">
-            <div className="text-[10px] font-bold text-eng-acc uppercase tracking-widest">
-              Electricity Demand Shift <span className="text-white/30 normal-case">(peak {chartData[chartData.length - 1]?.energy ?? 0} MW)</span>
-            </div>
-            <div className="h-[150px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="energyFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#2ecc71" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="#2ecc71" stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="#ffffff10" vertical={false} />
-                  <XAxis dataKey="time" tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[0, energyMax]} tick={{ fill: '#ffffff55', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#0d1a10', border: '1px solid #ffffff22', fontSize: 11 }} />
-                  {yearlyAvgEnergy != null && (
-                    <ReferenceLine y={yearlyAvgEnergy} stroke="#ffffff66" strokeDasharray="4 4" label={{ value: `2026 avg ${yearlyAvgEnergy} MW`, position: 'insideTopRight', fill: '#ffffff88', fontSize: 10 }} />
-                  )}
-                  <Area type="monotone" dataKey="energy" stroke="#2ecc71" fill="url(#energyFill)" strokeWidth={3} isAnimationActive={false} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="text-[10px] text-white/30 text-center">
-              Load correlation: {congestion}% congestion → {chartData[0]?.energy ?? 0}MW baseline
-            </div>
-          </div>
+      <Card title="What the evidence says about cross-domain effects" theme="home">
+        <div className="space-y-2">
+          {data.findings.map((f) => <p key={f} className="text-[13px] text-white/70">• {f}</p>)}
         </div>
-
-        <div className="p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-center gap-4">
-          <div className="text-[11px] font-medium text-white/40">Real-time Cross-Domain Link:</div>
-          <div className="flex gap-2">
-            <div className={`px-2 py-1 rounded text-[10px] font-bold ${congestion > 80 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>CO2 SYNC</div>
-            <div className={`px-2 py-1 rounded text-[10px] font-bold ${congestion > 60 ? 'bg-orange-500/20 text-orange-400' : 'bg-blue-500/20 text-blue-400'}`}>GRID LOAD</div>
-          </div>
-        </div>
-      </div>
-    </Card>
+        <p className="text-[12px] text-white/40 mt-4">
+          Hour-ahead forecasts are dominated by each signal's own recent history and daily cycle, so changing traffic barely moves the AQI forecast.
+          Day-level data shows where real links exist (temperature → electricity demand) and where they do not (traffic → AQI) in Bengaluru, Feb–Jun 2025.
+        </p>
+      </Card>
+    </div>
   );
 };
 

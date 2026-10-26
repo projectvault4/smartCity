@@ -26,6 +26,9 @@ COPY outputs/urban_events.json ./outputs/urban_events.json
 COPY outputs/urban_anomaly_timeline.csv ./outputs/urban_anomaly_timeline.csv
 COPY outputs/urban_events_2026.json ./outputs/urban_events_2026.json
 COPY outputs/urban_anomaly_timeline_2026.csv ./outputs/urban_anomaly_timeline_2026.csv
+# Decision-intelligence artifacts (build_intelligence.py): benchmark, SHAP,
+# conformal, what-if, anomaly evaluation, replay, policy, outlook uncertainty.
+COPY outputs/intelligence/*.json ./outputs/intelligence/
 
 RUN chown -R foresightx:foresightx /app
 

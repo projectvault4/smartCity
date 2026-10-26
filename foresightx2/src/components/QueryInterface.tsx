@@ -4,7 +4,7 @@ import { Search, Loader2, BarChart2, TrendingUp, Sparkles } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts';
 import { ModelConditions, ForecastPoint } from '../services/dataService';
 
-// Google Gemini (see services/gemini.ts). Uses process.env.GEMINI_API_KEY injected via vite.
+// Google Gemini via the backend proxy (see services/gemini.ts); no key in the browser.
 import { generateWithGemini } from '../services/gemini';
 
 // Normalize the model's response into the exact shape the charts expect:

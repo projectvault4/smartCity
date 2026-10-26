@@ -5,5 +5,6 @@ matplotlib
 seaborn
 torch
 statsmodels
+shap==0.51.0
 xlrd>=2.0.1
 openpyxl>=3.1.0

@@ -54,7 +54,8 @@ const deliverChannel = async ({ advisory, user, channel }) => {
     if (channel === 'sms') {
       const providerResult = await smsNotificationService.sendSms({
         to: user.phone,
-        message: `${advisory.title}: ${advisory.message}`
+        // Decision-engine alerts carry a compact SMS text that fits one segment.
+        message: advisory.smsMessage || `${advisory.title}: ${advisory.message}`
       });
 
       const record = await recordAdvisorySent({
@@ -82,7 +83,8 @@ const deliverChannel = async ({ advisory, user, channel }) => {
           severity: advisory.severity,
           riskScore: advisory.riskScore,
           riskLevel: advisory.riskLevel,
-          sourceFactors: advisory.sourceFactors
+          sourceFactors: advisory.sourceFactors,
+          decision: advisory.context?.source === 'decision_engine' ? advisory.context : undefined
         }
       });
 

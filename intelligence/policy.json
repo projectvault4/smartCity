@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "description": "Single alert policy shared by the Python replay (build_intelligence.py) and the Node decision engine (backend/src/services/decisionEngine.service.js). Thresholds follow CPCB AQI bands and the traffic/grid levels used across the dashboard.",
+  "cooldown_hours": 3,
+  "default_probability_cutoff": 0.5,
+  "interval_coverage": 0.9,
+  "message_template": "{label} expected around {time} ({probability}% chance). Forecast {value}; likely range {low}-{high}. Main driver: {driver}. {action}",
+  "sms_template": "ForeSightX: {label} ~{time}, {probability}% chance ({value}). {action}",
+  "units": { "traffic_flow": "veh/hr", "aqi": "AQI", "temperature": "C", "electricity_demand": "MW" },
+  "events": {
+    "traffic_congestion": {
+      "label": "Severe traffic congestion",
+      "conditions": [{ "target": "traffic_flow", "threshold": 20000 }],
+      "unit": "veh/hr",
+      "severity": "warning",
+      "audience": ["commuter", "outdoor_worker"]
+    },
+    "grid_peak": {
+      "label": "Electricity demand peak",
+      "conditions": [{ "target": "electricity_demand", "threshold": 6000 }],
+      "unit": "MW",
+      "severity": "advisory",
+      "audience": ["general", "elderly"]
+    },
+    "compound_stress": {
+      "label": "Traffic and grid peaks overlap",
+      "conditions": [
+        { "target": "traffic_flow", "threshold": 18000 },
+        { "target": "electricity_demand", "threshold": 5500 }
+      ],
+      "unit": "",
+      "severity": "warning",
+      "audience": ["commuter", "general"]
+    },
+    "air_quality_sensitive": {
+      "label": "Air quality Moderate (CPCB 101-200)",
+      "conditions": [{ "target": "aqi", "threshold": 100 }],
+      "unit": "AQI",
+      "severity": "warning",
+      "audience": ["respiratory", "child", "elderly", "outdoor_worker"]
+    },
+    "air_quality_poor": {
+      "label": "Air quality Poor or worse (CPCB > 200)",
+      "conditions": [{ "target": "aqi", "threshold": 200 }],
+      "unit": "AQI",
+      "severity": "critical",
+      "audience": ["general", "respiratory", "child", "elderly", "outdoor_worker", "commuter"]
+    },
+    "heat_stress": {
+      "label": "Heat stress",
+      "conditions": [{ "target": "temperature", "threshold": 35 }],
+      "unit": "C",
+      "severity": "warning",
+      "audience": ["elderly", "child", "outdoor_worker"]
+    }
+  },
+  "profiles": {
+    "general": "Everyone",
+    "commuter": "Commuter",
+    "outdoor_worker": "Outdoor worker",
+    "respiratory": "Respiratory or heart condition",
+    "elderly": "Older adult",
+    "child": "Parent of a child"
+  },
+  "actions": {
+    "traffic_congestion": {
+      "commuter": "Leave 20-30 min earlier or later, or take Namma Metro.",
+      "outdoor_worker": "Take breaks away from the carriageway during the peak.",
+      "general": "Avoid non-essential road trips in this window."
+    },
+    "grid_peak": {
+      "general": "Run washing machines, geysers and pumps outside this window.",
+      "elderly": "Keep phones and medical devices charged in case of load-shedding."
+    },
+    "compound_stress": {
+      "commuter": "Roads and the grid both peak now; travel off-peak if you can.",
+      "general": "Shift heavy appliance use and road trips away from this window."
+    },
+    "air_quality_sensitive": {
+      "respiratory": "Keep your inhaler handy and limit hard outdoor exercise.",
+      "child": "Prefer indoor play; avoid roadside walks for children.",
+      "elderly": "Limit long outdoor walks; rest indoors if breathing feels hard.",
+      "outdoor_worker": "Wear an N95 mask and take breaks in cleaner air."
+    },
+    "air_quality_poor": {
+      "general": "Reduce outdoor exertion; keep windows closed near busy roads.",
+      "respiratory": "Stay indoors where possible and keep medication ready.",
+      "child": "Keep children indoors; move outdoor school activities inside.",
+      "elderly": "Stay indoors and seek care if breathing worsens.",
+      "outdoor_worker": "Wear an N95 mask and cut heavy work during the peak.",
+      "commuter": "Use a mask and keep car windows closed in traffic."
+    },
+    "heat_stress": {
+      "elderly": "Drink water often and stay in a cool room in the afternoon.",
+      "child": "Keep children shaded and hydrated; avoid midday play.",
+      "outdoor_worker": "Shift heavy work to morning or evening; drink water hourly."
+    }
+  }
+}

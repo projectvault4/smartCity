@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import VoiceBriefing from '../components/VoiceBriefing';
 import {
   CityData,
+  Decision,
   ModelConditions,
+  PROFILE_LABELS,
   backendApi,
   cityDataFromModelConditions,
+  cpcbCategory,
+  fmtCityHour,
   getInitialData,
 } from '../services/dataService';
 
@@ -129,6 +133,34 @@ function metricValue(w: WardData, m: 'aqi' | 'traffic' | 'temp'): number {
   return w.temp.value;
 }
 
+// Member tags -> decision-engine profiles (same mapping as the SMS job).
+const TAG_TO_PROFILE: Record<string, string> = {
+  Respiratory: 'respiratory',
+  Heart: 'respiratory',
+  Elder: 'elderly',
+  Child: 'child',
+  Worker: 'outdoor_worker',
+  Commuter: 'commuter',
+};
+const profilesForTags = (tags: string[]) => Array.from(new Set(tags.map((t) => TAG_TO_PROFILE[t]).filter(Boolean)));
+
+// Alerts come from the shared decision engine, so the citizen page, the SMS
+// and the admin console always agree. (The earlier local rules are kept below
+// only as an offline fallback.)
+function alertsFromDecision(decision: Decision): Alert[] {
+  return decision.alerts.map((a) => {
+    const drivers = a.drivers.slice(0, 2).map((d) => d.label.replace(' (SARIMA)', '')).join(' and ');
+    const profileLabel = PROFILE_LABELS[a.profile || 'general'] || 'your profile';
+    return {
+      severity: a.severity === 'critical' ? 'bad' : 'warn',
+      headline: `${a.label} around ${fmtCityHour(a.startsAt)}`,
+      body: a.message || a.messages[a.audience[0]],
+      why: `Shown because you are tagged ${profileLabel}. The model gives this a ${Math.round(a.probability * 100)}% chance, above the ${Math.round(a.cutoff * 100)}% alert cutoff that was tuned on past data. Main drivers: ${drivers || 'the usual daily pattern'}. Expected range ${Math.round(a.forecast?.low ?? 0).toLocaleString('en-IN')}–${Math.round(a.forecast?.high ?? 0).toLocaleString('en-IN')}.`,
+      time: `${fmtCityHour(a.startsAt)}–${fmtCityHour(a.endsAt)}`,
+    };
+  });
+}
+
 function buildAlerts(ward: WardData, user: UserData): Alert[] {
   const now = new Date();
   let h = now.getHours() % 12; if (h === 0) h = 12;
@@ -142,7 +174,7 @@ function buildAlerts(ward: WardData, user: UserData): Alert[] {
     const max = r.max ?? Infinity;
     const tagMatch = user.tags.some((t) => r.tags.includes(t));
     if (val >= min && val <= max && tagMatch) {
-      out.push({ severity: r.severity, headline: r.headline(ward), body: r.body(ward, user), why: r.why(ward, user), time });
+      out.push({ severity: r.severity, headline: r.headline(ward), body: r.body(ward, user), why: r.why(ward, user).replace(/<\/?b>/g, ''), time });
     }
     return out;
   }, []);
@@ -207,6 +239,19 @@ export default function CitizenDashboard() {
   const [modelConditions, setModelConditions] = useState<ModelConditions | null>(null);
   const [smsAlerts, setSmsAlerts] = useState<SmsAlert[]>([]);
   const [dataFetchedAt, setDataFetchedAt] = useState<number | null>(null);
+  const [decision, setDecision] = useState<Decision | null>(null);
+  const profileKeys = useMemo(() => profilesForTags(profile.tags), [profile.tags]);
+
+  // Personal alerts from the shared decision engine (next 12 h).
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => backendApi.decision(12, profileKeys)
+      .then((r) => { if (!cancelled) setDecision(r.data); })
+      .catch(() => {});
+    load();
+    const id = setInterval(load, 300000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [profileKeys]);
 
   // Tick "updated Xs ago" — real elapsed time since the last live fetch
   useEffect(() => {
@@ -255,9 +300,11 @@ export default function CitizenDashboard() {
     const trafficFlow = Math.round(Number(modelConditions.traffic?.flow ?? baseWard.traffic.value));
     const aqi = Math.round(Number(modelConditions.aqi?.aqi ?? baseWard.aqi.value));
     const temp = Math.round(Number(modelConditions.weather?.temperature?.value ?? baseWard.temp.value));
-    const baseline = 8000;
-    const pct = Math.max(0, Math.round(((trafficFlow - baseline) / baseline) * 100));
-    const aqiLabel = aqi <= 50 ? 'good' : aqi <= 100 ? 'moderate' : aqi <= 200 ? 'poor' : aqi <= 300 ? 'very poor' : 'severe';
+    // % vs a normal hour, measured from observed data (not a fixed 8,000 baseline).
+    const vsTypical = decision?.hours[0]?.values.traffic_flow?.vsTypicalPct;
+    const pct = Math.round(vsTypical ?? 0);
+    // CPCB bands: 51-100 Satisfactory, 101-200 Moderate, 201-300 Poor.
+    const aqiLabel = cpcbCategory(aqi).toLowerCase();
     const tempLabel = temp >= 38 ? 'heatwave' : temp >= 32 ? 'hot' : temp >= 24 ? 'warm' : temp >= 15 ? 'cool' : 'cold';
     return {
       name: baseWard.name,
@@ -265,9 +312,10 @@ export default function CitizenDashboard() {
       aqi: { value: aqi, level: aqiLabel },
       temp: { value: temp, level: tempLabel },
     };
-  }, [baseWard, modelConditions]);
+  }, [baseWard, modelConditions, decision]);
   const currentUser = profile;
-  const alerts = buildAlerts(ward, currentUser);
+  // Shared decision engine when online; local rules only if the backend is unreachable.
+  const alerts = decision ? alertsFromDecision(decision) : buildAlerts(ward, currentUser);
 
   // Plain-language summary of the live conditions, used when nothing is flagged
   const conditionExplainer: Array<{ metric: string; line: string }> = (() => {
@@ -275,25 +323,23 @@ export default function CitizenDashboard() {
     const aqi = ward.aqi.value;
     lines.push({
       metric: 'Air quality',
-      line: aqi >= 120
-        ? `AQI is ${aqi} (${ward.aqi.level}) — very poor air. This can bother sensitive groups like people with respiratory issues, the elderly and children.`
-        : aqi >= 80
-          ? `AQI is ${aqi} (${ward.aqi.level}). Not urgent, but a bit of care is wise for sensitive groups.`
-          : `AQI is ${aqi} (${ward.aqi.level}) — clean enough that we have nothing to warn you about.`,
+      line: aqi > 200
+        ? `AQI is ${aqi} (CPCB ${ward.aqi.level}) — poor air. Everyone should cut outdoor exertion.`
+        : aqi > 100
+          ? `AQI is ${aqi} (CPCB ${ward.aqi.level}). People with breathing or heart conditions, children and older adults should take care.`
+          : `AQI is ${aqi} (CPCB ${ward.aqi.level}) — below the Moderate band, so nothing to warn you about.`,
     });
     const traffic = ward.traffic.value;
     lines.push({
       metric: 'Traffic',
-      line: ward.traffic.pct >= 60
-        ? `Traffic is ${traffic.toLocaleString()} vehicles/hr and surging about ${ward.traffic.pct}% above the usual baseline — expect slower commutes.`
-        : `Traffic is about ${traffic.toLocaleString()} vehicles/hr (${ward.traffic.level}) — a normal level, so no delay warning.`,
+      line: `Traffic is about ${traffic.toLocaleString('en-IN')} vehicles/hr, ${Math.abs(ward.traffic.pct)}% ${ward.traffic.pct >= 0 ? 'above' : 'below'} a normal hour. Severe congestion alerts start at 20,000 vehicles/hr.`,
     });
     const temp = ward.temp.value;
     lines.push({
       metric: 'Temperature',
-      line: temp >= 30
-        ? `It's ${temp}°C (${ward.temp.level}) and climbing. Heat at this level can affect the elderly, children and outdoor workers.`
-        : `It's ${temp}°C (${ward.temp.level}) — below the 30°C heat alert, so nothing to flag.`,
+      line: temp >= 35
+        ? `It's ${temp}°C (${ward.temp.level}). Heat at this level can affect older adults, children and outdoor workers.`
+        : `It's ${temp}°C (${ward.temp.level}) — below the 35°C heat alert, so nothing to flag.`,
     });
     return lines;
   })();
@@ -518,8 +564,9 @@ export default function CitizenDashboard() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     className="mt-3 p-[12px_14px] bg-[#0e1a16] rounded-[10px] text-[0.82rem] text-[#8fa69b] border border-dashed border-[#1f3831]"
-                    dangerouslySetInnerHTML={{ __html: a.why }}
-                  />
+                  >
+                    {a.why}
+                  </motion.div>
                 )}
               </motion.div>
             ))

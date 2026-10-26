@@ -1,10 +1,10 @@
 const yearlyForecastService = require('./yearlyForecast.service');
 const config = require('../config/env');
 
-const toTimestampMs = (timestamp) => {
-  const [date, time] = String(timestamp).split(' ');
-  return new Date(`${date}T${time || '00:00:00'}`).getTime();
-};
+const { parseCityTimestamp } = require('../utils/cityTime');
+
+// Naive CSV timestamps are city-local (IST), not server-local.
+const toTimestampMs = (timestamp) => parseCityTimestamp(timestamp);
 
 const toNumber = (value) => {
   const numeric = Number(value);

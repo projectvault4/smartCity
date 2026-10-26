@@ -281,14 +281,282 @@ export const backendApi = {
   runAdvisoryBatch: (payload?: AdvisoryBatchPayload) => apiRequest('/jobs/advisories/run', {
     method: 'POST',
     body: JSON.stringify(payload || {})
-  })
+  }),
+
+  // ── Decision intelligence (validated alert pipeline + evidence) ──────────
+  decision: (hours = 12, profiles: string[] = []) => apiRequest<{ data: Decision }>(
+    `/intelligence/decision?hours=${hours}${profiles.length ? `&profiles=${encodeURIComponent(profiles.join(','))}` : ''}`
+  ),
+  briefing: (profiles: string[] = [], lang: 'en' | 'kn' = 'en', hours = 12) => apiRequest<{ data: Briefing }>(
+    `/intelligence/briefing?hours=${hours}&lang=${lang}${profiles.length ? `&profiles=${encodeURIComponent(profiles.join(','))}` : ''}`
+  ),
+  summary: (profiles: string[] = [], lang: 'en' | 'kn' = 'en') => apiRequest<{ data: { source: string; text: string; evidence: string; aiError?: string } }>(
+    `/intelligence/summary?lang=${lang}${profiles.length ? `&profiles=${encodeURIComponent(profiles.join(','))}` : ''}`
+  ),
+  proof: () => apiRequest<{ data: Proof }>('/intelligence/proof'),
+  explain: () => apiRequest<{ data: ShapSummary }>('/intelligence/explain'),
+  whatIf: () => apiRequest<{ data: WhatIf }>('/intelligence/whatif'),
+  replay: (offset = 0, limit = 600) => apiRequest<{ data: Replay }>(`/intelligence/replay?offset=${offset}&limit=${limit}`),
+  liveCheck: (refresh = true) => apiRequest<{ data: LiveCheck }>(`/intelligence/live-check?refresh=${refresh}`),
+  ai: (body: { system: string; prompt: string; temperature?: number; maxOutputTokens?: number }) => apiRequest<{ data: { text: string } }>(
+    '/intelligence/ai',
+    { method: 'POST', body: JSON.stringify(body) }
+  )
 };
 
+// ── Decision-intelligence types ─────────────────────────────────────────────
+export type TargetKey = 'traffic_flow' | 'aqi' | 'temperature' | 'electricity_demand';
+
+export interface Driver {
+  key: string;
+  label: string;
+  effect: number;
+  direction: 'up' | 'down';
+  share: number;
+}
+
+export interface HourValue {
+  value: number;
+  outlook: number;
+  liveAdjustment: number;
+  low: number;
+  high: number;
+  typical: number | null;
+  vsTypicalPct: number | null;
+  drivers: Driver[];
+  category?: string;
+}
+
+export interface DecisionHour {
+  timestamp: string;
+  hour: number;
+  values: Partial<Record<TargetKey, HourValue>>;
+  probabilities: Record<string, number>;
+}
+
+export interface DecisionAlert {
+  event: string;
+  label: string;
+  severity: 'critical' | 'warning' | 'advisory';
+  cutoff: number;
+  startsAt: string;
+  endsAt: string;
+  activeHours: number;
+  peakAt: string;
+  probability: number;
+  peakProbability: number;
+  leadTarget: TargetKey;
+  forecast: { value: number; low: number; high: number; typical: number | null; vsTypicalPct: number | null } | null;
+  drivers: Driver[];
+  audience: string[];
+  messages: Record<string, string>;
+  sms: Record<string, string>;
+  profile?: string;
+  message?: string;
+  smsMessage?: string;
+}
+
+export interface Decision {
+  generatedAt: string;
+  horizonHours: number;
+  profiles: string[] | null;
+  uncertainty: { coverage: number; basis: string; note: string };
+  explanationBasis: string | null;
+  liveAdjustments: Partial<Record<TargetKey, { bias: number; points: number }>>;
+  forecastMix: Record<string, { neural_hybrid: number; last_observation: number; sarima: number }>;
+  cutoffs: Record<string, number>;
+  hours: DecisionHour[];
+  alerts: DecisionAlert[];
+  quiet: boolean;
+}
+
+export interface Briefing {
+  generatedAt: string;
+  forecastFor: string;
+  lang: 'en' | 'kn';
+  sentences: string[];
+  english: string[];
+  kannada: string[];
+  kannadaNote: string;
+  alerts: { event: string; label: string; severity: string; probability: number; startsAt: string }[];
+}
+
+export interface RuleScore {
+  hour_precision: number | null;
+  hour_recall: number | null;
+  hour_f1: number | null;
+  notifications_sent: number;
+  notifications_correct: number;
+  notification_precision: number | null;
+  false_alarms_per_week: number;
+  event_episodes: number;
+  episodes_caught: number;
+  episodes_warned_before_onset: number;
+}
+
+export interface Proof {
+  manifest: {
+    generated_at: string;
+    model: string;
+    splits: Record<string, { start: string; end: string; hours: number }>;
+    sarima_blend_weight_on_hybrid: Record<string, number>;
+    versions: Record<string, string>;
+  };
+  benchmark: {
+    window: { start: string; end: string; hours: number };
+    block_hours: number;
+    verdicts: string[];
+    targets: Record<string, {
+      label: string;
+      unit: string;
+      share_hours_unchanged: number;
+      models: Record<string, { MAE: number; RMSE: number }>;
+      comparisons: Record<string, { skill_mae: number | null; block_win_rate: number | null; block_skills: number[]; dm_test: { statistic: number | null; p_value: number | null } }>;
+      changed_hours: { hours: number; model_MAE: number; persistence_MAE: number; skill_vs_persistence: number | null } | null;
+    }>;
+    daily_resolution: Record<string, { days: number; model_daily_MAE: number; persistence_daily_MAE: number; skill_vs_persistence: number | null; yesterday_mean_MAE: number | null }>;
+  };
+  conformal: { coverage_target: number; targets: Record<string, { adaptive: { coverage: number; mean_width: number }; static_split: { coverage: number; mean_width: number } }> };
+  anomaly: {
+    threshold: number;
+    threshold_rule: string;
+    test_hours: number;
+    clean_window: { model_flags_per_week: number; zscore_flags_per_week: number; model_flag_rate: number; zscore_flag_rate: number };
+    forecast_error_link?: { mean_norm_error_flagged: number | null; mean_norm_error_unflagged: number; flagged_hours: number };
+    injection_tests: { id: string; label: string; incidents: number; detected_by_model: number; detected_by_zscore: number; recall_model: number; recall_zscore: number }[];
+    overall_recall_model: number;
+    overall_recall_zscore: number;
+  };
+  replay: {
+    window: { start: string; end: string; hours: number };
+    cooldownHours: number;
+    scorecard: Record<string, { notifications_sent: number; notifications_correct: number; event_episodes: number; episodes_caught: number; episodes_warned_before_onset: number; false_alarms: number; notification_precision: number | null; false_alarms_per_week: number; onset_warning_rate: number | null }>;
+    events: Record<string, { label: string; severity: string; cutoff: number; cutoff_rule: string; test_event_hours: number; validation_event_hours: number; brier_score: number; brier_climatology: number; rules: Record<string, RuleScore> }>;
+  };
+}
+
+export interface ShapSummary {
+  method: string;
+  targets: Record<string, {
+    final_mix: { neural_hybrid: number; last_observation: number; sarima: number };
+    global_drivers: { key: string; label: string; mean_abs_effect: number; share: number }[];
+    time_context: { key: string; label: string; share: number }[];
+    typical_drivers_by_hour: Record<string, Driver[]>;
+    additivity_check: { mean_abs_gap: number; network_output_std: number };
+  }>;
+}
+
+export interface WhatIfScenario {
+  id: string;
+  driver: string;
+  kind: 'scale' | 'shift';
+  value: number;
+  label: string;
+  effects: Record<string, { mean_change: number; mean_change_pct: number | null; p05: number; p95: number; network_mean_change: number; by_hour: Record<string, number> }>;
+}
+
+export interface WhatIf {
+  method: string;
+  caveat: string;
+  window: { start: string; end: string; hours: number };
+  scenarios: WhatIfScenario[];
+  daily_associations: { x: string; y: string; per: number; x_unit: string; y_unit: string; slope: number; ci95: [number, number]; correlation: number; days: number; significant: boolean; sentence: string }[];
+  findings: string[];
+}
+
+export interface ReplayHour {
+  timestamp: string;
+  alerts: { event: string; label: string; severity: string; probability: number; audience: string[]; drivers: Driver[]; messages: Record<string, string>; outcome: 'correct' | 'false_alarm' }[];
+  probabilities: Record<string, number>;
+  event_happened: Record<string, boolean>;
+  anomaly_score?: number | null;
+  anomaly_flag?: boolean;
+  traffic_flow: { actual: number; forecast: number; low: number; high: number };
+  aqi: { actual: number; forecast: number; low: number; high: number };
+  temperature: { actual: number; forecast: number; low: number; high: number };
+  electricity_demand: { actual: number; forecast: number; low: number; high: number };
+}
+
+export interface Replay {
+  window: { start: string; end: string; hours: number };
+  cooldown_hours: number;
+  totalHours: number;
+  offset: number;
+  scorecard: Proof['replay']['scorecard'];
+  events: Proof['replay']['events'];
+  hours: ReplayHour[];
+}
+
+export interface LiveCheckRow {
+  observedHour: string;
+  observedAt: string;
+  aqiCpcb: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  forecastAqi: number | null;
+  forecastTemperature: number | null;
+  forecastHumidity: number | null;
+  aqiCategory?: string;
+  intervals?: { aqi: { low: number; high: number } | null; temperature: { low: number; high: number } | null };
+  metadata?: { air?: { source: string; station?: string }; weather?: { source: string }; errors?: { provider: string; message: string }[] };
+}
+
+export interface LiveCheck {
+  generatedAt: string;
+  latest: LiveCheckRow | null;
+  history: LiveCheckRow[];
+  stats: Record<string, { points: number; mae?: number; bias?: number; coverage?: number | null; expectedMae?: number | null; errorRatio?: number | null; status: string }>;
+  drift: string[];
+  status: 'ok' | 'drift' | 'collecting';
+  rule: string;
+  notes: string[];
+  refreshError: { message: string } | null;
+}
+
+// CPCB National AQI bands.
+export const cpcbCategory = (aqi: number) => {
+  if (aqi <= 50) return 'Good';
+  if (aqi <= 100) return 'Satisfactory';
+  if (aqi <= 200) return 'Moderate';
+  if (aqi <= 300) return 'Poor';
+  if (aqi <= 400) return 'Very Poor';
+  return 'Severe';
+};
+
+// Every timestamp on the dashboard is shown on the Bengaluru clock.
+export const fmtCityHour = (ts: string) => new Date(ts).toLocaleTimeString('en-IN', { hour: 'numeric', hour12: true, timeZone: 'Asia/Kolkata' });
+export const fmtCityDateTime = (ts: string) => new Date(ts).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', hour12: true, timeZone: 'Asia/Kolkata' });
+
+export const PROFILE_LABELS: Record<string, string> = {
+  general: 'Everyone',
+  commuter: 'Commuter',
+  outdoor_worker: 'Outdoor worker',
+  respiratory: 'Respiratory / heart',
+  elderly: 'Older adult',
+  child: 'Parent of a child'
+};
+
+export const TARGET_META: Record<TargetKey, { label: string; unit: string; color: string; digits: number }> = {
+  traffic_flow: { label: 'Traffic', unit: 'veh/hr', color: '#ff8a3d', digits: 0 },
+  aqi: { label: 'AQI', unit: 'AQI', color: '#46c9b0', digits: 0 },
+  temperature: { label: 'Temperature', unit: '°C', color: '#6fb8e8', digits: 1 },
+  electricity_demand: { label: 'Electricity', unit: 'MW', color: '#b48eea', digits: 0 }
+};
+
+export const fmtNum = (v: number | null | undefined, digits = 0) => (
+  v === null || v === undefined || !Number.isFinite(v) ? '—' : v.toLocaleString('en-IN', { maximumFractionDigits: digits, minimumFractionDigits: digits })
+);
+export const pct = (v: number | null | undefined, digits = 0) => (
+  v === null || v === undefined || !Number.isFinite(v) ? '—' : `${(v * 100).toFixed(digits)}%`
+);
+
+// CPCB National AQI bands (101-200 is "Moderate", not "Poor").
 const getAqiLabel = (value: number) => {
   if (value <= 50) return 'Good';
-  if (value <= 100) return 'Moderate';
-  if (value <= 200) return 'Poor';
-  if (value <= 300) return 'Very Poor';
+  if (value <= 100) return 'Satisfactory';
+  if (value <= 200) return 'Moderate';
+  if (value <= 300) return 'Poor';
+  if (value <= 400) return 'Very Poor';
   return 'Severe';
 };
 

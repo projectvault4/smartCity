@@ -1,4 +1,5 @@
 const { calculateRisk } = require('./riskEngine.service');
+const { cpcbCategory } = require('./decisionEngine.service');
 
 const severityRank = {
   critical: 4,
@@ -93,7 +94,8 @@ const formatConditions = (assessment = {}) => {
   const traffic = assessment.inputs?.traffic;
 
   if (aqi?.value !== null && aqi?.value !== undefined) {
-    parts.push(`AQI ${aqi.value} (${String(aqi.category || 'unknown').replace('_', ' ')})`);
+    // Display the official CPCB band (e.g. 101-200 is "Moderate", not "poor").
+    parts.push(`AQI ${Math.round(aqi.value)} (CPCB ${cpcbCategory(aqi.value)})`);
   }
 
   if (weather?.temperatureCelsius !== null && weather?.temperatureCelsius !== undefined) {

@@ -45,3 +45,5 @@ yarn-error.log*
 .env
 backend/.env
 backend/.env.production
+# SHAP value cache for build_intelligence.py (regenerated on demand)
+outputs/intelligence/cache/

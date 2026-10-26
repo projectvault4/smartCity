@@ -2,6 +2,7 @@ const app = require('./app');
 const config = require('./config/env');
 const { testConnection } = require('./config/db');
 const advisoryCron = require('./jobs/advisoryCron.job');
+const liveCheckCron = require('./jobs/liveCheckCron.job');
 const logger = require('./utils/logger');
 
 const startServer = async () => {
@@ -22,6 +23,9 @@ const startServer = async () => {
 
       if (config.jobs.advisoryCronEnabled) {
         advisoryCron.start();
+      }
+      if (config.jobs.liveCheckCronEnabled) {
+        liveCheckCron.start();
       }
     });
   } catch (error) {

@@ -108,7 +108,25 @@ const findSmsHistory = async ({ limit = 50, offset = 0 } = {}) => {
   return result.rows;
 };
 
+// Event ids already delivered to a user recently (cooldown / dedupe for the
+// decision engine, so the 15-minute cron cannot resend the same alert).
+const findRecentEventIds = async ({ userId, sinceHours }) => {
+  const result = await db.query(
+    `
+      SELECT DISTINCT context->>'event' AS event
+      FROM advisories_sent
+      WHERE user_id = $1
+        AND context ? 'event'
+        AND delivery_status IN ('sent', 'delivered')
+        AND sent_at >= NOW() - ($2 || ' hours')::interval
+    `,
+    [userId, String(sinceHours)]
+  );
+  return new Set(result.rows.map((row) => row.event));
+};
+
 module.exports = {
+  findRecentEventIds,
   create,
   findSmsHistory
 };

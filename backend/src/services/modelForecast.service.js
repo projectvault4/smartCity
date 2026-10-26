@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('../config/env');
+const { parseCityTimestamp, floorToCityHour } = require('../utils/cityTime');
 
 const parseCsvLine = (line) => {
   const values = [];
@@ -75,9 +76,9 @@ const pad = (n) => String(n).padStart(2, '0');
 
 const formatTimestamp = (date) => date.toISOString();
 
-const toTimestampMs = (timestamp) => {
-  return new Date(timestamp).getTime();
-};
+// CSV timestamps are naive city-local times (IST). Parsing them with
+// `new Date()` on a UTC server shifted the whole live dashboard by 5 hours.
+const toTimestampMs = (timestamp) => parseCityTimestamp(timestamp);
 
 // Re-anchor future rows to the live server clock. The model forecasts N steps
 // ahead of its last training timestamp; we keep the relative spacing and map
@@ -86,11 +87,7 @@ const toTimestampMs = (timestamp) => {
 // Floor to the top of the hour in the CITY's timezone (IST by default), not the
 // server's. Render runs in UTC, and IST is UTC+5:30, so flooring in UTC lands on
 // :30 IST and can publish an hour that has already passed.
-const floorToLocalHour = (date) => {
-  const offsetMs = (config.modelForecast.tzOffsetMinutes ?? 330) * 60 * 1000;
-  const hourMs = 60 * 60 * 1000;
-  return Math.floor((date.getTime() + offsetMs) / hourMs) * hourMs - offsetMs;
-};
+const floorToLocalHour = (date) => floorToCityHour(date.getTime());
 
 const rebaseFutureTimestamps = (rows) => {
   const stepMs = (config.modelForecast.stepMinutes || 60) * 60 * 1000;
@@ -198,8 +195,10 @@ const classifyWeather = ({ temperature, humidity }) => {
     return { main: 'Heatwave', description: 'model forecast heatwave' };
   }
 
+  // The model forecasts humidity, not rainfall, so high humidity is reported as
+  // humid rather than inventing a rainfall amount.
   if (humidity !== null && humidity >= 82) {
-    return { main: 'Rain', description: 'model forecast high humidity rain risk' };
+    return { main: 'Humid', description: 'model forecast high humidity' };
   }
 
   return { main: 'Clear', description: 'model forecast stable weather' };
@@ -241,7 +240,7 @@ const getLatestModelConditions = ({ city = config.modelForecast.defaultCity, ste
         units: 'metric'
       },
       humidity,
-      rainLastHourMm: weather.main === 'Rain' ? 8 : 0,
+      rainLastHourMm: 0,
       observedAt: selected.timestamp
     },
     traffic: {
@@ -281,8 +280,26 @@ const getForecastSeries = ({ city = config.modelForecast.defaultCity, steps = 24
   }));
 };
 
+// Outlook value for the city hour containing `ms` (used by the live reality
+// check to compare the forecast with what is observed right now).
+const getOutlookAt = ({ city = config.modelForecast.defaultCity, ms = Date.now() } = {}) => {
+  const target = floorToCityHour(ms);
+  const rows = readForecastRows(city, config.modelForecast.forecastYear || '2026');
+  const row = rows.find((r) => toTimestampMs(r.timestamp) === target);
+  if (!row) return null;
+  return {
+    timestamp: new Date(target).toISOString(),
+    trafficFlow: toNumber(row.traffic_flow),
+    aqi: toNumber(row.aqi),
+    temperature: toNumber(row.temperature),
+    humidity: toNumber(row.humidity),
+    electricityDemand: toNumber(row.electricity_demand)
+  };
+};
+
 module.exports = {
   getLatestModelConditions,
   getForecastSeries,
+  getOutlookAt,
   readForecastRows
 };

@@ -1,69 +1,25 @@
 import { useEffect, useState } from 'react';
 import Card from './Card';
-import { backendApi, CityData, MultivariateAnalysis } from '../services/dataService';
+import { backendApi, CityData, MultivariateAnalysis, WhatIf } from '../services/dataService';
 import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const fallbackSeries = Array.from({ length: 24 }).map((_, i) => ({
-  time: `${i}:00`,
-  traffic: Math.sin(i / 3) * 30 + 60 + Math.random() * 5,
-  aqi: Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10 + 100,
-  energy: Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5 + 200,
-  trafficNorm: Math.sin(i / 3) * 30 + 60 + Math.random() * 5,
-  aqiNorm: Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10,
-  energyNorm: Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5,
-  trafficRaw: Math.round(Math.sin(i / 3) * 30 + 60 + Math.random() * 5) * 100,
-  aqiRaw: Math.round(Math.sin((i - 1) / 3) * 20 + 50 + Math.random() * 10),
-  energyRaw: Math.round(Math.sin((i - 3) / 3) * 40 + 70 + Math.random() * 5) * 100,
-}));
+// No invented fallback series: when the backend is offline the chart is empty.
+const fallbackSeries: never[] = [];
 
 const fallbackStats = {
-  phaseLagHours: 1.2,
+  phaseLagHours: 0,
   phaseLagDirection: 'traffic_leads_aqi',
-  phaseLagCorr: 0.84,
-  syncFactor: 0.84,
-  coherence: 0.92,
-  tempEnergyCorr: 0.7,
-  aqiEnergyCorr: 0.5,
-};
-
-const impactLabel = (from: string, to: string, s: MultivariateAnalysis['stats']) => {
-  if (from === 'Traffic' && to === 'AQI') return `Direct · ρ=${s.phaseLagCorr}`;
-  if (from === 'Weather' && to === 'Energy') return `Lagged · ρ=${s.tempEnergyCorr}`;
-  if (from === 'Energy' && to === 'Economic') return `Strong · ρ=${s.aqiEnergyCorr}`;
-  if (from === 'AQI' && to === 'Health') return `Terminal · ρ=${s.coherence}`;
-  return 'Observed';
-};
-
-const strengthWord = (r: number) =>
-  r >= 0.9 ? 'very strong' : r >= 0.7 ? 'strong' : r >= 0.5 ? 'moderate' : r >= 0.3 ? 'weak' : 'very weak';
-
-const causalDescs = (from: string, to: string, s: MultivariateAnalysis['stats']): string => {
-  const r = (from === 'Traffic' && to === 'AQI')
-    ? s.phaseLagCorr
-    : (from === 'Weather' && to === 'Energy')
-      ? s.tempEnergyCorr
-      : (from === 'Energy' && to === 'Economic')
-        ? s.aqiEnergyCorr
-        : s.coherence;
-  const strength = strengthWord(r);
-
-  switch (from + '→' + to) {
-    case 'Traffic→AQI':
-      return `A ${strength} correlation (ρ=${r}) between vehicle flow and air quality, measured from the trained-model time series — the model links more traffic to more pollution in the air.`;
-    case 'Weather→Energy':
-      return `A ${strength} correlation (ρ=${r}) between temperature and electricity use, from the trained-model series — the model ties warmer weather to more cooling demand.`;
-    case 'Energy→Economic':
-      return `A ${strength} correlation (ρ=${r}) in the trained-model series — used as a proxy for industrial output and commercial activity, since direct economic data is not part of the model.`;
-    case 'AQI→Health':
-      return `A ${strength} correlation (ρ=${r}) in the trained-model AQI series — a proxy for respiratory and cardiovascular stress, since direct health records are not part of the model.`;
-    default:
-      return 'Observed relationship in the trained-model series.';
-  }
+  phaseLagCorr: 0,
+  syncFactor: 0,
+  coherence: 0,
+  tempEnergyCorr: 0,
+  aqiEnergyCorr: 0,
 };
 
 const MultivariatePanel = ({ data }: { data: CityData }) => {
   const [analysis, setAnalysis] = useState<MultivariateAnalysis | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [associations, setAssociations] = useState<WhatIf['daily_associations'] | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -71,6 +27,9 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
       .then((response) => { if (mounted) setAnalysis(response.data); })
       .catch(() => {})
       .finally(() => { if (mounted) setLoaded(true); });
+    backendApi.whatIf()
+      .then((response) => { if (mounted) setAssociations(response.data.daily_associations); })
+      .catch(() => {});
     return () => { mounted = false; };
   }, []);
 
@@ -94,15 +53,15 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
       : stats.phaseLagDirection === 'traffic_leads_aqi'
         ? `Traffic congestion cycles consistently precede AQI shifts by ~${Math.round(stats.phaseLagHours * 60)} minutes.`
         : `AQI shifts lead traffic cycles by ~${Math.round(stats.phaseLagHours * 60)} minutes in the trained-model series.`
-    : 'Traffic congestion cycles consistently precede AQI shifts by ~72 minutes.';
+    : 'Model offline.';
 
   const syncFactorText = analysis
     ? `Correlation of ${stats.syncFactor} between energy demand and traffic flow, computed from the trained-model multivariate series.`
-    : 'High correlation between industrial energy surges and heavy logistics vehicle movement.';
+    : 'Model offline.';
 
   const coherenceText = analysis
     ? `Environmental metrics show ${Math.round(stats.coherence * 100)}% coherence with urban mobility patterns in the trained-model window.`
-    : 'Environmental metrics show 92% seasonal coherence with urban mobility patterns.';
+    : 'Model offline.';
 
   return (
     <div className="space-y-6">
@@ -177,26 +136,23 @@ const MultivariatePanel = ({ data }: { data: CityData }) => {
         </div>
       </Card>
 
-      <Card title="Cross-Domain Causal Mapping" theme="home">
+      <Card title="Cross-domain links measured in observed data" theme="home">
+        <p className="text-xs text-white/45 mb-4">
+          The curves above come from the 2026 outlook, whose hourly AQI and energy shapes are partly derived from traffic and temperature during
+          post-processing, so their correlations overstate coupling. The links below are measured on observed daily Bengaluru data (Feb–Jun 2025)
+          with 95% bootstrap intervals.
+        </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-           {[
-             { from: 'Traffic', to: 'AQI', impact: 'Direct' },
-             { from: 'Weather', to: 'Energy', impact: 'Lagged' },
-             { from: 'Energy', to: 'Economic', impact: 'Strong' },
-             { from: 'AQI', to: 'Health', impact: 'Terminal' }
-           ].map((rel, i) => (
-             <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/15 transition-all group">
-                <div className="flex flex-col items-center gap-1 min-w-[60px]">
-                   <div className="text-[10px] font-black text-white/30 uppercase">{rel.from}</div>
-                   <div className="h-4 w-[1px] bg-white/10" />
-                   <div className="text-[10px] font-black text-home-acc uppercase">{rel.to}</div>
-                </div>
-                <div className="flex-1">
-                   <div className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Impact: {impactLabel(rel.from, rel.to, stats)}</div>
-                   <p className="text-xs text-white/60 font-medium leading-normal">{causalDescs(rel.from, rel.to, stats)}</p>
-                </div>
-             </div>
-           ))}
+          {(associations || []).map((a) => (
+            <div key={a.x + a.y} className="p-4 bg-white/5 rounded-2xl border border-white/5">
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-white/50">{a.x.replace('_flow', '').replace('_', ' ')} → {a.y.replace('_', ' ')}</div>
+                <span className={`text-[10px] px-2 py-0.5 rounded border ${a.significant ? 'text-home-acc border-home-acc/40' : 'text-white/40 border-white/15'}`}>{a.significant ? 'supported' : 'not supported'}</span>
+              </div>
+              <p className="text-xs text-white/65 leading-normal">{a.sentence}</p>
+            </div>
+          ))}
+          {!associations && <p className="text-xs text-white/40">Loading measured links…</p>}
         </div>
       </Card>
     </div>

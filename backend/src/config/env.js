@@ -61,7 +61,21 @@ const config = {
         ? Number(process.env.DEFAULT_TRAFFIC_DESTINATION_LON)
         : null,
       address: process.env.DEFAULT_TRAFFIC_DESTINATION_ADDRESS || null
-    }
+    },
+    // Hourly forecast-vs-reality recording (WAQI + OpenWeather). On by default
+    // whenever at least one provider key is configured.
+    liveCheckCronEnabled: process.env.LIVE_CHECK_CRON_ENABLED
+      ? process.env.LIVE_CHECK_CRON_ENABLED === 'true'
+      : Boolean(process.env.WAQI_API_KEY || process.env.OPENWEATHER_API_KEY),
+    liveCheckCronSchedule: process.env.LIVE_CHECK_CRON_SCHEDULE || '5 * * * *'
+  },
+  ai: {
+    // Server-side only: the key never reaches the browser bundle.
+    geminiApiKey: process.env.GEMINI_API_KEY || '',
+    geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    maxPromptChars: Number(process.env.AI_MAX_PROMPT_CHARS) || 8000,
+    rateLimitPerWindow: Number(process.env.AI_RATE_LIMIT) || 30,
+    rateLimitWindowMs: Number(process.env.AI_RATE_WINDOW_MS) || 10 * 60 * 1000
   },
   modelForecast: {
     enabled: process.env.MODEL_FORECAST_ENABLED !== 'false',

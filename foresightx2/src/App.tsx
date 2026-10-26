@@ -7,7 +7,6 @@ import CitizenDashboard from './pages/CitizenDashboard';
 import Sidebar from './components/Sidebar';
 import Hero from './components/Hero';
 import SectionWrapper from './components/SectionWrapper';
-import Card from './components/Card';
 import Sparkline from './components/Sparkline';
 import CityPulseForecast from './components/CityPulseForecast';
 import YearlyOutlook from './components/YearlyOutlook';
@@ -17,11 +16,13 @@ import QueryInterface from './components/QueryInterface';
 import RippleSimulator from './components/RippleSimulator';
 import StressHeatmap from './components/StressHeatmap';
 import DriftMonitor from './components/DriftMonitor';
-import EventImpact from './components/EventImpact';
 import ReportGenerator from './components/ReportGenerator';
 import RiskAdvisoryConsole from './components/RiskAdvisoryConsole';
 import AnomalyDetectionEmbed from './components/AnomalyDetectionEmbed';
 import VoiceBriefing from './components/VoiceBriefing';
+import DecisionCenter from './components/DecisionCenter';
+import AlertReplay from './components/AlertReplay';
+import ProofPanel from './components/ProofPanel';
 import { backendApi, cityDataFromModelConditions, getInitialData, updateMetric, CityData, ModelConditions, ForecastPoint } from './services/dataService';
 
 // ── Protected route guards ────────────────────────────────────────────────────
@@ -46,15 +47,15 @@ function RootRedirect() {
 }
 
 // ── Admin dashboard ───────────────────────────────────────────────────────────
-type DashboardView = 'overview' | 'simulation' | 'prediction' | 'yearly' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'advisories' | 'model';
+type DashboardView = 'overview' | 'decision' | 'replay' | 'simulation' | 'prediction' | 'yearly' | 'xai' | 'analytics' | 'anomaly' | 'voice' | 'advisories' | 'model';
 
 function AdminDashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('anomaly');
+  const [activeTab, setActiveTab] = useState('decision');
   const [heroMode, setHeroMode] = useState<'home' | 'traffic' | 'air' | 'energy' | 'weather'>('home');
-  const [dashboardView, setDashboardView] = useState<DashboardView>('anomaly');
+  const [dashboardView, setDashboardView] = useState<DashboardView>('decision');
   const [cityData, setCityData] = useState<CityData>(getInitialData());
   const [modelConditions, setModelConditions] = useState<ModelConditions | null>(null);
   const [modelForecast, setModelForecast] = useState<ForecastPoint[] | null>(null);
@@ -138,7 +139,9 @@ function AdminDashboard() {
     if (['traffic', 'air', 'energy', 'weather', 'home'].includes(activeTab)) {
       setDashboardView('overview');
       setHeroMode(activeTab === 'home' ? 'home' : activeTab as any);
-    } else if (activeTab === 'simulation') setDashboardView('simulation');
+    } else if (activeTab === 'decision') setDashboardView('decision');
+    else if (activeTab === 'replay') setDashboardView('replay');
+    else if (activeTab === 'simulation') setDashboardView('simulation');
     else if (activeTab === 'prediction') setDashboardView('prediction');
     else if (activeTab === 'yearly') setDashboardView('yearly');
     else if (activeTab === 'xai') setDashboardView('xai');
@@ -178,7 +181,6 @@ function AdminDashboard() {
               <div className="space-y-12">
                 <div className="space-y-8">
                   <QueryInterface modelConditions={modelConditions} forecast={modelForecast || []} />
-                  <EventImpact />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
@@ -209,12 +211,13 @@ function AdminDashboard() {
               </div>
             )}
 
+            {dashboardView === 'decision' && <DecisionCenter />}
+
+            {dashboardView === 'replay' && <AlertReplay />}
+
             {dashboardView === 'simulation' && (
               <div className="space-y-8">
                 <RippleSimulator forecast={modelForecast} />
-                <Card title="Cross-Domain Knowledge Graph" theme="home">
-                  <p className="text-sm text-white/60 leading-relaxed max-w-3xl">This simulator models the "Ripple Effect" of traffic on energy grids and air quality. For instance, high idling traffic (congestion) leads to an immediate 14% increase in particulate matter (AQI) and creates heat pockets that drive up local energy demand for cooling systems.</p>
-                </Card>
               </div>
             )}
 
@@ -256,38 +259,8 @@ function AdminDashboard() {
 
             {dashboardView === 'model' && (
               <div className="space-y-8">
+                <ProofPanel />
                 <DriftMonitor />
-                <SectionWrapper id="s-model" label="System Benchmarks" theme="model">
-                  <div className="bg-black/35 border border-white/10 rounded-2xl p-6 overflow-auto">
-                    <table className="w-full text-left">
-                      <thead>
-                        <tr className="border-b border-white/5 text-[10px] font-bold text-white/30 uppercase tracking-[2px]">
-                          <th className="pb-4">Model Architecture</th>
-                          <th className="pb-4 text-right">Convergence</th>
-                          <th className="pb-4 text-right">Latency</th>
-                          <th className="pb-4 text-right">Efficiency</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { name: 'ForeSight GRU+TFT+SARIMA', acc: '98.4%', lat: '12ms', eff: 'High' },
-                          { name: 'Urban Transformer', acc: '97.2%', lat: '45ms', eff: 'Moderate' },
-                          { name: 'Hybrid Ensemble', acc: '99.1%', lat: '120ms', eff: 'Low' },
-                          { name: 'Light Adaptive', acc: '94.5%', lat: '2ms', eff: 'Ultra-High' },
-                        ].map((row, i) => (
-                          <tr key={i} className="border-b border-white/5 text-sm hover:bg-white/5 transition-all">
-                            <td className="py-4 font-bold text-white/80">{row.name}</td>
-                            <td className="py-4 text-right font-mono text-home-acc">{row.acc}</td>
-                            <td className="py-4 text-right font-mono text-white/40">{row.lat}</td>
-                            <td className="py-4 text-right">
-                              <span className="px-2 py-0.5 bg-white/5 rounded text-[10px] font-bold uppercase">{row.eff}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </SectionWrapper>
               </div>
             )}
           </motion.div>

@@ -10,8 +10,10 @@ interface SidebarProps {
 }
 
 const navItems = [
+  { id: 'decision', label: 'Decision Center', color: 'bg-orange-400' },
+  { id: 'replay', label: 'Alert Replay', color: 'bg-orange-400' },
   { id: 'home', label: 'City Pulse', color: 'bg-home-acc' },
-  { id: 'simulation', label: 'Ripple Sim', color: 'bg-traf-acc' },
+  { id: 'simulation', label: 'What-if', color: 'bg-traf-acc' },
   { id: 'prediction', label: 'Forecasting', color: 'bg-air-acc' },
   { id: 'yearly', label: '2026 Outlook', color: 'bg-home-acc' },
   { id: 'xai', label: 'Explainable AI', color: 'bg-home-acc' },
@@ -19,7 +21,7 @@ const navItems = [
   { id: 'anomaly', label: 'Anomaly Detection', color: 'bg-red-400' },
   { id: 'voice', label: 'Voice Briefing', color: 'bg-traf-acc' },
   { id: 'advisories', label: 'Advisories & Users', color: 'bg-home-acc' },
-  { id: 'model', label: 'Model Quality', color: 'bg-white' },
+  { id: 'model', label: 'Proof & Live Check', color: 'bg-white' },
 ];
 
 const Sidebar = ({ activeTab, setActiveTab, onLogout }: SidebarProps) => {

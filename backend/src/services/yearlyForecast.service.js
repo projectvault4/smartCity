@@ -96,10 +96,9 @@ const getYearlyForecast = ({ city = config.modelForecast.defaultCity, year = 202
   }
 
   const monthlyAgg = Array.from({ length: 12 }, (_, i) => i + 1).map((month) => {
-    const monthRows = rows.filter((row) => {
-      const ts = new Date(String(row.timestamp).replace(' ', 'T'));
-      return ts.getMonth() === month - 1;
-    });
+    // Read the month straight from the naive city-local timestamp so the
+    // server's timezone cannot move boundary hours into the wrong month.
+    const monthRows = rows.filter((row) => Number(String(row.timestamp).slice(5, 7)) === month);
 
     const pick = (col) => monthRows.map((row) => toNumber(row[col]));
     return {
