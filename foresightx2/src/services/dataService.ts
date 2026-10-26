@@ -207,14 +207,39 @@ export interface AdvisoryBatchPayload {
   };
 }
 
+// Render's free tier sleeps and restarts on deploy; while it boots, fetch
+// fails with a network error ("Load failed" in Safari) or a 502/503. Retry
+// those for up to ~90 s so panels recover by themselves instead of staying
+// on "unavailable".
+const RETRY_DELAYS_MS = [2000, 4000, 8000, 12000, 16000, 20000, 25000];
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchWithRetry = async (url: string, init: RequestInit): Promise<Response> => {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      const response = await fetch(url, init);
+      const retryable = response.status === 502 || response.status === 503 || response.status === 504;
+      if (!retryable || attempt >= RETRY_DELAYS_MS.length) return response;
+    } catch (error) {
+      if (attempt >= RETRY_DELAYS_MS.length) throw error;
+    }
+    await sleep(RETRY_DELAYS_MS[attempt]);
+  }
+};
+
 const apiRequest = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const method = (options.method || 'GET').toUpperCase();
+  const init: RequestInit = {
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...(options.headers || {})
     }
-  });
+  };
+  // Only idempotent reads are retried; writes (SMS, user edits) are sent once.
+  const response = method === 'GET'
+    ? await fetchWithRetry(`${API_BASE_URL}${path}`, init)
+    : await fetch(`${API_BASE_URL}${path}`, init);
 
   const payload = await response.json().catch(() => ({}));
 
