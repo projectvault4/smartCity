@@ -132,8 +132,27 @@ const toCpcbAqi = (pollutants = {}) => {
 // Postgres). Render's free tier sleeps, so stored history has gaps.
 const memory = [];
 
+// Render does not run the migration script, so make sure the table exists
+// (same DDL as migrations/003, idempotent).
+let tableReady = null;
+const ensureTable = () => {
+  if (!tableReady) {
+    const fs = require('fs');
+    const path = require('path');
+    const sql = fs.readFileSync(path.join(__dirname, '../migrations/003_create_live_observations.sql'), 'utf8')
+      .replace(/^\s*BEGIN;\s*$/m, '')
+      .replace(/^\s*COMMIT;\s*$/m, '');
+    tableReady = db.query(sql).catch((error) => {
+      tableReady = null;
+      throw error;
+    });
+  }
+  return tableReady;
+};
+
 const save = async (row) => {
   try {
+    await ensureTable();
     await db.query(
       `INSERT INTO live_observations
         (city, observed_hour, observed_at, aqi_cpcb, aqi_us, temperature, humidity,
@@ -159,6 +178,7 @@ const save = async (row) => {
 
 const history = async (hours = 48) => {
   try {
+    await ensureTable();
     const result = await db.query(
       `SELECT observed_hour, observed_at, aqi_cpcb, aqi_us, temperature, humidity,
               forecast_aqi, forecast_temperature, forecast_humidity, metadata
