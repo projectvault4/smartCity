@@ -77,6 +77,19 @@ module.exports = {
     res.status(200).json({ data: { text } });
   }),
 
+  ask: asyncHandler(async (req, res) => {
+    if (!aiSummary.allow(req.ip)) {
+      res.status(429).json({ error: { message: 'Too many questions, try again in a few minutes.' } });
+      return;
+    }
+    const question = req.body?.question;
+    if (!question || typeof question !== 'string') {
+      res.status(400).json({ error: { message: 'question is required' } });
+      return;
+    }
+    res.status(200).json({ data: await aiSummary.ask({ question }) });
+  }),
+
   liveCheck: asyncHandler(async (req, res) => {
     res.set('Cache-Control', 'no-store');
     const data = await liveCheck.getLiveCheck({ refresh: req.query.refresh !== 'false' });

@@ -23,5 +23,7 @@ router.get('/live-check', controller.liveCheck);
 
 // Server-side Gemini proxy (rate limited; key stays on the server).
 router.post('/ai', controller.ai);
+// Evidence-grounded Q&A (works without a Gemini key).
+router.post('/ask', controller.ask);
 
 module.exports = router;

@@ -323,6 +323,10 @@ export const backendApi = {
   whatIf: () => apiRequest<{ data: WhatIf }>('/intelligence/whatif'),
   replay: (offset = 0, limit = 600) => apiRequest<{ data: Replay }>(`/intelligence/replay?offset=${offset}&limit=${limit}`),
   liveCheck: (refresh = true) => apiRequest<{ data: LiveCheck }>(`/intelligence/live-check?refresh=${refresh}`),
+  ask: (question: string) => apiRequest<{ data: { text: string; source: string; lead: string; forecast: { time: string; value: number | null }[]; shap: { name: string; val: number }[] } }>(
+    '/intelligence/ask',
+    { method: 'POST', body: JSON.stringify({ question }) }
+  ),
   ai: (body: { system: string; prompt: string; temperature?: number; maxOutputTokens?: number }) => apiRequest<{ data: { text: string } }>(
     '/intelligence/ai',
     { method: 'POST', body: JSON.stringify(body) }

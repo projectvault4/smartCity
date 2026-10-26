@@ -2,10 +2,8 @@ import { useState } from 'react';
 import Card from './Card';
 import { Search, Loader2, BarChart2, TrendingUp, Sparkles } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line } from 'recharts';
-import { ModelConditions, ForecastPoint } from '../services/dataService';
+import { ModelConditions, ForecastPoint, backendApi } from '../services/dataService';
 
-// Google Gemini via the backend proxy (see services/gemini.ts); no key in the browser.
-import { generateWithGemini } from '../services/gemini';
 
 // Normalize the model's response into the exact shape the charts expect:
 // { text: string, forecast: [{time, value}], shap: [{name, val}] }
@@ -167,74 +165,21 @@ const QueryInterface = ({
     setResult(null);
 
     try {
-      // Current city data for context — pulled from the trained model when available
-      const cityContext = buildCityContext();
-
-      const prompt = `
-        You are the Bengaluru Urban Intelligence Assistant — a senior urban systems analyst presenting to municipal officials and a thesis committee.
-        The city values below come from a trained forecasting model. Use them as your ground truth.
-
-        Context (model source: ${cityContext.source}):
-        - Traffic: ${cityContext.traffic}
-        - Air Quality: ${cityContext.aqi}
-        - Energy Demand: ${cityContext.energy}
-        - Temperature: ${cityContext.temp}
-
-        Model forecast (next 6 hours):
-        ${cityContext.forecastText}
-
-        User Query: "${query}"
-
-        Respond in plain, simple language that a general audience can easily understand:
-
-        1. ANALYSIS: Explain the answer in 4-5 short, simple sentences (max ~110 words total). Use everyday words, not jargon. Tell them what's happening, why it's happening in plain terms, and what it means for them. Mention the relevant forecast number(s) naturally (e.g. "AQI rises to 109"). Never refuse or say the data "cannot answer" — reason from the evidence you have and keep it simple.
-        2. Format the response as a JSON object wrapped in <data> tags.
-        3. Include "forecast": an ARRAY of 6 objects, each {"time":"HH:00","value":<number>}, mirroring the real model forecast values above (plot the metric most relevant to the query).
-        4. Include "shap": an ARRAY of 4 objects, each {"name":"<driver>","val":<number>}, ranking the drivers of the trend with real magnitudes.
-      `;
-
-      const rawText = await generateWithGemini({
-        system:
-          "You explain city forecast data in plain, simple language that a general audience understands. Always answer the user's query with 4-5 short, easy sentences (max ~110 words total), using everyday words and no jargon. Mention the key forecast number(s) naturally. Never refuse or claim the data is insufficient — reason from the evidence and keep it simple. Format your response as a JSON object inside <data> tags with fields: text (your explanation), forecast (array of {time,value} with numeric values), and shap (array of {name,val} with numeric values). Do not include markdown code blocks.",
-        prompt,
-        temperature: 0.5,
-        maxOutputTokens: 1200,
+      // Answer comes from the model's real evidence (forecast, 90% range, SHAP
+      // drivers, alerts, measured cross-domain links). If Gemini is configured
+      // on the server it only rephrases that evidence; the charts are always
+      // the model's own numbers.
+      const response = await backendApi.ask(query);
+      const data = response.data;
+      setResult({
+        text: data.text,
+        forecast: data.forecast.filter((p) => p.value !== null),
+        shap: data.shap,
+        source: data.source,
       });
-      // Strip stray markdown fences in case the model adds them anyway.
-      const responseText = rawText.replace(/```json|```/g, '');
-
-      const dataMatch = responseText.match(/<data>(.*?)<\/data>/s);
-      let structuredData = null;
-      if (dataMatch) {
-         try {
-           structuredData = JSON.parse(dataMatch[1].trim());
-         } catch (e) {
-           console.error("JSON Parse Error", e);
-         }
-      }
-
-      const normalized = structuredData
-        ? normalizeResult(structuredData)
-        : { text: '', forecast: [], shap: [] };
-
-      // LLMs sometimes write the real analysis OUTSIDE the <data> tags and leave a
-      // stub inside. Prefer whichever text is longer/more substantive.
-      const outerProse = responseText.replace(/<data>[\s\S]*?<\/data>/s, '').trim();
-      const analysisText =
-        normalized.text && normalized.text.trim().length >= 40
-          ? normalized.text
-          : outerProse || normalized.text;
-
-      // Guarantee charts render even if the LLM skipped them.
-      const finalResult = {
-        text: analysisText || 'No textual analysis returned — showing the model forecast data below.',
-        forecast: normalized.forecast.length >= 4 ? normalized.forecast : fallbackForecast(query),
-        shap: normalized.shap.length >= 3 ? normalized.shap : fallbackShap(),
-      };
-      setResult(finalResult);
     } catch (error) {
       console.error("Urban Intelligence Query Failed:", error);
-      setResult({ text: "The urban relay is currently unresponsive. Please check your query or try again in a moment." });
+      setResult({ text: "The backend is waking up or unreachable. Please try again in a few seconds." });
     } finally {
       setLoading(false);
     }
@@ -317,6 +262,13 @@ const QueryInterface = ({
                      <p className="text-[15px] text-white/90 leading-relaxed font-medium">
                        {result.text}
                      </p>
+                     {result.source && (
+                       <p className="mt-3 text-[10px] font-mono text-white/30">
+                         {result.source === 'gemini_grounded'
+                           ? 'Gemini rephrasing the model evidence · numbers from the trained model'
+                           : 'Answer built from the trained model: forecast, 90% range, SHAP drivers, alerts'}
+                       </p>
+                     )}
                   </div>
 
                   {result.forecast && result.forecast.length > 0 && (
@@ -358,7 +310,7 @@ const QueryInterface = ({
                                  <BarChart2 size={16} className="text-home-acc" />
                                  Model Attribution
                               </div>
-                              <div className="text-[10px] text-white/20 font-bold">SHAP VALUES</div>
+                              <div className="text-[10px] text-white/20 font-bold">SHAP SHARE %</div>
                            </div>
                            <div className="h-[220px] w-full p-4 bg-black/30 rounded-2xl border border-white/5 shadow-inner">
                               <ResponsiveContainer width="100%" height="100%">
